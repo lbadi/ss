@@ -2,23 +2,16 @@ package model;
 
 import util.PlainWritable;
 
-import java.util.Scanner;
-
-/**
- *
- */
 public class Particle implements PlainWritable{
 
     private static final String separator = " ";
 
-    double x;
-    double y;
-
-    double speedX;
-    double speedY;
-
-    double radius;
-    double color;
+    private double x;
+    private double y;
+    private double speedX;
+    private double speedY;
+    private double radius;
+    private double color;
 
     @Override
     public PlainWritable readObject(String plainObject) {
@@ -40,7 +33,6 @@ public class Particle implements PlainWritable{
                 .append(getSpeedX())
                 .append(separator)
                 .append(getSpeedY());
-
         return sb.toString();
     }
 
@@ -92,6 +84,16 @@ public class Particle implements PlainWritable{
         this.color = color;
     }
 
+    /**
+     * Formato de entrada del archivo estático.
+     * @param radius
+     * @param color
+     */
+    public Particle(double radius, double color) {
+        this.radius = radius;
+        this.color = color;
+    }
+
     public Particle(){
     }
 
@@ -120,4 +122,5 @@ public class Particle implements PlainWritable{
     public void setColor(double color) {
         this.color = color;
     }
+
 }

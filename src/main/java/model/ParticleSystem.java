@@ -4,21 +4,39 @@ import util.PlainWritable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
-/**
- * Created by leonelbadi on 11/3/16.
- */
-public class ParticleSystem implements PlainWritable{
+public class ParticleSystem implements PlainWritable {
 
-    long n;
-    long l;
+    private long n;
+    private long l;
+    private List<Particle> particles = new ArrayList<>();
 
-    List<Particle> particles = new ArrayList<>();
-
-
+    /**
+     * Estático:
+     N      (Heading con el Nro. total de Partículas)
+     L      (Longitud del lado del área de simulación)
+     r1 c1  (radio y color de la partícula 1)
+     r2 c2  (radio y color de la partícula 2)
+     ....
+     rN cN  (radio y color de la partícula N)
+     * @param plainObject
+     * @return
+     */
     @Override
     public PlainWritable readObject(String plainObject) {
-        return null;
+        Scanner scanner = new Scanner(plainObject);
+        setN(Long.parseLong(scanner.next()));
+        setL(Long.parseLong(scanner.next()));
+        List<Particle> particles = new ArrayList<>();
+        while (scanner.hasNext()) {
+            double radius = Double.parseDouble(scanner.next());
+            double color = Double.parseDouble(scanner.next());
+            Particle particle = new Particle(radius, color);
+            particles.add(particle);
+        }
+        setParticles(particles);
+        return this;
     }
 
     @Override
@@ -65,5 +83,7 @@ public class ParticleSystem implements PlainWritable{
         particles.add(particle);
     }
 
-    public ParticleSystem(){}
+    public ParticleSystem() {
+    }
+
 }

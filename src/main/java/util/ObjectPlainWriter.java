@@ -5,24 +5,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-/**
- * Created by leonelbadi on 11/3/16.
- */
 public class ObjectPlainWriter {
 
     /**
      * Example method for using the ObjectOutputStream class
      */
     public void writeObject(String filename, PlainWritable object ) {
-
         PrintWriter writer = null;
-
         try {
-
             //Construct the LineNumberReader object
             writer = new PrintWriter(filename);
             writer.write(object.writeObject());
-
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
@@ -36,9 +29,6 @@ public class ObjectPlainWriter {
     }
 
     public PlainWritable readObject(String fileName, PlainWritable objectToWrite){
-
-        FileInputStream reader = null;
-
         try {
             String text = new String(Files.readAllBytes(Paths.get(fileName)), StandardCharsets.UTF_8);
             return objectToWrite.readObject(text);
