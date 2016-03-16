@@ -1,5 +1,6 @@
 package model;
 
+import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import util.PlainWritable;
 
 import java.util.ArrayList;
@@ -47,6 +48,25 @@ public class ParticleSystem implements PlainWritable {
                 .append(getL());
         particles.stream().forEach(particle -> sb.append("\n").append(particle.getRadius() + " " + particle.getColor()));
         return sb.toString();
+    }
+
+    public ParticleSystem readDynamic(String plainDynamic){
+        Scanner scanner = new Scanner(plainDynamic);
+        while(scanner.hasNextLine()){
+            String line = scanner.nextLine();
+            line = line.substring(3);
+            String[] words = line.split("\\W+");
+
+            if(words.length == 1){
+                //Es el separador de tiempo
+            }else{
+                //Leer particula
+                Particle particle = new Particle();
+                particle.readObject(line);
+                particles.add(particle);
+            }
+        }
+        return this;
     }
 
     public long getN() {

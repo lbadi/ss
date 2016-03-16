@@ -2,6 +2,8 @@ package model;
 
 import util.PlainWritable;
 
+import java.util.Scanner;
+
 public class Particle implements PlainWritable{
 
     private static final String separator = " ";
@@ -15,11 +17,13 @@ public class Particle implements PlainWritable{
 
     @Override
     public PlainWritable readObject(String plainObject) {
-        String[] values = plainObject.split(separator);
-        setX(Double.valueOf(values[0]));
-        setY(Double.valueOf(values[1]));
-        setSpeedX(Double.valueOf(values[2]));
-        setSpeedY(Double.valueOf(values[3]));
+        Scanner scanner = new Scanner(plainObject);
+        setX(Double.valueOf(scanner.next()));
+        setY(Double.valueOf(scanner.next()));
+        if(scanner.hasNext()) {
+            setSpeedX(Double.valueOf(scanner.next()));
+            setSpeedY(Double.valueOf(scanner.next()));
+        }
         return this;
     }
 
