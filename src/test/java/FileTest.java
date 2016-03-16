@@ -1,9 +1,12 @@
 import model.ParticleSystem;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import util.ObjectPlainWriter;
 
 public class FileTest {
+
+    private static Logger logger = Logger.getLogger(Main.class);
 
     @Test
     public void loadStaticFileTest() {
@@ -41,11 +44,15 @@ public class FileTest {
         plainWriter.readObject(filename, particleSystem);
         String filenameDynamic = "src/main/resources/Dynamic5.txt";
         plainWriter.readParticleSystem(filenameDynamic, particleSystem);
+        long start = System.currentTimeMillis();
         particleSystem.populateNeighbourhood();
+        long end = System.currentTimeMillis();
         Assert.assertEquals(particleSystem.getGrid()[2][2].size(), 2);
         Assert.assertEquals(particleSystem.getGrid()[0][0].get(0).getNeighbours().size(), 2);
         Assert.assertEquals(particleSystem.getGrid()[4][4].get(0).getNeighbours().size(), 2);
         plainWriter.writeObject("src/main/resources/output5.txt", particleSystem);
+        logger.info("Tiempo total: " + (end - start) + " ms");
+        logger.info("Fin");
     }
 
 }
