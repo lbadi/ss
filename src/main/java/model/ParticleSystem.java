@@ -3,15 +3,31 @@ package model;
 import jdk.nashorn.internal.runtime.regexp.joni.Regex;
 import util.PlainWritable;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class ParticleSystem implements PlainWritable {
 
     private long n;
-    private long l;
+    private double l;
     private List<Particle> particles = new ArrayList<>();
+    private double squareSize;
+
+    private static final int squareCount = 5;
+    private static final double interactionRadius=1;
+
+
+    private List<Particle>[][] neighbourhood;
+
+
+    public void init(){
+        neighbourhood = new ArrayList[squareCount][squareCount];
+        for(int i = 0 ; i<squareCount; i++){
+            for(int j = 0 ; j<squareCount; j++){
+                neighbourhood[i][j] = new ArrayList<>();
+            }
+        }
+        squareSize = l / squareCount;
+    }
 
     /**
      * Estático:
@@ -43,15 +59,22 @@ public class ParticleSystem implements PlainWritable {
     @Override
     public String writeObject() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getN())
-                .append("\n")
-                .append(getL());
-        particles.stream().forEach(particle -> sb.append("\n").append(particle.getRadius() + " " + particle.getColor()));
+        particles.stream().forEach(particle ->{
+            sb.append(particle.getId() + " ");
+            particle.getNeighbours().stream().forEach(neighbour -> {
+                sb.append(neighbour.getId() + ",");
+            });
+            sb.deleteCharAt(sb.lastIndexOf(","));
+            sb.append("\n");
+        });
         return sb.toString();
     }
 
     public ParticleSystem readDynamic(String plainDynamic){
+        init();
         Scanner scanner = new Scanner(plainDynamic);
+
+        Iterator<Particle> it = particles.iterator();
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
             line = line.substring(3);
@@ -60,10 +83,10 @@ public class ParticleSystem implements PlainWritable {
             if(words.length == 1){
                 //Es el separador de tiempo
             }else{
+                Particle particle = it.next();
                 //Leer particula
-                Particle particle = new Particle();
                 particle.readObject(line);
-                particles.add(particle);
+                addParticle(particle);
             }
         }
         return this;
@@ -77,7 +100,7 @@ public class ParticleSystem implements PlainWritable {
         this.n = n;
     }
 
-    public long getL() {
+    public double getL() {
         return l;
     }
 
@@ -100,10 +123,56 @@ public class ParticleSystem implements PlainWritable {
     }
 
     public void addParticle(Particle particle){
-        particles.add(particle);
+        int x = (int)Math.floor(particle.getX() / squareSize);
+        int y = (int)Math.floor(particle.getY() / squareSize);
+        neighbourhood[x][y].add(particle);
     }
 
     public ParticleSystem() {
     }
 
+    public List<Particle>[][] getGrid() {
+        return neighbourhood;
+    }
+
+    public void populateNeighbourhood(){
+        for(int i = 0 ; i<squareCount; i++){
+            for(int j = 0 ; j<squareCount; j++){
+                for(Particle particle : neighbourhood[i][j]){
+                    visitNeighbourhood(particle, i, j);
+                }
+            }
+        }
+    }
+
+    private void visitNeighbourhood(Particle particle, int i, int j){
+        visitHouse(particle,i,j);
+        visitHouse(particle,i,j+1);
+        visitHouse(particle,i-1,j+1);
+        visitHouse(particle,i-1,j);
+        visitHouse(particle,i-1,j-1);
+
+    }
+
+    private void visitHouse(Particle particle, int i, int j){
+        if(i == -1){
+            i = squareCount-1;
+        }else if(i==squareCount){
+            i = 0;
+        }
+        if(j == -1){
+            j = squareCount-1;
+        }else if(j==squareCount){
+            j = 0;
+        }
+        for(Particle potentialNeighbour : neighbourhood[i][j]){
+            if(!potentialNeighbour.equals(particle) && !potentialNeighbour.getNeighbours().contains(particle)) {
+                if (particle.isNeighbour(potentialNeighbour,interactionRadius,l)) {
+                    particle.addNeighbour(potentialNeighbour);
+                }
+            }
+        }
+
+
+    }
 }

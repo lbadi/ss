@@ -33,4 +33,19 @@ public class FileTest {
         Assert.assertEquals(particleSystem.getParticles().get(99).getY(), Double.valueOf(4.7727423e+01), 0);
     }
 
+    @Test
+    public void loadEntireGrid() {
+        String filename = "src/main/resources/Static5.txt";
+        ObjectPlainWriter plainWriter = new ObjectPlainWriter();
+        ParticleSystem particleSystem = new ParticleSystem();
+        plainWriter.readObject(filename, particleSystem);
+        String filenameDynamic = "src/main/resources/Dynamic5.txt";
+        plainWriter.readParticleSystem(filenameDynamic, particleSystem);
+        particleSystem.populateNeighbourhood();
+        Assert.assertEquals(particleSystem.getGrid()[2][2].size(), 2);
+        Assert.assertEquals(particleSystem.getGrid()[0][0].get(0).getNeighbours().size(), 2);
+        Assert.assertEquals(particleSystem.getGrid()[4][4].get(0).getNeighbours().size(), 2);
+        plainWriter.writeObject("src/main/resources/output5.txt", particleSystem);
+    }
+
 }

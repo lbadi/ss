@@ -2,7 +2,9 @@ package model;
 
 import util.PlainWritable;
 
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class Particle implements PlainWritable{
 
@@ -14,6 +16,11 @@ public class Particle implements PlainWritable{
     private double speedY;
     private double radius;
     private double color;
+
+    private Set<Particle> neighbours = new HashSet<>();
+
+    private static AtomicLong counter = new AtomicLong();
+    private long id;
 
     @Override
     public PlainWritable readObject(String plainObject) {
@@ -94,11 +101,13 @@ public class Particle implements PlainWritable{
      * @param color
      */
     public Particle(double radius, double color) {
+        id = counter.incrementAndGet();
         this.radius = radius;
         this.color = color;
     }
 
-    public Particle(){
+    public long getId() {
+        return id;
     }
 
     @Override
@@ -127,4 +136,59 @@ public class Particle implements PlainWritable{
         this.color = color;
     }
 
+    public void addNeighbour(Particle particle){
+        neighbours.add(particle);
+        particle.neighbours.add(this);
+    }
+
+    public Set<Particle> getNeighbours() {
+        return neighbours;
+    }
+
+    public boolean isNeighbour(Particle particle,Double interactionRadius, double l){
+        if( distanceTo(particle, l) < interactionRadius ){
+            return true;
+        }
+        return false;
+    }
+
+
+    private double distanceTo(Particle particle, double l){
+        double distanceX  = particle.getX() - getX();
+        double distanceY = particle.getY() - getY();
+        if(l - distanceX < distanceX){
+            distanceX = l-distanceX;
+        }
+        if(l - distanceY < distanceY){
+            distanceY = l-distanceY;
+        }
+        double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2)) - particle.getRadius() - getRadius();
+        return distance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Particle particle = (Particle) o;
+
+        if (Double.compare(particle.getX(), getX()) != 0) return false;
+        if (Double.compare(particle.getY(), getY()) != 0) return false;
+        return Double.compare(particle.getRadius(), getRadius()) == 0;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result;
+        long temp;
+        temp = Double.doubleToLongBits(getX());
+        result = (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(getY());
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(getRadius());
+        result = 31 * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
 }
