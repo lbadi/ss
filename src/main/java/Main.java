@@ -22,4 +22,8 @@ public class Main {
 //        plainWriter.writeObject("src/main/resources/static.txt", system);
     }
 
+    public void getNeighbours(String staticFilename, String dynamicFilename, int m, int interactionRadius){
+
+    }
+
 }

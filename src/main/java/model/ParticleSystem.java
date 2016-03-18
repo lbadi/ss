@@ -11,13 +11,20 @@ public class ParticleSystem implements PlainWritable {
     private double l;
     private List<Particle> particles = new ArrayList<>();
     private double squareSize;
+    private boolean isPeriodic;
 
-    private static final int squareCount = 5;
-    private static final double interactionRadius=1;
+    private int squareCount;
+    private double interactionRadius;
 
 
     private List<Particle>[][] neighbourhood;
 
+
+    public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius) {
+        this.squareCount = squareCount;
+        this.interactionRadius = interactionRadius;
+        this.isPeriodic = isPeriodic;
+    }
 
     public void init(){
         neighbourhood = new ArrayList[squareCount][squareCount];
@@ -116,11 +123,6 @@ public class ParticleSystem implements PlainWritable {
         this.particles = particles;
     }
 
-    public ParticleSystem(long n, long l, List<Particle> particles) {
-        this.n = n;
-        this.particles = particles;
-        this.l = l;
-    }
 
     public void addParticle(Particle particle){
         int x = (int)Math.floor(particle.getX() / squareSize);
@@ -128,8 +130,6 @@ public class ParticleSystem implements PlainWritable {
         neighbourhood[x][y].add(particle);
     }
 
-    public ParticleSystem() {
-    }
 
     public List<Particle>[][] getGrid() {
         return neighbourhood;
@@ -154,7 +154,14 @@ public class ParticleSystem implements PlainWritable {
 
     }
 
+    private boolean isInBorder(int i, int j){
+        return ( i == -1 || j == -1 || i == squareCount || j == squareCount);
+    }
+
     private void visitHouse(Particle particle, int i, int j){
+        if(!isPeriodic && isInBorder(i,j)){
+            return;
+        }
         if(i == -1){
             i = squareCount-1;
         }else if(i==squareCount){
@@ -174,5 +181,17 @@ public class ParticleSystem implements PlainWritable {
         }
 
 
+    }
+
+    public int getSquareCount() {
+        return squareCount;
+    }
+
+    public double getInteractionRadius() {
+        return interactionRadius;
+    }
+
+    public double getSquareSize() {
+        return squareSize;
     }
 }

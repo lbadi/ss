@@ -18,7 +18,7 @@ public class FileTest {
     public void loadStaticFileTest() {
         String filename = "src/main/resources/Static100.txt";
         ObjectPlainWriter plainWriter = new ObjectPlainWriter();
-        ParticleSystem particleSystem = new ParticleSystem();
+        ParticleSystem particleSystem = new ParticleSystem(true, 5, 1);
         plainWriter.readObject(filename, particleSystem);
         Assert.assertEquals(particleSystem.getL(),100);
         Assert.assertEquals(particleSystem.getN(),100);
@@ -30,7 +30,8 @@ public class FileTest {
     }
     //Change resource file to static100 and dynamic 100
     @Test
-    public void loadDynamicFileTest() {
+    public void test100() {
+        loadFiles(5,1);
         particleSystem.populateNeighbourhood();
         Assert.assertEquals(particleSystem.getParticles().size(),100);
         Assert.assertEquals(particleSystem.getParticles().get(0).getX(), Double.valueOf(8.4615324e+00), 0);
@@ -39,11 +40,31 @@ public class FileTest {
         Assert.assertEquals(particleSystem.getParticles().get(99).getY(), Double.valueOf(4.7727423e+01), 0);
     }
 
-    @Before
-    public void loadFiles(){
+    @Test
+    public void testTime5_1(){
+        loadFiles(5,1);
+        particleSystem.populateNeighbourhood();
+    }
+    @Test
+    public void testTime10_1(){
+        loadFiles(5,1);
+        particleSystem.populateNeighbourhood();
+    }
+    @Test
+    public void testTime50_1(){
+        loadFiles(5,1);
+        particleSystem.populateNeighbourhood();
+    }
+    @Test
+    public void testTime100_1(){
+        loadFiles(5,1);
+        particleSystem.populateNeighbourhood();
+    }
+
+    public void loadFiles(int m, int rc){
         String filename = "src/main/resources/Static100.txt";
         objectPlainWriter = new ObjectPlainWriter();
-        particleSystem = new ParticleSystem();
+        particleSystem = new ParticleSystem(true, m , rc);
         objectPlainWriter.readObject(filename, particleSystem);
         String filenameDynamic = "src/main/resources/Dynamic100.txt";
         objectPlainWriter.readParticleSystem(filenameDynamic, particleSystem);
@@ -58,7 +79,7 @@ public class FileTest {
     }
 
     @Test
-    public void loadEntireGrid() {
+    public void test5() {
         particleSystem.populateNeighbourhood();
         Assert.assertEquals(particleSystem.getGrid()[2][2].size(), 2);
         Assert.assertEquals(particleSystem.getGrid()[0][0].get(0).getNeighbours().size(), 2);
