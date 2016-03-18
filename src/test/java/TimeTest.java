@@ -1,13 +1,13 @@
 import model.ParticleSystem;
 import org.apache.log4j.Logger;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import util.ObjectPlainWriter;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -19,14 +19,46 @@ public class TimeTest {
     private static Logger logger = Logger.getLogger(Main.class);
     private ParticleSystem particleSystem;
     private ObjectPlainWriter objectPlainWriter = new ObjectPlainWriter();
+    private static FileWriter writer;
     private long start;
     private long end;
     private int m;
     private int rc;
 
+
+
+    private static final String csvFileName = "times.csv";
+
     public TimeTest(int m, int rc){
         this.m = m;
         this.rc = rc;
+    }
+
+    @BeforeClass
+    public static void setUpCSV() {
+        try {
+            writer = new FileWriter(csvFileName);
+            writer.append("m");
+            writer.append(',');
+            writer.append("rc");
+            writer.append(',');
+            writer.append("time");
+            writer.append('\n');
+
+            //Do the necessary setup here
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
+    }
+
+    @AfterClass
+    public static void closeCSV(){
+        try {
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
@@ -62,5 +94,16 @@ public class TimeTest {
         logger.info("Tiempo total M: " + particleSystem.getSquareCount() + " RC: " + particleSystem.getInteractionRadius()
                 + " :  " + (end - start) + " ms");
         logger.info("Fin");
+        try {
+            writer.append(Integer.toString(particleSystem.getSquareCount()));
+            writer.append(',');
+            writer.append(Double.toString(particleSystem.getInteractionRadius()));
+            writer.append(',');
+            writer.append(Long.toString(end - start));
+            writer.append('\n');
+
+        }catch (IOException ex){
+            ex.printStackTrace();
+        }
     }
 }

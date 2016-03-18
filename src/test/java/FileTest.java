@@ -6,6 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 import util.ObjectPlainWriter;
 
+import java.io.FileWriter;
+
 public class FileTest {
 
     private static Logger logger = Logger.getLogger(Main.class);
