@@ -2,7 +2,11 @@ package model;
 
 import util.PlainWritable;
 
+import java.awt.*;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.*;
+import java.util.List;
 
 public class ParticleSystem implements PlainWritable {
 
@@ -33,6 +37,9 @@ public class ParticleSystem implements PlainWritable {
             }
         }
         squareSize = l / squareCount;
+        if(l/squareCount <= interactionRadius){
+            throw new IllegalArgumentException();
+        }
     }
 
     /**
@@ -192,5 +199,34 @@ public class ParticleSystem implements PlainWritable {
 
     public double getSquareSize() {
         return squareSize;
+    }
+
+    public void writeVisualization(String filename, int id) throws FileNotFoundException {
+        PrintWriter writer = new PrintWriter(filename);
+        Particle selectedParticle = this.getParticles().get(id);
+        Color color = new Color(255,0,0); //Default color
+        Color highlightedColor = new Color(0,255,0); //Highlighted color
+        Color neighbourColor = new Color(0, 124,0);
+        StringBuilder sb = new StringBuilder();
+        sb.append(this.getN()).append("\n");
+        sb.append("0").append("\n"); //TODO TIMESTEPS
+        particles.stream().forEach(particle ->{
+            sb.append(particle.getX() + "\t" + particle.getY() + "\t" + particle.getRadius() + "\t");
+            if(particle.equals(selectedParticle)){
+                //PINTAR
+                sb.append(highlightedColor.getRed()/255.0 + "\t" + highlightedColor.getGreen()/255.0 + "\t" + highlightedColor.getBlue()/255.0 + "\t");
+            }
+            else if(selectedParticle.getNeighbours().contains(particle)){
+                //Pintar
+                sb.append(neighbourColor.getRed()/255.0 + "\t" + neighbourColor.getGreen()/255.0 + "\t" + neighbourColor.getBlue()/255.0 + "\t");
+
+            }else{
+                sb.append(color.getRed()/255.0 + "\t" + color.getGreen()/255.0 + "\t" + color.getBlue()/255.0 + "\t");
+            }
+            sb.append("\n");
+        });
+        writer.write(sb.toString());
+        writer.flush();
+        writer.close();
     }
 }

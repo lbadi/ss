@@ -173,10 +173,8 @@ public class Particle implements PlainWritable{
 
         Particle particle = (Particle) o;
 
-        if (Double.compare(particle.getX(), getX()) != 0) return false;
-        if (Double.compare(particle.getY(), getY()) != 0) return false;
-        return Double.compare(particle.getRadius(), getRadius()) == 0;
-
+        if (Double.compare(particle.getId(), getId()) != 0) return false;
+        return true;
     }
 
     @Override
