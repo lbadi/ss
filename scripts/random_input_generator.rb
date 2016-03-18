@@ -3,9 +3,9 @@ class RandomInputGenerator
   def initialize(args)
     particle_count, seed = 123, grid_size = 20, max_radious = 1
     @particle_count = args[0]
-    @grid_size = args[2] || 20
-    @max_radious = args[3] || 1
-    seed = args[1] || 123
+    @grid_size = args[2].to_i || 20
+    @max_radious = args[3].to_f || 1
+    seed = args[1].to_i || 123
     @dynamic_file = File.open("Dynamic#{@particle_count}.txt", 'w+')
     @static_file = File.open("Static#{@particle_count}.txt", 'w+')
     @random = Random.new(seed)

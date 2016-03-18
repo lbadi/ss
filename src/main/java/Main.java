@@ -23,11 +23,11 @@ public class Main {
 //        plainWriter.writeObject("src/main/resources/static.txt", system);
         ObjectPlainWriter objectPlainWriter = new ObjectPlainWriter();
 
-        String filename = "src/main/resources/Static100.txt";
+        String filename = "src/main/resources/Static100000.txt";
         objectPlainWriter = new ObjectPlainWriter();
-        ParticleSystem particleSystem = new ParticleSystem(true, 1 , 10);
+        ParticleSystem particleSystem = new ParticleSystem(true, 49 , 10);
         objectPlainWriter.readObject(filename, particleSystem);
-        String filenameDynamic = "src/main/resources/Dynamic100.txt";
+        String filenameDynamic = "src/main/resources/Dynamic100000.txt";
         objectPlainWriter.readParticleSystem(filenameDynamic, particleSystem);
         particleSystem.populateNeighbourhood();
         try {

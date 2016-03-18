@@ -90,7 +90,7 @@ public class ParticleSystem implements PlainWritable {
         Iterator<Particle> it = particles.iterator();
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
-            line = line.substring(3);
+            line = line.substring(2);
             String[] words = line.split("\\W+");
 
             if(words.length == 1){
