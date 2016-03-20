@@ -38,7 +38,7 @@ public class ParticleSystemTest {
     public static final String OUTPUT_PATH = "src/test/resources/output/";
     public static final String CSV_FILENAME = "times.csv";
     public static final String OUTPUT_FILENAME = "output-%d.txt";
-    public static final String VISUAL_FILENAME = "visual-%d-%d.txt";
+    private static final String VISUAL_FILENAME = "visual-%d-%d.txt";
 
     public ParticleSystemTest(int id, int m, int rc, String staticFilename, String dynamicFilename, int selectedParticle) {
         this.id = id;
@@ -92,7 +92,7 @@ public class ParticleSystemTest {
         end = System.currentTimeMillis();
         logger.info("M: " + particleSystem.getSquareCount()
                 + " RC: " + particleSystem.getInteractionRadius()
-                + " Tiempo:  " + (end - start) + " ms");
+                + " Tiempo: " + (end - start) + " ms");
 
         /**
          * Agregado de resultados de cada sistema al CSV general.
