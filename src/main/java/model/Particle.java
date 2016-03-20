@@ -3,10 +3,9 @@ package model;
 import util.PlainWritable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Particle implements PlainWritable{
+public class Particle implements PlainWritable {
 
     private static final String separator = " ";
 
@@ -79,22 +78,6 @@ public class Particle implements PlainWritable{
         this.speedY = speedY;
     }
 
-    public Particle(double x, double y, double speedX, double speedY) {
-        this.x = x;
-        this.y = y;
-        this.speedY = speedY;
-        this.speedX = speedX;
-    }
-
-    public Particle(double x, double y, double speedX, double speedY, double radius, double color) {
-        this.x = x;
-        this.y = y;
-        this.speedY = speedY;
-        this.speedX = speedX;
-        this.radius = radius;
-        this.color = color;
-    }
-
     /**
      * Formato de entrada del archivo estático.
      * @param radius
@@ -152,7 +135,6 @@ public class Particle implements PlainWritable{
         return false;
     }
 
-
     private double distanceTo(Particle particle, double l){
         double distanceX  = particle.getX() - getX();
         double distanceY = particle.getY() - getY();
@@ -189,4 +171,5 @@ public class Particle implements PlainWritable{
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
+
 }

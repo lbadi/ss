@@ -2,15 +2,12 @@ import model.ParticleSystem;
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import util.ObjectPlainWriter;
 
-import java.io.FileWriter;
-
 public class FileTest {
 
-    private static Logger logger = Logger.getLogger(Main.class);
+    private static Logger logger = Logger.getLogger(FileTest.class);
     private ParticleSystem particleSystem;
     private ObjectPlainWriter objectPlainWriter = new ObjectPlainWriter();
     private long start;
