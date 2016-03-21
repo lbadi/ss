@@ -7,6 +7,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.*;
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class ParticleSystem implements PlainWritable {
 
@@ -19,9 +20,7 @@ public class ParticleSystem implements PlainWritable {
     private int squareCount;
     private double interactionRadius;
 
-
     private List<Particle>[][] neighbourhood;
-
 
     public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius) {
         this.squareCount = squareCount;
@@ -37,7 +36,7 @@ public class ParticleSystem implements PlainWritable {
             }
         }
         squareSize = l / squareCount;
-        if(l/squareCount <= interactionRadius){
+        if(squareSize <= interactionRadius){
             throw new IllegalArgumentException();
         }
     }
@@ -72,28 +71,39 @@ public class ParticleSystem implements PlainWritable {
     @Override
     public String writeObject() {
         StringBuilder sb = new StringBuilder();
-        particles.stream().forEach(particle ->{
+        for(Particle particle : particles) {
+            boolean atLeastOne = false;
             sb.append(particle.getId() + " ");
-            particle.getNeighbours().stream().forEach(neighbour -> {
+            for(Particle neighbour : particle.getNeighbours()) {
                 sb.append(neighbour.getId() + ",");
-            });
-            sb.deleteCharAt(sb.lastIndexOf(","));
+                atLeastOne = true;
+            }
+            if(atLeastOne) {
+                sb.deleteCharAt(sb.lastIndexOf(","));
+            }
             sb.append("\n");
-        });
+        }
         return sb.toString();
     }
 
     public ParticleSystem readDynamic(String plainDynamic){
         init();
         Scanner scanner = new Scanner(plainDynamic);
-
         Iterator<Particle> it = particles.iterator();
+        scanner.nextLine(); //Ignoramos la primer linea de tiempo
         while(scanner.hasNextLine()){
             String line = scanner.nextLine();
-            line = line.substring(2);
-            String[] words = line.split("\\W+");
+//            String[] words = line.split("\\t*\\s*");
 
-            if(words.length == 1){
+//            try {
+//                line = line.substring(1);
+//
+//            } catch (Exception ex) {
+//                //TODO: Hacerlo mejor
+//                line = line.substring(3);
+//            }
+//            String[] words = line.split("\\W+");
+            if(false){
                 //Es el separador de tiempo
             }else{
                 Particle particle = it.next();
@@ -129,13 +139,21 @@ public class ParticleSystem implements PlainWritable {
         this.particles = particles;
     }
 
-
     public void addParticle(Particle particle){
         int x = (int)Math.floor(particle.getX() / squareSize);
         int y = (int)Math.floor(particle.getY() / squareSize);
+        if(particle.getX() > 100000) {
+            System.out.println(particle.getX());
+            System.out.println(particle.getId());
+
+        }
+        if(particle.getY() > 100000) {
+            System.out.println(particle.getY());
+            System.out.println(particle.getId());
+
+        }
         neighbourhood[x][y].add(particle);
     }
-
 
     public List<Particle>[][] getGrid() {
         return neighbourhood;
@@ -157,7 +175,6 @@ public class ParticleSystem implements PlainWritable {
         visitHouse(particle,i-1,j+1);
         visitHouse(particle,i-1,j);
         visitHouse(particle,i-1,j-1);
-
     }
 
     private boolean isInBorder(int i, int j){
@@ -185,8 +202,6 @@ public class ParticleSystem implements PlainWritable {
                 }
             }
         }
-
-
     }
 
     public int getSquareCount() {

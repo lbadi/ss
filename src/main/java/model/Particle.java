@@ -3,10 +3,9 @@ package model;
 import util.PlainWritable;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class Particle implements PlainWritable{
+public class Particle implements PlainWritable {
 
     private static final String separator = " ";
 
@@ -27,6 +26,16 @@ public class Particle implements PlainWritable{
         Scanner scanner = new Scanner(plainObject);
         setX(Double.valueOf(scanner.next()));
         setY(Double.valueOf(scanner.next()));
+        if(this.getX() > 100000) {
+            System.out.println(this.getX());
+            System.out.println(this.getId());
+
+        }
+        if(this.getY() > 100000) {
+            System.out.println(this.getY());
+            System.out.println(this.getId());
+
+        }
         if(scanner.hasNext()) {
             setSpeedX(Double.valueOf(scanner.next()));
             setSpeedY(Double.valueOf(scanner.next()));
@@ -77,22 +86,6 @@ public class Particle implements PlainWritable{
 
     public void setSpeedY(double speedY) {
         this.speedY = speedY;
-    }
-
-    public Particle(double x, double y, double speedX, double speedY) {
-        this.x = x;
-        this.y = y;
-        this.speedY = speedY;
-        this.speedX = speedX;
-    }
-
-    public Particle(double x, double y, double speedX, double speedY, double radius, double color) {
-        this.x = x;
-        this.y = y;
-        this.speedY = speedY;
-        this.speedX = speedX;
-        this.radius = radius;
-        this.color = color;
     }
 
     /**
@@ -152,7 +145,6 @@ public class Particle implements PlainWritable{
         return false;
     }
 
-
     private double distanceTo(Particle particle, double l){
         double distanceX  = particle.getX() - getX();
         double distanceY = particle.getY() - getY();
@@ -189,4 +181,5 @@ public class Particle implements PlainWritable{
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         return result;
     }
+
 }
