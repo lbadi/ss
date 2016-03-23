@@ -55,11 +55,31 @@ public class ParticleSystemTest {
                 /**
                  * id, M, intRadius, staticFile, dynamicFile, selectedParticle (con -1 es random)
                  */
-                {1, 1, 99, "Static100.txt", "Dynamic100.txt", -1},
-                {2, 5, 1, "Static100.txt", "Dynamic100.txt", -1},
-                {3, 70, 1, "Static100.txt", "Dynamic100.txt", -1},
-                {5, 150, 0.1, "Static10000.txt", "Dynamic10000.txt", -1},
-                {6, 20, 20, "Static100000.txt", "Dynamic100000.txt", -1}
+//                {1, 1, 99, "Static100.txt", "Dynamic100.txt", -1},
+//                {2, 5, 1, "Static100.txt", "Dynamic100.txt", -1},
+//                {3, 70, 1, "Static100.txt", "Dynamic100.txt", -1},
+//                {5, 150, 0.1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 1, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 2, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 3, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 4, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 5, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 6, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 7, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 8, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 9, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 10, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 11, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 12, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 13, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 14, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 15, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 16, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 17, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 18, 1, "Static10000.txt", "Dynamic10000.txt", -1},
+//                {5, 19, 1, "Static10000.txt", "Dynamic10000.txt", -1}
+                    {7, 6, 15, "Static500.txt", "Dynamic500.txt", 217}
+//                {6, 20, 20, "Static100000.txt", "Dynamic100000.txt", -1}
 
         });
     }

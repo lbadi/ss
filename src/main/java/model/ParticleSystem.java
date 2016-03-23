@@ -16,6 +16,7 @@ public class ParticleSystem implements PlainWritable {
     private List<Particle> particles = new ArrayList<>();
     private double squareSize;
     private boolean isPeriodic;
+    private double maxRadius = 0;
 
     private int squareCount;
     private double interactionRadius;
@@ -36,7 +37,7 @@ public class ParticleSystem implements PlainWritable {
             }
         }
         squareSize = l / squareCount;
-        if(squareSize <= interactionRadius){
+        if(squareSize <= interactionRadius + 2 * maxRadius){
             throw new IllegalArgumentException();
         }
     }
@@ -61,6 +62,9 @@ public class ParticleSystem implements PlainWritable {
         while (scanner.hasNext()) {
             double radius = Double.parseDouble(scanner.next());
             double color = Double.parseDouble(scanner.next());
+            if(radius > maxRadius){
+                maxRadius = radius;
+            }
             Particle particle = new Particle(radius, color);
             particles.add(particle);
         }

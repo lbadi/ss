@@ -146,8 +146,8 @@ public class Particle implements PlainWritable {
     }
 
     private double distanceTo(Particle particle, double l){
-        double distanceX  = particle.getX() - getX();
-        double distanceY = particle.getY() - getY();
+        double distanceX  = Math.abs(particle.getX() - getX());
+        double distanceY = Math.abs(particle.getY() - getY());
         if(l - distanceX < distanceX){
             distanceX = l-distanceX;
         }
