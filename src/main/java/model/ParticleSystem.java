@@ -3,8 +3,7 @@ package model;
 import util.PlainWritable;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -27,6 +26,32 @@ public class ParticleSystem implements PlainWritable {
         this.squareCount = squareCount;
         this.interactionRadius = interactionRadius;
         this.isPeriodic = isPeriodic;
+    }
+
+    /**
+     * Construct and initialize a particle system. This method will create N particles in a grid of size L
+     * @param isPeriodic periodic grid
+     * @param squareCount count of square in a grid
+     * @param interactionRadius interaction radius
+     * @param l size of the grid
+     * @param n amount of particles
+     */
+    public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius, double l, long n){
+        this(isPeriodic, squareCount,interactionRadius);
+        this.l = l;
+        this.n = n;
+        init();
+        //Create N particles
+        for(int i = 0; i < n; i++){
+            Particle particle = new Particle();
+
+            particle.setX(Math.random() * l);
+            particle.setY(Math.random() * l);
+
+            addParticle(particle);
+            particles.add(particle);
+        }
+
     }
 
     public void init(){
@@ -146,15 +171,14 @@ public class ParticleSystem implements PlainWritable {
     public void addParticle(Particle particle){
         int x = (int)Math.floor(particle.getX() / squareSize);
         int y = (int)Math.floor(particle.getY() / squareSize);
-        if(particle.getX() > 100000) {
-            System.out.println(particle.getX());
-            System.out.println(particle.getId());
 
-        }
-        if(particle.getY() > 100000) {
-            System.out.println(particle.getY());
-            System.out.println(particle.getId());
+        if(isInBorder(x,y)){
+            //TODO Si es periodica que aparezca del otro lado
+            if(isPeriodic){
 
+            }else{
+                return;
+            }
         }
         neighbourhood[x][y].add(particle);
     }
@@ -182,7 +206,11 @@ public class ParticleSystem implements PlainWritable {
     }
 
     private boolean isInBorder(int i, int j){
-        return ( i == -1 || j == -1 || i == squareCount || j == squareCount);
+        return ( i == -1 || j == -1 || i >= squareCount || j >= squareCount);
+    }
+
+    public boolean isInBorder(double x, double y){
+        return (x>= l || x<= 0 || y>=l || y<=0);
     }
 
     private void visitHouse(Particle particle, int i, int j){
@@ -220,15 +248,21 @@ public class ParticleSystem implements PlainWritable {
         return squareSize;
     }
 
-    public void writeVisualization(String filename, int id) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter(filename);
+    public List<Particle>[][] getNeighbourhood() {
+        return neighbourhood;
+    }
+
+    public void writeVisualization(String filename, int id, int timeStep) throws IOException {
+        //PrintWriter writer = new PrintWriter(filename);
+
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename, true)));
         Particle selectedParticle = this.getParticles().get(id);
         Color color = new Color(255,0,0); //Default color
         Color highlightedColor = new Color(0,255,0); //Highlighted color
         Color neighbourColor = new Color(0, 124,0);
         StringBuilder sb = new StringBuilder();
-        sb.append(this.getN()).append("\n");
-        sb.append("0").append("\n"); //TODO TIMESTEPS
+        sb.append(getN()).append("\n");
+        sb.append(timeStep).append("\n"); //TODO TIMESTEPS
         particles.stream().forEach(particle ->{
             sb.append(particle.getX() + "\t" + particle.getY() + "\t" + particle.getRadius() + "\t");
             if(particle.equals(selectedParticle)){
@@ -247,5 +281,12 @@ public class ParticleSystem implements PlainWritable {
         writer.write(sb.toString());
         writer.flush();
         writer.close();
+    }
+
+    public void refreshSystem(List<Particle> newParticles){
+        setParticles(newParticles);
+        for(Particle particle : getParticles()){
+            addParticle(particle);
+        }
     }
 }

@@ -8,6 +8,10 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Particle implements PlainWritable {
 
     private static final String separator = " ";
+    private static final double DEFAULT_RADIUS = 0.1;
+    private static final double DEFAULT_COLOR = 0.5;
+    private static final double DEFAULT_SPEED = 0.3;
+
 
     private double x;
     private double y;
@@ -15,6 +19,11 @@ public class Particle implements PlainWritable {
     private double speedY;
     private double radius;
     private double color;
+
+    //Speed without direction (mod)
+    private double speed;
+    //Direction of the particle
+    private double angle;
 
     private Set<Particle> neighbours = new HashSet<>();
 
@@ -26,16 +35,6 @@ public class Particle implements PlainWritable {
         Scanner scanner = new Scanner(plainObject);
         setX(Double.valueOf(scanner.next()));
         setY(Double.valueOf(scanner.next()));
-        if(this.getX() > 100000) {
-            System.out.println(this.getX());
-            System.out.println(this.getId());
-
-        }
-        if(this.getY() > 100000) {
-            System.out.println(this.getY());
-            System.out.println(this.getId());
-
-        }
         if(scanner.hasNext()) {
             setSpeedX(Double.valueOf(scanner.next()));
             setSpeedY(Double.valueOf(scanner.next()));
@@ -88,15 +87,33 @@ public class Particle implements PlainWritable {
         this.speedY = speedY;
     }
 
+    public double getAngle() {
+        return angle;
+    }
+
+    public void setAngle(double angle) {
+        this.angle = angle;
+    }
+
     /**
      * Formato de entrada del archivo estático.
      * @param radius
      * @param color
      */
     public Particle(double radius, double color) {
+        this(radius,color,Math.random() * 2 * Math.PI, DEFAULT_SPEED );
+    }
+
+    public Particle(){
+        this(DEFAULT_RADIUS,DEFAULT_COLOR);
+    }
+
+    public Particle(double radius, double color, double angle, double speed){
         id = counter.incrementAndGet();
         this.radius = radius;
         this.color = color;
+        this.angle = angle;
+        this.speed = speed;
     }
 
     public long getId() {
@@ -182,4 +199,24 @@ public class Particle implements PlainWritable {
         return result;
     }
 
+    public double calculatePromAngle(){
+        //⟨sin(θ(t))⟩r
+        double sinAngle = Math.sin(angle);
+        //⟨cos(θ(t))⟩r
+        double cosAngle = Math.cos(angle);
+        int i = 1;
+        for(Particle particle : neighbours){
+            sinAngle += Math.sin(particle.getAngle());
+            cosAngle += Math.cos(particle.getAngle());
+            i++;
+        }
+        double promSin = sinAngle/i;
+        double promCos = cosAngle/i;
+        //arctg[⟨sin(θ(t))⟩r/⟨cos(θ(t))⟩r]
+        return Math.atan(promSin/promCos);
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
 }
