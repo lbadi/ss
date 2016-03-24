@@ -1,0 +1,129 @@
+\documentclass[hyperref={pdfpagelayout=SinglePage}]{beamer}
+\usetheme{Warsaw}
+\usecolortheme{default}
+\usefonttheme[onlymath]{serif}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,activeacute]{babel}
+
+\usepackage{graphicx}
+\usepackage{fancyhdr}
+\usepackage{float}
+\usepackage{adjustbox}
+\usepackage{subfigure}
+\usepackage{amsmath}
+\usepackage{ragged2e}
+
+\expandafter\def\expandafter\insertshorttitle\expandafter{%
+  \insertshorttitle\hfill%
+  \insertframenumber\,/\,\inserttotalframenumber}
+
+\title{Autómatas Celulares}
+\subtitle{Trabajo Practico Nro. 2}
+%\author{Grupo 3}
+\author{Badi Leonel, Buchhalter Nicolás Demián y Meola Franco Román}
+\subject{Simulación de Sistemas}
+\date{\today}
+
+\makeatletter
+\@addtoreset{subfigure}{framenumber}
+\makeatother
+
+\begin{document}
+
+\renewcommand{\figurename}{Grafico}
+
+\begin{frame}[plain]
+    \frametitle{} 
+    \titlepage
+\end{frame}
+
+\section{Fundamentos}
+
+\subsection{Subsección 1}
+
+\begin{frame}
+\frametitle{Título}
+\framesubtitle{Subtítulo}
+\begin{itemize}
+	\item Lorem ipsum dolor sit amet.
+	\item Lorem ipsum dolor sit amet.
+	\item Lorem ipsum dolor sit amet.
+\end{itemize}
+\end{frame}
+
+\subsection{Subsección 2}
+
+\begin{frame}
+\frametitle{Título}
+\framesubtitle{Subtítulo}
+\begin{itemize}
+	\item Lorem ipsum dolor sit amet.
+	\item Lorem ipsum dolor sit amet.
+	\item Lorem ipsum dolor sit amet.
+\end{itemize}
+\end{frame}
+
+\section{Implementación}
+
+\subsection{Subsección 1}
+
+\begin{frame}
+\frametitle{Título}
+\framesubtitle{Subtítulo}
+\begin{itemize}
+	\item Lorem ipsum dolor sit amet.
+	\item Lorem ipsum dolor sit amet.
+	\item Lorem ipsum dolor sit amet.
+\end{itemize}
+\end{frame}
+
+\section{Resultados}
+
+\subsection{Tablas}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Tabla de la prueba $i = 1$}
+\begin{center}
+\begin{table}[h]
+\centering
+\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
+           max width=\textwidth}{
+\begin{tabular}{cccccccccccc}
+\hline
+\textbf{$i$} & \textbf{$t(s)$} \\ \hline
+1&322\\
+2&728\\
+\end{tabular}
+
+}
+\caption{Lorem ipsum dolor sit amet.}
+\end{table}
+\end{center}
+\end{frame}
+
+\subsection{Gráficos}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Gráfico de la prueba $i = 1$}
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\textheight]{example-image}
+        \caption{Lorem ipsum dolor sit amet.}
+\end{figure}
+\end{frame}
+
+\subsection{Animaciones}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Animación de la prueba $i = 1$}
+\begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\textheight]{example-image}
+        \caption{Lorem ipsum dolor sit amet.}
+\end{figure}
+\end{frame}
+
+\end{document}
