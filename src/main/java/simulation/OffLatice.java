@@ -49,11 +49,16 @@ public class OffLatice {
                 double newAngle = particle.calculatePromAngle() + deltaAngle;
                 double newX = particle.getX() + particle.getSpeed() * Math.cos(particle.getAngle());
                 double newY = particle.getX() + particle.getSpeed() * Math.sin(particle.getAngle());
-                //Creo la nueva particula y la agrego al conjunto de nuevas particulas
-                Particle newParticle = new Particle(particle.getRadius(), particle.getColor(), newAngle, particle.getSpeed());
-                newParticle.setX(newX);
-                newParticle.setY(newY);
-                particlesXn2.add(newParticle);
+                if(!particleSystem.isInBorder(newX,newY)){
+                    //TODO ver si es periodico que aparezca del otro lado
+                    //Creo la nueva particula y la agrego al conjunto de nuevas particulas
+                    Particle newParticle = new Particle(particle.getRadius(), particle.getColor(), newAngle, particle.getSpeed());
+                    newParticle.setX(newX);
+                    newParticle.setY(newY);
+                    particlesXn2.add(newParticle);
+                }else {
+                    particlesXn2.add(particle);
+                }
 
             }
 
@@ -68,6 +73,7 @@ public class OffLatice {
 
             //Crear el nuevo sistema en el instante i+1
             particleSystem.refreshSystem(particlesXn2);
+            System.out.println(framesQuantity);
 
         }
     }

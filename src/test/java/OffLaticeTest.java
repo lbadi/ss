@@ -19,8 +19,10 @@ public class OffLaticeTest {
     double l;
     long n;
     double noise;
+    long frames;
 
-    public OffLaticeTest(int id, int squareCount, double interactionRadius, boolean periodic,  double l, long n, double noise){
+    public OffLaticeTest(int id, int squareCount, double interactionRadius, boolean periodic,
+                         double l, long n, double noise, long frames){
         this.id = id;
         this.squareCount = squareCount;
         this.interactionRadius = interactionRadius;
@@ -28,6 +30,7 @@ public class OffLaticeTest {
         this.l = l;
         this.n = n;
         this.noise = noise;
+        this.frames = frames;
     }
 
     @Parameterized.Parameters
@@ -36,7 +39,7 @@ public class OffLaticeTest {
                 /**
                  * id, squareCount, interactionRadius, periodic, l, n, noise
                 */
-                {1, 5, 0.9, false,5, 10,0.3}
+                {1, 19, 0.5, false,10, 1000,0.3, 20}
         });
     }
 
@@ -48,7 +51,7 @@ public class OffLaticeTest {
     @Test
     public void construct(){
 
-        offLatice.simulate(20);
+        offLatice.simulate(frames);
 
     }
 }

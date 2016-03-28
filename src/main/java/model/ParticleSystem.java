@@ -173,12 +173,7 @@ public class ParticleSystem implements PlainWritable {
         int y = (int)Math.floor(particle.getY() / squareSize);
 
         if(isInBorder(x,y)){
-            //TODO Si es periodica que aparezca del otro lado
-            if(isPeriodic){
-
-            }else{
-                return;
-            }
+            return;
         }
         neighbourhood[x][y].add(particle);
     }
@@ -210,7 +205,7 @@ public class ParticleSystem implements PlainWritable {
     }
 
     public boolean isInBorder(double x, double y){
-        return (x>= l || x<= 0 || y>=l || y<=0);
+        return (x>= l || x< 0 || y>=l || y<0);
     }
 
     private void visitHouse(Particle particle, int i, int j){
