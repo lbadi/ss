@@ -30,6 +30,8 @@ public class Particle implements PlainWritable {
     private static AtomicLong counter = new AtomicLong();
     private long id;
 
+    private static Random generator = new Random(System.currentTimeMillis());
+
     @Override
     public PlainWritable readObject(String plainObject) {
         Scanner scanner = new Scanner(plainObject);
@@ -101,7 +103,7 @@ public class Particle implements PlainWritable {
      * @param color
      */
     public Particle(double radius, double color) {
-        this(radius,color,Math.random() * 2 * Math.PI, DEFAULT_SPEED );
+        this(radius,color,generator.nextDouble() * 2 * Math.PI, DEFAULT_SPEED );
     }
 
     public Particle(){
@@ -200,20 +202,35 @@ public class Particle implements PlainWritable {
     }
 
     public double calculatePromAngle(){
-        //⟨sin(θ(t))⟩r
-        double sinAngle = Math.sin(angle);
-        //⟨cos(θ(t))⟩r
-        double cosAngle = Math.cos(angle);
-        int i = 1;
-        for(Particle particle : neighbours){
-            sinAngle += Math.sin(particle.getAngle());
-            cosAngle += Math.cos(particle.getAngle());
-            i++;
-        }
-        double promSin = sinAngle/i;
-        double promCos = cosAngle/i;
+//        //⟨sin(θ(t))⟩r
+//        double sinAngle = Math.sin(angle);
+//        //⟨cos(θ(t))⟩r
+//        double cosAngle = Math.cos(angle);
+//        int i = 1;
+//        for(Particle particle : neighbours){
+//            sinAngle += Math.sin(particle.getAngle());
+//            cosAngle += Math.cos(particle.getAngle());
+//            i++;
+//        }
+//        double promSin = sinAngle/i;
+//        double promCos = cosAngle/i;
         //arctg[⟨sin(θ(t))⟩r/⟨cos(θ(t))⟩r]
-        return Math.atan(promSin/promCos);
+//        if(angle > Math.PI/2 || angle < Math.PI/2){
+//            return Math.atan(promSin/promCos) + Math.PI;
+//        }
+//        if(promSin/promCos)
+//            return Math.atan(promSin/promCos) < 0 ? Math.atan(promSin/promCos) + Math.PI : Math.atan(promSin/promCos) ;
+
+        double sumAngle = angle;
+        for(Particle particle : neighbours){
+            double avg = (sumAngle + particle.getAngle())/2;
+            if(Math.abs(sumAngle - particle.getAngle()) > Math.PI){
+                avg += Math.PI;
+                avg = avg % (2 * Math.PI);
+            }
+            sumAngle = avg;
+        }
+        return sumAngle;
     }
 
     public double getSpeed() {

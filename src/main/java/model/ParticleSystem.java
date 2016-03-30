@@ -247,17 +247,16 @@ public class ParticleSystem implements PlainWritable {
         return neighbourhood;
     }
 
-    public void writeVisualization(String filename, int id, int timeStep) throws IOException {
-        //PrintWriter writer = new PrintWriter(filename);
+    public void writeFrame(PrintWriter writer, int id, int timeStep){
 
-        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename, true)));
         Particle selectedParticle = this.getParticles().get(id);
         Color color = new Color(255,0,0); //Default color
         Color highlightedColor = new Color(0,255,0); //Highlighted color
         Color neighbourColor = new Color(0, 124,0);
         StringBuilder sb = new StringBuilder();
-        sb.append(getN()).append("\n");
+        sb.append(getN() + 4).append("\n"); //El 4 es de los corners
         sb.append(timeStep).append("\n"); //TODO TIMESTEPS
+        writeCorners(sb);
         particles.stream().forEach(particle ->{
             sb.append(particle.getX() + "\t" + particle.getY() + "\t" + particle.getRadius() + "\t");
             if(particle.equals(selectedParticle)){
@@ -274,12 +273,52 @@ public class ParticleSystem implements PlainWritable {
             sb.append("\n");
         });
         writer.write(sb.toString());
+    }
+
+    public void writeFrameWithDirection(PrintWriter writer, int id, int timeStep){
+        StringBuilder sb = new StringBuilder();
+        sb.append(getN() + 4).append("\n"); //El 4 es de los corners
+        sb.append(timeStep).append("\n");
+        writeCorners(sb);
+
+        particles.stream().forEach(particle ->{
+            sb.append(particle.getX() + "\t" + particle.getY() + "\t" + particle.getRadius() + "\t");
+            sb.append((Math.cos(particle.getAngle())+1)/2 + "\t" + (Math.sin(particle.getAngle())+1)/2 + "\t" + 0.0 + "\t");
+            sb.append("\n");
+        });
+        writer.write(sb.toString());
+    }
+
+    private void writeCorners(StringBuilder sb){
+        sb.append(0 + "\t" + 0 + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+
+        sb.append(getL() + "\t" + getL() + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+
+        sb.append(getL() + "\t" + 0 + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+
+        sb.append(0 + "\t" + getL() + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+    }
+
+    public void writeVisualization(String filename, int id, int timeStep) throws IOException {
+        //PrintWriter writer = new PrintWriter(filename);
+
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename, true)));
+        writeFrame(writer,id,timeStep);
         writer.flush();
         writer.close();
     }
 
     public void refreshSystem(List<Particle> newParticles){
         setParticles(newParticles);
+        init();
         for(Particle particle : getParticles()){
             addParticle(particle);
         }
