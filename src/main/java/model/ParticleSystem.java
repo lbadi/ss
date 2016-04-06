@@ -325,4 +325,19 @@ public class ParticleSystem implements PlainWritable {
             addParticle(particle);
         }
     }
+
+    public double getOrder(){
+
+        double sumSpeedX = 0;
+        double sumSpeedY = 0;
+        for(Particle particle : getParticles()){
+            sumSpeedX += Math.cos(particle.getAngle()) * particle.getSpeed();
+            sumSpeedY += Math.sin(particle.getAngle()) * particle.getSpeed();
+        }
+
+        double sumSpeed = Math.sqrt(Math.pow(sumSpeedX,2) + Math.pow(sumSpeedY,2));
+        double order = sumSpeed / getN() / Particle.DEFAULT_SPEED;
+
+        return order;
+    }
 }

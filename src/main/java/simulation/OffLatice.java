@@ -92,4 +92,11 @@ public class OffLatice {
         writer.close();
     }
 
+    public ParticleSystem getParticleSystem() {
+        return particleSystem;
+    }
+
+    public double getNoise() {
+        return noise;
+    }
 }
