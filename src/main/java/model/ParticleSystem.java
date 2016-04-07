@@ -1,12 +1,13 @@
 package model;
 
 import util.PlainWritable;
+import util.PrintFormatter;
 
 import java.awt.*;
 import java.io.*;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class ParticleSystem implements PlainWritable {
 
@@ -21,6 +22,8 @@ public class ParticleSystem implements PlainWritable {
     private double interactionRadius;
 
     private List<Particle>[][] neighbourhood;
+
+    private NumberFormat df = new PrintFormatter().getDf();
 
     public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius) {
         this.squareCount = squareCount;
@@ -255,20 +258,20 @@ public class ParticleSystem implements PlainWritable {
         Color neighbourColor = new Color(0, 124,0);
         StringBuilder sb = new StringBuilder();
         sb.append(getN() + 4).append("\n"); //El 4 es de los corners
-        sb.append(timeStep).append("\n"); //TODO TIMESTEPS
+        sb.append(timeStep).append("\n");
         writeCorners(sb);
         particles.stream().forEach(particle ->{
-            sb.append(particle.getX() + "\t" + particle.getY() + "\t" + particle.getRadius() + "\t");
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
             if(particle.equals(selectedParticle)){
                 //PINTAR
-                sb.append(highlightedColor.getRed()/255.0 + "\t" + highlightedColor.getGreen()/255.0 + "\t" + highlightedColor.getBlue()/255.0 + "\t");
+                sb.append(df.format(highlightedColor.getRed()/255.0) + "\t" + df.format(highlightedColor.getGreen()/255.0) + "\t" + df.format(highlightedColor.getBlue()/255.0) + "\t");
             }
             else if(selectedParticle.getNeighbours().contains(particle)){
                 //Pintar
-                sb.append(neighbourColor.getRed()/255.0 + "\t" + neighbourColor.getGreen()/255.0 + "\t" + neighbourColor.getBlue()/255.0 + "\t");
+                sb.append(df.format(neighbourColor.getRed()/255.0) + "\t" + df.format(neighbourColor.getGreen()/255.0) + "\t" + df.format(neighbourColor.getBlue()/255.0) + "\t");
 
             }else{
-                sb.append(color.getRed()/255.0 + "\t" + color.getGreen()/255.0 + "\t" + color.getBlue()/255.0 + "\t");
+                sb.append(df.format(color.getRed()/255.0) + "\t" + df.format(color.getGreen()/255.0) + "\t" + df.format(color.getBlue()/255.0) + "\t");
             }
             sb.append("\n");
         });
@@ -282,8 +285,8 @@ public class ParticleSystem implements PlainWritable {
         writeCorners(sb);
 
         particles.stream().forEach(particle ->{
-            sb.append(particle.getX() + "\t" + particle.getY() + "\t" + particle.getRadius() + "\t");
-            sb.append((Math.cos(particle.getAngle())+1)/2 + "\t" + (Math.sin(particle.getAngle())+1)/2 + "\t" + 0.0 + "\t");
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
+            sb.append(df.format((Math.cos(particle.getAngle())+1)/2) + "\t" + df.format((Math.sin(particle.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
             sb.append("\n");
         });
         writer.write(sb.toString());
@@ -309,7 +312,6 @@ public class ParticleSystem implements PlainWritable {
 
     public void writeVisualization(String filename, int id, int timeStep) throws IOException {
         //PrintWriter writer = new PrintWriter(filename);
-
         PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename, true)));
         writeFrame(writer,id,timeStep);
         writer.flush();
@@ -322,5 +324,20 @@ public class ParticleSystem implements PlainWritable {
         for(Particle particle : getParticles()){
             addParticle(particle);
         }
+    }
+
+    public double getOrder(){
+
+        double sumSpeedX = 0;
+        double sumSpeedY = 0;
+        for(Particle particle : getParticles()){
+            sumSpeedX += Math.cos(particle.getAngle()) * particle.getSpeed();
+            sumSpeedY += Math.sin(particle.getAngle()) * particle.getSpeed();
+        }
+
+        double sumSpeed = Math.sqrt(Math.pow(sumSpeedX,2) + Math.pow(sumSpeedY,2));
+        double order = sumSpeed / getN() / Particle.DEFAULT_SPEED;
+
+        return order;
     }
 }

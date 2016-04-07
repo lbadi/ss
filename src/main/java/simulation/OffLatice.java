@@ -2,9 +2,10 @@ package simulation;
 
 import model.Particle;
 import model.ParticleSystem;
-import util.ObjectPlainWriter;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,11 @@ public class OffLatice {
      * l/n : density
      */
     public OffLatice(int squareCount, double interactionRadius, boolean periodic,  double l, long n, double noise, String fileName) throws IOException {
+        try {
+            Files.deleteIfExists(Paths.get(fileName));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         particleSystem  = new ParticleSystem(periodic,squareCount,interactionRadius, l, n);
         this.noise = noise;
         writer = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
@@ -80,10 +86,16 @@ public class OffLatice {
             //Crear el nuevo sistema en el instante i+1
             particleSystem.refreshSystem(particlesXn2);
 
-            System.out.println(i);
         }
         writer.flush();
         writer.close();
     }
 
+    public ParticleSystem getParticleSystem() {
+        return particleSystem;
+    }
+
+    public double getNoise() {
+        return noise;
+    }
 }
