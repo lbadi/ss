@@ -47,55 +47,7 @@ public class OffLaticeTest {
                 /**
                  * id, squareCount, interactionRadius, periodic, l, n, noise, frame
                 */
-//                {1, 5, 0.5, false,10, 10,0.3, 500, "src/test/resources/output/offLatice10-10-0.txt"},
-//                {1, 5, 0.5, false,10, 10,0.6, 500, "src/test/resources/output/offLatice10-10-0.6.txt"},
-//                {1, 5, 0.5, false,10, 10,0.9, 500, "src/test/resources/output/offLatice10-10-0.9.txt"},
-//                {1, 5, 0.5, false,10, 10,1.2, 500, "src/test/resources/output/offLatice10-10-1.2.txt"},
-//                {1, 5, 0.5, false,10, 10,1.5, 500, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 5, 0.5, false,10, 10,1.8, 500, "src/test/resources/output/offLatice10-10-1.8.txt"},
-//                {1, 5, 0.5, false,10, 10,2.1, 500, "src/test/resources/output/offLatice10-10-2.1.txt"},
-//                {1, 5, 0.5, false,10, 10,2.4, 500, "src/test/resources/output/offLatice10-10-2.4.txt"},
-//
-//
-//                {1, 5, 0.5, false,10, 50,0.3, 500, "src/test/resources/output/offLatice10-50-0.3.txt"},
-//                {1, 5, 0.5, false,10, 50,0.6, 500, "src/test/resources/output/offLatice10-50-0.6.txt"},
-//                {1, 5, 0.5, false,10, 50,0.9, 500, "src/test/resources/output/offLatice10-50-0.9.txt"},
-//                {1, 5, 0.5, false,10, 50,1.2, 500, "src/test/resources/output/offLatice10-50-1.2.txt"},
-//                {1, 5, 0.5, false,10, 50,1.5, 500, "src/test/resources/output/offLatice10-50-1.5.txt"},
-//                {1, 5, 0.5, false,10, 50,1.8, 500, "src/test/resources/output/offLatice10-50-1.8.txt"},
-//                {1, 5, 0.5, false,10, 50,2.1, 500, "src/test/resources/output/offLatice10-50-2.1.txt"},
-//                {1, 5, 0.5, false,10, 50,2.4, 500, "src/test/resources/output/offLatice10-50-2.4.txt"},
-//
-//                {1, 5, 0.5, false,10, 100,0.3, 500, "src/test/resources/output/offLatice10-100-0.3.txt"},
-//                {1, 5, 0.5, false,10, 100,0.6, 500, "src/test/resources/output/offLatice10-100-0.6.txt"},
-//                {1, 5, 0.5, false,10, 100,0.9, 500, "src/test/resources/output/offLatice10-100-0.9.txt"},
-//                {1, 5, 0.5, false,10, 100,1.2, 500, "src/test/resources/output/offLatice10-100-1.2.txt"},
-//                {1, 5, 0.5, false,10, 100,1.5, 500, "src/test/resources/output/offLatice10-100-1.5.txt"},
-//                {1, 5, 0.5, false,10, 100,1.8, 500, "src/test/resources/output/offLatice10-100-1.8.txt"},
-//                {1, 5, 0.5, false,10, 100,2.1, 500, "src/test/resources/output/offLatice10-100-2.1.txt"},
-//                {1, 5, 0.5, false,10, 100,2.4, 500, "src/test/resources/output/offLatice10-100-2.4.txt"},
-//
-//                {1, 5, 0.5, false,10, 400,0.3, 500, "src/test/resources/output/offLatice10-400-0.3.txt"},
-//                {1, 5, 0.5, false,10, 400,0.6, 500, "src/test/resources/output/offLatice10-400-0.6.txt"},
-//                {1, 5, 0.5, false,10, 400,0.9, 500, "src/test/resources/output/offLatice10-400-0.9.txt"},
-//                {1, 5, 0.5, false,10, 400,1.2, 500, "src/test/resources/output/offLatice10-400-1.2.txt"},
-//                {1, 5, 0.5, false,10, 400,1.5, 500, "src/test/resources/output/offLatice10-400-1.5.txt"},
-//                {1, 5, 0.5, false,10, 400,1.8, 500, "src/test/resources/output/offLatice10-400-1.8.txt"},
-//                {1, 5, 0.5, false,10, 400,2.1, 500, "src/test/resources/output/offLatice10-400-2.1.txt"},
-//                {1, 5, 0.5, false,10, 400,2.4, 500, "src/test/resources/output/offLatice10-400-2.4.txt"},
-//
-//
-//                {1, 5, 0.5, false,10, 1000,0.3, 500, "src/test/resources/output/offLatice10-1000-0.3.txt"},
-//                {1, 5, 0.5, false,10, 1000,0.6, 500, "src/test/resources/output/offLatice10-1000-0.6.txt"},
-//                {1, 5, 0.5, false,10, 1000,0.9, 500, "src/test/resources/output/offLatice10-1000-0.9.txt"},
-//                {1, 5, 0.5, false,10, 1000,1.2, 500, "src/test/resources/output/offLatice10-1000-1.2.txt"},
-//                {1, 5, 0.5, false,10, 1000,1.5, 500, "src/test/resources/output/offLatice10-1000-1.5.txt"},
-//                {1, 5, 0.5, false,10, 1000,1.8, 500, "src/test/resources/output/offLatice10-1000-1.8.txt"},
-//                {1, 5, 0.5, false,10, 1000,2.1, 500, "src/test/resources/output/offLatice10-1000-2.1.txt"},
-//                {1, 5, 0.5, false,10, 1000,2.4, 500, "src/test/resources/output/offLatice10-1000-2.4.txt"},
-
-
-
+        
 
 //                {1, 5, 0.5, false,10, 1000,0.3, 500, "src/test/resources/output/offLatice10-1000-0.3.txt"},
 //                {1, 5, 0.5, false,100, 100,0.3, 500, "src/test/resources/output/offLatice100-100-0.3.txt"},
@@ -161,11 +113,6 @@ public class OffLaticeTest {
                 {1, 40, 1, true,50, 10000,4, 300, "src/test/resources/output/offLatice10-10-4.txt"},
                 {1, 40, 1, true,50, 10000,4.5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
                 {1, 40, 1, true,50, 10000,5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-
-
-
-
-
 
         });
     }
