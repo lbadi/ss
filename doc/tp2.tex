@@ -32,7 +32,7 @@ breaklines=true,        % sets automatic line breaking
 breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
 escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
-\renewcommand{\lstlistingname}{Salida}
+\renewcommand{\lstlistingname}{Código}
 \renewcommand\spanishtablename{Tabla}
 
 \expandafter\def\expandafter\insertshorttitle\expandafter{%
@@ -81,6 +81,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \begin{itemize}
 	\item $N$ : cantidad de agentes
 	\item $L$ : longitud del lado del área de simulación
+	\item $r_{c}$ : radio de interacción de las partículas
 	\item $v$ : módulo de la velocidad
 	\item $\rho = \frac{N}{L^2}$ : densidad
 	\item $\eta$ : amplitud del ruido
@@ -98,27 +99,75 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \framesubtitle{Generación de los agentes}
 \begin{itemize}
 	\item Posiciones $(x,y)$ aleatorias para cada agente.
-	\item $r_{c} = 0.5$ (radio de interacción de las partículas)
+	\item $r = 0.1$
 	\item $v_{cte} = 0.3$
 	\item $\theta_{0} = rand() * 2\pi$ (ángulo inicial aleatorio)
 	\item $\delta_{\theta} = {(rand() * \eta) - \frac{\eta}{2}} $
 \end{itemize}
 \end{frame}
 
-\subsection{Algoritmo}
+\subsection{Modelo del Agente}
+
+\begin{frame}
+\frametitle{Implementación}
+\framesubtitle{Modelo del Agente}
+Una partícula está compuesta por:
+\begin{itemize}
+	\item $(x,y)$: Posición 
+	\item $|v|$: Módulo de la velocidad
+	\item $\theta$ : Ángulo
+	\item Lista de agentes vecinos
+\end{itemize}
+\end{frame}
+
+\subsection{Modelo del Sistema}
+
+\begin{frame}
+\frametitle{Implementación}
+\framesubtitle{Modelo del Sistema}
+El sistema está compuesto por:
+\begin{itemize}
+	\item $N$ 
+	\item $L$
+	\item $r_{c}$
+	\item Longitud del lado de un elemento de la grilla
+	\item Lista de partículas
+	\item Arreglo de listas de partículas
+\end{itemize}
+\end{frame}
+
+\subsection{Simulación}
 
 \begin{frame}[fragile]
 \frametitle{Implementación}
-\framesubtitle{Algoritmo}
-
-\begin{lstlisting}[language=Java, caption = Código]
-public static void main(String[] args) {
-	log.info("Hola Mundo!");
-	(...)
+\framesubtitle{Simulación}
+\begin{lstlisting}[language=Java, caption = Algoritmo de simulación de partículas.]
+for(Frame frame : frames) {
+	List<Particle> particles = calculateNeighbours();
+	for(Particle particle : particles) {
+		particle.updateAngleAndPosition();
+		if(particle.isInBorderPosition()) {
+			particle.makePeriodicTraslation();
+		}
+	}
+	saveFrameData();
 }
 \end{lstlisting}
+\end{frame}
 
-
+\begin{frame}
+\frametitle{Implementación}
+\framesubtitle{Visualización}
+\begin{itemize}
+	\item La simulación y la visualización son independientes
+	\item El algoritmo de simulación escribe un archivo \texttt{.tsv} con los siguientes datos:
+\begin{itemize}
+\item $(x,y)$
+\item $r$
+\item Color RGB para indicar las velocidades, donde R es la componente en el eje Y y G es la componente en eje X
+\end{itemize}
+\item Por último, se carga en \texttt{Ovito} el archivo de salida\texttt{.tsv} para hacer la visualización
+\end{itemize}
 \end{frame}
 
 \section{Resultados}
@@ -127,67 +176,100 @@ public static void main(String[] args) {
 
 \begin{frame}
 \frametitle{Resultados}
-\framesubtitle{Tabla de la prueba $N = 10$}
+\framesubtitle{$N = 40$, $L = 3.1$ y $r_{c} = 1$}
 \begin{center}
 \begin{table}[h]
 \centering
 \adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
            max width=\textwidth}{
-\begin{tabular}{ccc}
+\begin{tabular}{cc}
 \hline
-\textbf{$\eta$} & \textbf{$v_{a}$} & \textbf{$t(s)$} \\ \hline
-0.3&0.90837&0\\
-0.6&0.98470&0\\
-0.9&0.70629&0\\
-1.2&0.83263&0\\
-1.5&0.20089&0\\
-1.8&0.30686&0\\
-2.1&0.36970&0\\
-2.4&0.21550&0\\
+\textbf{$\eta$} & \textbf{$v_{a}$}\\ \hline
+0.0&1.00000\\
+0.5&0.98799\\
+1.0&0.95777\\
+1.5&0.89056\\
+2.0&0.82847\\
+2.5&0.71321\\
+3.0&0.55152\\
+3.5&0.53482\\
+4.0&0.42995\\
+4.5&0.38458\\
+5.0&0.11822\\
 \end{tabular}
-
 }
-\caption{Datos de la curva de $v_{a}$ para $N = 10$.}
+\caption{Datos de la curva de $v_{a}$ para $N = 40$, $L = 3.1$ y $r_{c} = 1$.}
 \end{table}
 \end{center}
 \end{frame}
 
 \begin{frame}
 \frametitle{Resultados}
-\framesubtitle{Tabla de la prueba $N = 50$}
+\framesubtitle{$N = 400$, $L = 10$ y $r_{c} = 1$}
 \begin{center}
 \begin{table}[h]
 \centering
 \adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
            max width=\textwidth}{
-\begin{tabular}{ccc}
+\begin{tabular}{cc}
 \hline
-\textbf{$\eta$} & \textbf{$v_{a}$} & \textbf{$t(s)$} \\ \hline
-0.3&0.97092&0\\
-0.6&0.93931&0\\
-0.9&0.68197&0\\
-1.2&0.85446&0\\
-1.5&0.79951&0\\
-1.8&0.73634&0\\
-2.1&0.38437&0\\
-2.4&0.29738&0\\
+\textbf{$\eta$} & \textbf{$v_{a}$}\\ \hline
+0.0&0.99999\\
+0.5&0.97909\\
+1.0&0.87444\\
+1.5&0.78458\\
+2.0&0.70671\\
+2.5&0.25537\\
+3.0&0.46229\\
+3.5&0.35985\\
+4.0&0.13354\\
+4.5&0.06530\\
+5.0&0.04682\\
 \end{tabular}
-
 }
-\caption{Datos de la curva de $v_{a}$ para $N = 50$.}
+\caption{Datos de la curva de $v_{a}$ para $N = 400$, $L = 10$ y $r_{c} = 1$.}
 \end{table}
 \end{center}
 \end{frame}
 
-\subsection{Gráficos}
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{$N = 10000$, $L = 50$ y $r_{c} = 1$}
+\begin{center}
+\begin{table}[h]
+\centering
+\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
+           max width=\textwidth}{
+\begin{tabular}{cc}
+\hline
+\textbf{$\eta$} & \textbf{$v_{a}$}\\ \hline
+0.0&0.92861\\
+0.5&0.07030\\
+1.0&0.44647\\
+1.5&0.46268\\
+2.0&0.26689\\
+2.5&0.20727\\
+3.0&0.03786\\
+3.5&0.05376\\
+4.0&0.00901\\
+4.5&0.00760\\
+5.0&0.00412\\
+\end{tabular}
+}
+\caption{Datos de la curva de $v_{a}$ para $N = 10000$, $L = 50$ y $r_{c} = 1$.}
+\end{table}
+\end{center}
+\end{frame}
+
+\subsection{Gráfico}
 
 \begin{frame}
 \frametitle{Resultados}
 \framesubtitle{Gráfico}
 \begin{figure}[H]
         \centering
-        \includegraphics[width=0.9\textheight]{example-image}
-        \caption{Lorem ipsum dolor sit amet.}
+        \includegraphics[width=\textheight]{graphic.png}
+        \caption{Gráfico de la curva de $v_{a}$ para distintos valores de $N$, $L$ y $\eta$. http://bl.ocks.org/lbadi/05bfacbb96e14df499a7ef18b37ca2cc}
 \end{figure}
 \end{frame}
 
@@ -195,11 +277,11 @@ public static void main(String[] args) {
 
 \begin{frame}
 \frametitle{Resultados}
-\framesubtitle{Animación de la prueba $N = ?$}
+\framesubtitle{Animaciones}
 \begin{figure}[H]
         \centering
-        \includegraphics[width=0.9\textheight]{example-image}
-        \caption{Lorem ipsum dolor sit amet.}
+        \includegraphics[width=0.70\textheight]{screenshot.png}
+        \caption{Ver archivos \texttt{.avi} en la demostración en vivo.}
 \end{figure}
 \end{frame}
 
