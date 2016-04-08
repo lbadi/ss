@@ -140,7 +140,7 @@ public class ParticleSystemTest {
         if(selectedParticle == -1) {
             selectedParticle = new Random().nextInt(particleSystem.getParticles().size());
         }
-        particleSystem.writeVisualization(OUTPUT_PATH + String.format(VISUAL_FILENAME, id), selectedParticle);
+        particleSystem.writeVisualization(OUTPUT_PATH + String.format(VISUAL_FILENAME, id), selectedParticle, 0);
     }
 
     @AfterClass

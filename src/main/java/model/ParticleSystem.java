@@ -1,13 +1,13 @@
 package model;
 
 import util.PlainWritable;
+import util.PrintFormatter;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
+import java.io.*;
+import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class ParticleSystem implements PlainWritable {
 
@@ -23,10 +23,38 @@ public class ParticleSystem implements PlainWritable {
 
     private List<Particle>[][] neighbourhood;
 
+    private NumberFormat df = new PrintFormatter().getDf();
+
     public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius) {
         this.squareCount = squareCount;
         this.interactionRadius = interactionRadius;
         this.isPeriodic = isPeriodic;
+    }
+
+    /**
+     * Construct and initialize a particle system. This method will create N particles in a grid of size L
+     * @param isPeriodic periodic grid
+     * @param squareCount count of square in a grid
+     * @param interactionRadius interaction radius
+     * @param l size of the grid
+     * @param n amount of particles
+     */
+    public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius, double l, long n){
+        this(isPeriodic, squareCount,interactionRadius);
+        this.l = l;
+        this.n = n;
+        init();
+        //Create N particles
+        for(int i = 0; i < n; i++){
+            Particle particle = new Particle();
+
+            particle.setX(Math.random() * l);
+            particle.setY(Math.random() * l);
+
+            addParticle(particle);
+            particles.add(particle);
+        }
+
     }
 
     public void init(){
@@ -146,15 +174,9 @@ public class ParticleSystem implements PlainWritable {
     public void addParticle(Particle particle){
         int x = (int)Math.floor(particle.getX() / squareSize);
         int y = (int)Math.floor(particle.getY() / squareSize);
-        if(particle.getX() > 100000) {
-            System.out.println(particle.getX());
-            System.out.println(particle.getId());
 
-        }
-        if(particle.getY() > 100000) {
-            System.out.println(particle.getY());
-            System.out.println(particle.getId());
-
+        if(isInBorder(x,y)){
+            return;
         }
         neighbourhood[x][y].add(particle);
     }
@@ -182,7 +204,11 @@ public class ParticleSystem implements PlainWritable {
     }
 
     private boolean isInBorder(int i, int j){
-        return ( i == -1 || j == -1 || i == squareCount || j == squareCount);
+        return ( i == -1 || j == -1 || i >= squareCount || j >= squareCount);
+    }
+
+    public boolean isInBorder(double x, double y){
+        return (x>= l || x< 0 || y>=l || y<0);
     }
 
     private void visitHouse(Particle particle, int i, int j){
@@ -220,32 +246,98 @@ public class ParticleSystem implements PlainWritable {
         return squareSize;
     }
 
-    public void writeVisualization(String filename, int id) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter(filename);
+    public List<Particle>[][] getNeighbourhood() {
+        return neighbourhood;
+    }
+
+    public void writeFrame(PrintWriter writer, int id, int timeStep){
+
         Particle selectedParticle = this.getParticles().get(id);
         Color color = new Color(255,0,0); //Default color
         Color highlightedColor = new Color(0,255,0); //Highlighted color
         Color neighbourColor = new Color(0, 124,0);
         StringBuilder sb = new StringBuilder();
-        sb.append(this.getN()).append("\n");
-        sb.append("0").append("\n"); //TODO TIMESTEPS
+        sb.append(getN() + 4).append("\n"); //El 4 es de los corners
+        sb.append(timeStep).append("\n");
+        writeCorners(sb);
         particles.stream().forEach(particle ->{
-            sb.append(particle.getX() + "\t" + particle.getY() + "\t" + particle.getRadius() + "\t");
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
             if(particle.equals(selectedParticle)){
                 //PINTAR
-                sb.append(highlightedColor.getRed()/255.0 + "\t" + highlightedColor.getGreen()/255.0 + "\t" + highlightedColor.getBlue()/255.0 + "\t");
+                sb.append(df.format(highlightedColor.getRed()/255.0) + "\t" + df.format(highlightedColor.getGreen()/255.0) + "\t" + df.format(highlightedColor.getBlue()/255.0) + "\t");
             }
             else if(selectedParticle.getNeighbours().contains(particle)){
                 //Pintar
-                sb.append(neighbourColor.getRed()/255.0 + "\t" + neighbourColor.getGreen()/255.0 + "\t" + neighbourColor.getBlue()/255.0 + "\t");
+                sb.append(df.format(neighbourColor.getRed()/255.0) + "\t" + df.format(neighbourColor.getGreen()/255.0) + "\t" + df.format(neighbourColor.getBlue()/255.0) + "\t");
 
             }else{
-                sb.append(color.getRed()/255.0 + "\t" + color.getGreen()/255.0 + "\t" + color.getBlue()/255.0 + "\t");
+                sb.append(df.format(color.getRed()/255.0) + "\t" + df.format(color.getGreen()/255.0) + "\t" + df.format(color.getBlue()/255.0) + "\t");
             }
             sb.append("\n");
         });
         writer.write(sb.toString());
+    }
+
+    public void writeFrameWithDirection(PrintWriter writer, int id, int timeStep){
+        StringBuilder sb = new StringBuilder();
+        sb.append(getN() + 4).append("\n"); //El 4 es de los corners
+        sb.append(timeStep).append("\n");
+        writeCorners(sb);
+
+        particles.stream().forEach(particle ->{
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
+            sb.append(df.format((Math.cos(particle.getAngle())+1)/2) + "\t" + df.format((Math.sin(particle.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
+            sb.append("\n");
+        });
+        writer.write(sb.toString());
+    }
+
+    private void writeCorners(StringBuilder sb){
+        sb.append(0 + "\t" + 0 + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+
+        sb.append(getL() + "\t" + getL() + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+
+        sb.append(getL() + "\t" + 0 + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+
+        sb.append(0 + "\t" + getL() + "\t" + 0.01 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+    }
+
+    public void writeVisualization(String filename, int id, int timeStep) throws IOException {
+        //PrintWriter writer = new PrintWriter(filename);
+        PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(filename, true)));
+        writeFrame(writer,id,timeStep);
         writer.flush();
         writer.close();
+    }
+
+    public void refreshSystem(List<Particle> newParticles){
+        setParticles(newParticles);
+        init();
+        for(Particle particle : getParticles()){
+            addParticle(particle);
+        }
+    }
+
+    public double getOrder(){
+
+        double sumSpeedX = 0;
+        double sumSpeedY = 0;
+        for(Particle particle : getParticles()){
+            sumSpeedX += Math.cos(particle.getAngle()) * particle.getSpeed();
+            sumSpeedY += Math.sin(particle.getAngle()) * particle.getSpeed();
+        }
+
+        double sumSpeed = Math.sqrt(Math.pow(sumSpeedX,2) + Math.pow(sumSpeedY,2));
+        double order = sumSpeed / getN() / Particle.DEFAULT_SPEED;
+
+        return order;
     }
 }
