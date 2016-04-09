@@ -4,6 +4,7 @@ import util.PlainWritable;
 import util.PrintFormatter;
 
 import java.awt.*;
+import java.awt.geom.Point2D;
 import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
@@ -14,6 +15,7 @@ public class ParticleSystem implements PlainWritable {
     private long n;
     private double l;
     private List<Particle> particles = new ArrayList<>();
+    private List<Wall> walls = new ArrayList<>();
     private double squareSize;
     private boolean isPeriodic;
     private double maxRadius = 0;
@@ -25,10 +27,17 @@ public class ParticleSystem implements PlainWritable {
 
     private NumberFormat df = new PrintFormatter().getDf();
 
-    public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius) {
+    private Particle colParticle1;
+    private Particle colParticle2;
+
+    public ParticleSystem(boolean isPeriodic, int squareCount){
         this.squareCount = squareCount;
-        this.interactionRadius = interactionRadius;
         this.isPeriodic = isPeriodic;
+    }
+
+    public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius) {
+        this(isPeriodic,squareCount);
+        this.interactionRadius = interactionRadius;
     }
 
     /**
@@ -51,11 +60,57 @@ public class ParticleSystem implements PlainWritable {
             particle.setX(Math.random() * l);
             particle.setY(Math.random() * l);
 
-            addParticle(particle);
+            addParticleInNeighbourHood(particle);
             particles.add(particle);
         }
-
     }
+
+    /**
+     * Construct and initialize a particle system. This method will create N particles in a grid of size L
+     * @param squareCount count of square in a grid
+     * @param radius radius of a particle
+     * @param l size of the grid
+     * @param n amount of particles
+     * @param walls list of walls (not the borders, the borders are implicit)
+     */
+    public ParticleSystem(int squareCount, double radius, double l, long n, List<Wall> walls){
+        this(false, squareCount);
+        this.l = l;
+        this.n = n;
+        addWalls(walls);
+        //Create N particles that not overlap with other particles or wall
+        for(int i = 0; i < n; i++){
+            Particle newParticle = new Particle(radius);
+            newParticle.setX(Math.random() * (l - radius) + radius);
+            newParticle.setY(Math.random() * (l - radius) + radius);
+            boolean overlap = true;
+            while(overlap) {
+                overlap = false;
+                if(overlapWithBorders(newParticle)){
+                    newParticle.setX(Math.random() * (l - radius) + radius);
+                    newParticle.setY(Math.random() * (l - radius) + radius);
+                    overlap = true;
+                }
+                for(Particle particle :  particles) {
+                    if (newParticle.overlap(particle)) {
+                        newParticle.setX(Math.random() * (l - radius) + radius);
+                        newParticle.setY(Math.random() * (l - radius) + radius);
+                        overlap = true;
+                    }
+                }
+                for(Wall wall : walls){
+                    if (newParticle.overlap(wall)) {
+                        newParticle.setX(Math.random() * (l - radius) + radius);
+                        newParticle.setY(Math.random() * (l - radius) + radius);
+                        overlap = true;
+                    }
+                }
+            }
+            addParticle(newParticle);
+        }
+    }
+
+
 
     public void init(){
         neighbourhood = new ArrayList[squareCount][squareCount];
@@ -141,7 +196,7 @@ public class ParticleSystem implements PlainWritable {
                 Particle particle = it.next();
                 //Leer particula
                 particle.readObject(line);
-                addParticle(particle);
+                addParticleInNeighbourHood(particle);
             }
         }
         return this;
@@ -171,7 +226,7 @@ public class ParticleSystem implements PlainWritable {
         this.particles = particles;
     }
 
-    public void addParticle(Particle particle){
+    public void addParticleInNeighbourHood(Particle particle){
         int x = (int)Math.floor(particle.getX() / squareSize);
         int y = (int)Math.floor(particle.getY() / squareSize);
 
@@ -322,7 +377,7 @@ public class ParticleSystem implements PlainWritable {
         setParticles(newParticles);
         init();
         for(Particle particle : getParticles()){
-            addParticle(particle);
+            addParticleInNeighbourHood(particle);
         }
     }
 
@@ -340,4 +395,113 @@ public class ParticleSystem implements PlainWritable {
 
         return order;
     }
+
+    public void addWalls(List<Wall> walls){
+        this.walls.addAll(walls);
+    }
+
+    public void addParticle(Particle particle){
+        particles.add(particle);
+    }
+
+    private boolean overlapWithBorders(Particle particle){
+        if((particle.getX() - particle.getRadius()) <= 0 || (particle.getX() + particle.getRadius()) >= l ){
+            return true;
+        }
+        if((particle.getY() - particle.getRadius()) <= 0 || (particle.getY() + particle.getRadius()) >= l ){
+            return true;
+        }
+        return false;
+    }
+
+    //TODO : Arreglar que no es 100% preciso este calculo ya que son esferas
+    private double timeToBorder(){
+        double t = Double.MAX_VALUE;
+        for(Particle particle : getParticles()){
+            double xBorder;
+            if(particle.getSpeedX() > 0){
+                xBorder = l;
+            }else{
+                xBorder = 0;
+            }
+            double calculatedT = (xBorder - particle.getX()) / particle.getSpeedX();
+            if(t > calculatedT){
+                t = calculatedT;
+            }
+            double yBorder;
+            if(particle.getSpeedY() > 0){
+                yBorder = l;
+            }else{
+                yBorder = 0;
+            }
+            calculatedT = (yBorder - particle.getY()) / particle.getSpeedY();
+            if(t > calculatedT){
+                t = calculatedT;
+            }
+        }
+        return t;
+    }
+
+    /**
+     * Inf if DV * DR > 0
+     * Inf if d<0
+     * -DV * DR + sqrt(d) / DV * DV
+     * @return
+     */
+    //TODO Aca hay algo que no cierra, el tiempo
+    private double timeToCollisionWithParticle(){
+        Double t = Double.MAX_VALUE;
+        for(Particle particle : getParticles()){
+            for(Particle particle2 : getParticles()){
+                if(!particle.equals(particle2)) {
+                    double deltaX = particle.getX() - particle2.getX();
+                    double deltaVx = particle.getSpeedX() - particle2.getSpeedX();
+                    double deltaY = particle.getY() - particle2.getY();
+                    double deltaVy = particle.getSpeedY() - particle2.getSpeedY();
+                    double dvdr = deltaX * deltaVx + deltaVy * deltaY;
+                    if (dvdr < 0) {
+                        double dvdv = Math.pow(deltaVx, 2) + Math.pow(deltaVy, 2);
+                        double drdr = Math.pow(deltaX, 2) + Math.pow(deltaY, 2);
+                        double sumRadius = particle.getRadius() + particle2.getRadius();
+                        double d = Math.pow(dvdr, 2) - dvdv * (drdr - Math.pow(sumRadius, 2));
+                        if (d >= 0) {
+                            //TODO preguntar por que hay veces que me queda negativo este tiempo
+                            Double calculatedTime = -((dvdr + Math.sqrt(d)) / dvdv);
+                            if (Math.abs(calculatedTime) < t) {
+                                t = Math.abs(calculatedTime);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return t;
+    }
+
+    /**
+     * return min time to next collision.
+     * @return
+     */
+    public double getTimeToNextCollision(){
+        double timeToBorder = timeToBorder();
+        double timeToCollisionWithParticle = timeToCollisionWithParticle();
+        return Math.min(timeToBorder,timeToCollisionWithParticle);
+    }
+
+    public void moveToNextTime(){
+        double t = getTimeToNextCollision();
+        for(Particle particle : particles){
+            particle.move(t);
+        }
+    }
+
+    public void collide(Particle particle , Particle particle2){
+        //TODO
+    }
+
+    public void collide(Particle particle){
+        
+    }
+
+
 }

@@ -15,8 +15,6 @@ public class Particle implements PlainWritable {
 
     private double x;
     private double y;
-    private double speedX;
-    private double speedY;
     private double radius;
     private double color;
 
@@ -38,8 +36,8 @@ public class Particle implements PlainWritable {
         setX(Double.valueOf(scanner.next()));
         setY(Double.valueOf(scanner.next()));
         if(scanner.hasNext()) {
-            setSpeedX(Double.valueOf(scanner.next()));
-            setSpeedY(Double.valueOf(scanner.next()));
+//            setSpeedX(Double.valueOf(scanner.next()));
+//            setSpeedY(Double.valueOf(scanner.next()));
         }
         return this;
     }
@@ -74,20 +72,14 @@ public class Particle implements PlainWritable {
     }
 
     public double getSpeedX() {
-        return speedX;
+        return Math.cos(getAngle()) * getSpeed();
     }
 
-    public void setSpeedX(double speedX) {
-        this.speedX = speedX;
-    }
 
     public double getSpeedY() {
-        return speedY;
+        return Math.sin(getAngle()) * getSpeed();
     }
 
-    public void setSpeedY(double speedY) {
-        this.speedY = speedY;
-    }
 
     public double getAngle() {
         return angle;
@@ -110,6 +102,10 @@ public class Particle implements PlainWritable {
         this(DEFAULT_RADIUS,DEFAULT_COLOR);
     }
 
+    public Particle(double radius){
+        this(radius,DEFAULT_COLOR);
+    }
+
     public Particle(double radius, double color, double angle, double speed){
         id = counter.incrementAndGet();
         this.radius = radius;
@@ -122,15 +118,15 @@ public class Particle implements PlainWritable {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "Particle{" +
-                "x=" + x +
-                ", y=" + y +
-                ", speedX=" + speedX +
-                ", speedY=" + speedY +
-                '}';
-    }
+//    @Override
+//    public String toString() {
+//        return "Particle{" +
+//                "x=" + x +
+//                ", y=" + y +
+//                ", speedX=" + speedX +
+//                ", speedY=" + speedY +
+//                '}';
+//    }
 
     public double getRadius() {
         return radius;
@@ -235,5 +231,25 @@ public class Particle implements PlainWritable {
 
     public double getSpeed() {
         return speed;
+    }
+
+    public boolean overlap(Particle particle) {
+        return !(Math.pow(particle.getX() - getX(),2) + Math.pow(particle.getY() - getY(),2) > Math.pow(particle.getRadius() + getRadius(),2));
+    }
+
+    public boolean overlap(Wall wall) {
+        //Distance of a point(particle) o a line(wall)
+        double distancePointToRect = Math.abs(wall.getA() * getX() + wall.getB() * getY() + wall.getC())
+                / Math.sqrt(Math.pow(wall.getA(),2) + Math.pow(wall.getB(),2));
+        return getRadius() >= distancePointToRect;
+    }
+
+    public void move(double t){
+        setX(getX() + getSpeedX() * t);
+        setY(getY() + getSpeedY() * t);
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 }
