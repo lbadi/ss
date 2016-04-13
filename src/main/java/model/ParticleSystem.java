@@ -4,7 +4,6 @@ import util.PlainWritable;
 import util.PrintFormatter;
 
 import java.awt.*;
-import java.awt.geom.Point2D;
 import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
@@ -27,8 +26,9 @@ public class ParticleSystem implements PlainWritable {
 
     private NumberFormat df = new PrintFormatter().getDf();
 
-    private Particle colParticle1;
-    private Particle colParticle2;
+    public Particle colParticle1;
+    public Particle colParticle2;
+    public BorderDirection borderDirection;
 
     public ParticleSystem(boolean isPeriodic, int squareCount){
         this.squareCount = squareCount;
@@ -414,30 +414,30 @@ public class ParticleSystem implements PlainWritable {
         return false;
     }
 
-    //TODO : Arreglar que no es 100% preciso este calculo ya que son esferas
-    private double timeToBorder(){
-        double t = Double.MAX_VALUE;
-        for(Particle particle : getParticles()){
-            double xBorder;
-            if(particle.getSpeedX() > 0){
-                xBorder = l;
-            }else{
-                xBorder = 0;
-            }
-            double calculatedT = (xBorder - particle.getX()) / particle.getSpeedX();
-            if(t > calculatedT){
-                t = calculatedT;
-            }
-            double yBorder;
-            if(particle.getSpeedY() > 0){
-                yBorder = l;
-            }else{
-                yBorder = 0;
-            }
-            calculatedT = (yBorder - particle.getY()) / particle.getSpeedY();
-            if(t > calculatedT){
-                t = calculatedT;
-            }
+    private double timeToBorder(Particle particle, double t){
+        double calculatedT;
+        if(particle.getSpeedX() > 0){
+            calculatedT = (l - (particle.getX() + particle.getRadius())) / particle.getSpeedX();
+        }else{
+            calculatedT = Math.abs((particle.getX() - particle.getRadius()) / particle.getSpeedX());
+        }
+
+        if(t > calculatedT){
+            borderDirection = BorderDirection.VERTICAL;
+            colParticle1 = particle;
+            colParticle2 = null;
+            t = calculatedT;
+        }
+        if(particle.getSpeedY() > 0){
+            calculatedT = (l - (particle.getY() + particle.getRadius())) / particle.getSpeedY();
+        }else{
+            calculatedT = Math.abs((particle.getY() - particle.getRadius()) / particle.getSpeedY());
+        }
+        if(t > calculatedT){
+            borderDirection = BorderDirection.HORIZONTAL;
+            colParticle1 = particle;
+            colParticle2 = null;
+            t = calculatedT;
         }
         return t;
     }
@@ -449,15 +449,21 @@ public class ParticleSystem implements PlainWritable {
      * @return
      */
     //TODO Aca hay algo que no cierra, el tiempo
-    private double timeToCollisionWithParticle(){
+    public double timeToNextColision(){
         Double t = Double.MAX_VALUE;
-        for(Particle particle : getParticles()){
-            for(Particle particle2 : getParticles()){
+        for(int i = 0 ; i < getParticles().size() ; i++){
+            Particle particle = getParticles().get(i);
+            Double calculatedTime = timeToBorder(particle, t);
+            if(t > calculatedTime){
+                t = calculatedTime;
+            }
+            for(int j = i+1 ; j < getParticles().size(); j++){
+                Particle particle2 = getParticles().get(j);
                 if(!particle.equals(particle2)) {
-                    double deltaX = particle.getX() - particle2.getX();
-                    double deltaVx = particle.getSpeedX() - particle2.getSpeedX();
-                    double deltaY = particle.getY() - particle2.getY();
-                    double deltaVy = particle.getSpeedY() - particle2.getSpeedY();
+                    double deltaX = particle2.getX() - particle.getX();
+                    double deltaVx = particle2.getSpeedX() - particle.getSpeedX();
+                    double deltaY = particle2.getY() - particle.getY();
+                    double deltaVy = particle2.getSpeedY() - particle.getSpeedY();
                     double dvdr = deltaX * deltaVx + deltaVy * deltaY;
                     if (dvdr < 0) {
                         double dvdv = Math.pow(deltaVx, 2) + Math.pow(deltaVy, 2);
@@ -465,10 +471,12 @@ public class ParticleSystem implements PlainWritable {
                         double sumRadius = particle.getRadius() + particle2.getRadius();
                         double d = Math.pow(dvdr, 2) - dvdv * (drdr - Math.pow(sumRadius, 2));
                         if (d >= 0) {
-                            //TODO preguntar por que hay veces que me queda negativo este tiempo
-                            Double calculatedTime = -((dvdr + Math.sqrt(d)) / dvdv);
-                            if (Math.abs(calculatedTime) < t) {
-                                t = Math.abs(calculatedTime);
+                            calculatedTime = -((dvdr + Math.sqrt(d)) / dvdv);
+                            if (calculatedTime < t) {
+                                //Esta particula choca
+                                colParticle1 = particle;
+                                colParticle2 = particle2;
+                                t = calculatedTime;
                             }
                         }
                     }
@@ -478,29 +486,66 @@ public class ParticleSystem implements PlainWritable {
         return t;
     }
 
-    /**
-     * return min time to next collision.
-     * @return
-     */
-    public double getTimeToNextCollision(){
-        double timeToBorder = timeToBorder();
-        double timeToCollisionWithParticle = timeToCollisionWithParticle();
-        return Math.min(timeToBorder,timeToCollisionWithParticle);
-    }
 
-    public void moveToNextTime(){
-        double t = getTimeToNextCollision();
+    public double moveToNextTime(){
+        double t = timeToNextColision();
         for(Particle particle : particles){
             particle.move(t);
         }
+        if(colParticle2 == null){
+            collide(colParticle1,borderDirection);
+        }else{
+            collide(colParticle1,colParticle2);
+        }
+        return t;
     }
 
     public void collide(Particle particle , Particle particle2){
         //TODO
+        double deltaX = particle2.getX() - particle.getX();
+        double deltaVx = particle2.getSpeedX() - particle.getSpeedX();
+        double deltaY = particle2.getY() - particle.getY();
+        double deltaVy = particle2.getSpeedY() - particle.getSpeedY();
+        double dvdr = deltaX * deltaVx + deltaVy * deltaY;
+        double sumRadius = particle.getRadius() + particle2.getRadius();
+
+        double jx,jy,j,vx1,vx2,vy1,vy2 ;
+
+        j = 2 * particle.getMass() * particle2.getMass() * (dvdr) / (sumRadius * (particle.getMass() + particle2.getMass() ));
+        jx = j * deltaX / sumRadius;
+        jy = j * deltaY / sumRadius;
+
+        vx1 = particle.getSpeedX() + jx/particle.getMass();
+        vx2 = particle2.getSpeedX() - jx/particle2.getMass();
+
+        vy1 = particle.getSpeedY() + jy/particle.getMass();
+        vy2 = particle2.getSpeedY() - jy/particle2.getMass();
+
+        particle.setSpeed(vx1,vy1);
+        particle2.setSpeed(vx2,vy2);
+
+//        particle.move(0.01);
+//        particle2.move(0.01);
     }
 
-    public void collide(Particle particle){
-        
+    public void collide(Particle particle, BorderDirection border){
+        if(border == BorderDirection.HORIZONTAL){
+            //(vx, -vy)
+            particle.setAngle(-particle.getAngle() + 2 * Math.PI);
+        }else{
+            //(-vx, vy)
+            double newAngle  = Math.PI - particle.getAngle();
+            if(newAngle < 0){
+                newAngle += Math.PI * 2;
+            }
+            particle.setAngle(newAngle);
+        }
+    }
+
+    public void moveSystem(double deltaT){
+        for (Particle particle : getParticles()) {
+            particle.move(deltaT);
+        }
     }
 
 

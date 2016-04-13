@@ -13,7 +13,7 @@ public class PrintFormatter {
         df = (DecimalFormat)nf;
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(1);
-        df.setMaximumFractionDigits(4);
+        df.setMaximumFractionDigits(10);
     }
 
     public DecimalFormat getDf() {

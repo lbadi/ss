@@ -52,7 +52,7 @@ public class CollisionTest {
                 /**
                  * int id, int squareCount, double radius, double l, long n, long frames, String filename
                 */
-                {1, 1, 0.1, 10, 5, 500, "src/test/resources/output/offLatice10-1000-0.3.txt"},
+                {1, 1, 0.2, 10,10, 100, "src/test/resources/output/offLatice10-1000-0.3.txt"},
         });
     }
 
@@ -78,7 +78,6 @@ public class CollisionTest {
         newParticle.setY(6.0848);
         boolean overlap = particle.overlap(newParticle);
         Assert.assertEquals(overlap,true);
-
     }
 
     @Test
@@ -102,13 +101,13 @@ public class CollisionTest {
         particleList.add(particle);
 
         particleSystem.setParticles(particleList);
-        double t = particleSystem.getTimeToNextCollision();
+        double t = particleSystem.timeToNextColision();
         System.out.println(t);
 
     }
 
     @Test
     public void simulate(){
-        collision.simulate(frames);
+        collision.simulate(frames,1);
     }
 }

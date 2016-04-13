@@ -11,6 +11,7 @@ public class Particle implements PlainWritable {
     private static final double DEFAULT_RADIUS = 0.1;
     private static final double DEFAULT_COLOR = 0.5;
     public static final double DEFAULT_SPEED = 0.3;
+    public static final double DEFAULT_MASS = 1;
 
 
     private double x;
@@ -22,6 +23,8 @@ public class Particle implements PlainWritable {
     private double speed;
     //Direction of the particle
     private double angle;
+    //Mass of the particle
+    private double mass = DEFAULT_MASS;
 
     private Set<Particle> neighbours = new HashSet<>();
 
@@ -247,6 +250,14 @@ public class Particle implements PlainWritable {
     public void move(double t){
         setX(getX() + getSpeedX() * t);
         setY(getY() + getSpeedY() * t);
+    }
+
+    public double getMass() {
+        return mass;
+    }
+
+    public void setSpeed(double vx, double vy){
+        setAngle(Math.atan2(vy,vx));
     }
 
     public void setSpeed(double speed) {
