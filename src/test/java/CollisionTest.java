@@ -54,15 +54,15 @@ public class CollisionTest {
     @Parameterized.Parameters
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
-                /**
-                 * int id, int squareCount, double radius, double l, long n, long frames, double frameRate
-                */
-                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
-                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
-                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
-                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1},
-                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1},
-                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1}
+            /**
+             * int id, int squareCount, double radius, double l, long n, long frames, double frameRate
+            */
+            {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
+            {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
+            {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
+            {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1},
+            {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1},
+            {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1}
         });
     }
 

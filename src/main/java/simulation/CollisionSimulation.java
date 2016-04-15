@@ -11,6 +11,9 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Molecular dynamic simulation of Hard Spheres
@@ -20,6 +23,8 @@ public class CollisionSimulation {
     private ParticleSystem particleSystem;
     private PrintWriter writer;
 
+    private static final double DEFAULT_EPSILON = 0.001;
+
     public CollisionSimulation(int squareCount, double radius,  double l, long n, String fileName) throws IOException {
         try {
             Files.deleteIfExists(Paths.get(fileName));
@@ -28,6 +33,7 @@ public class CollisionSimulation {
         }
         //Ver el radio de las particulas (No el radio de interacción). Hay que modificar para que sea el radio
         particleSystem = new ParticleSystem(squareCount, radius, l, n, new ArrayList<Wall>());
+        Logger.getAnonymousLogger().info("Construcción completa");
         writer = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
     }
 
@@ -38,7 +44,11 @@ public class CollisionSimulation {
         double timeToNextCollision;
         double accumulatedTime = 0;
         while(time>0){
-            timeToNextCollision = particleSystem.timeToNextColision();
+            if(particleSystem.getDifferenceBetweenPromTime() < DEFAULT_EPSILON){
+                timeToNextCollision = particleSystem.timeToNextCollisionWithHeuristic();
+            }else {
+                timeToNextCollision = particleSystem.timeToNextColision();
+            }
             accumulatedTime += timeToNextCollision;
             if(accumulatedTime < frameRate) {
                 for (Particle particle : particleSystem.getParticles()) {

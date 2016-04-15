@@ -31,6 +31,10 @@ public class ParticleSystem implements PlainWritable {
     public Particle colParticle2;
     public BorderDirection borderDirection;
 
+    //Para que la primera vez te de mucha diferencia entre el promedio y el ultimo.
+    private double promTimeToCollision = Double.MAX_VALUE;
+    private double lastPromTimeCollision = 0;
+
     public ParticleSystem(boolean isPeriodic, int squareCount){
         this.squareCount = squareCount;
         this.isPeriodic = isPeriodic;
@@ -464,6 +468,7 @@ public class ParticleSystem implements PlainWritable {
      */
     public double timeToNextColision(){
         Double t = Double.MAX_VALUE;
+        lastPromTimeCollision = promTimeToCollision;
         for(int i = 0 ; i < getParticles().size() ; i++){
             Particle particle = getParticles().get(i);
             Double calculatedTime = timeToBorder(particle, t);
@@ -495,7 +500,9 @@ public class ParticleSystem implements PlainWritable {
                     }
                 }
             }
+            promTimeToCollision+= calculatedTime;
         }
+        promTimeToCollision/=getParticles().size();
         return t;
     }
 
@@ -512,6 +519,47 @@ public class ParticleSystem implements PlainWritable {
 //        }
 //        return t;
 //    }
+
+    public double timeToNextCollisionWithHeuristic(){
+        if(neighbourhood == null){
+
+            if(squareSize <= interactionRadius + 2 * maxRadius){
+                throw new IllegalArgumentException();
+            }
+        }
+        Double t = Double.MAX_VALUE;
+        for(Particle particle : getParticles()){
+            Double calculatedTime = timeToBorder(particle, t);
+            if(t > calculatedTime){
+                t = calculatedTime;
+            }
+            for(Particle particle2 : particle.getNeighbours()){
+                if(!particle.equals(particle2)) {
+                    double deltaX = particle2.getX() - particle.getX();
+                    double deltaVx = particle2.getSpeedX() - particle.getSpeedX();
+                    double deltaY = particle2.getY() - particle.getY();
+                    double deltaVy = particle2.getSpeedY() - particle.getSpeedY();
+                    double dvdr = deltaX * deltaVx + deltaVy * deltaY;
+                    if (dvdr < 0) {
+                        double dvdv = Math.pow(deltaVx, 2) + Math.pow(deltaVy, 2);
+                        double drdr = Math.pow(deltaX, 2) + Math.pow(deltaY, 2);
+                        double sumRadius = particle.getRadius() + particle2.getRadius();
+                        double d = Math.pow(dvdr, 2) - dvdv * (drdr - Math.pow(sumRadius, 2));
+                        if (d >= 0) {
+                            calculatedTime = -((dvdr + Math.sqrt(d)) / dvdv);
+                            if (calculatedTime < t) {
+                                //Esta particula choca
+                                colParticle1 = particle;
+                                colParticle2 = particle2;
+                                t = calculatedTime;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return t;
+    }
 
     public void collide(Particle particle , Particle particle2){
         double deltaX = particle2.getX() - particle.getX();
@@ -557,4 +605,8 @@ public class ParticleSystem implements PlainWritable {
         }
     }
 
+    //Se necesita haber corrido timeToNextCollision por lo menos una vez antes
+    public double getDifferenceBetweenPromTime(){
+        return promTimeToCollision - lastPromTimeCollision;
+    }
 }
