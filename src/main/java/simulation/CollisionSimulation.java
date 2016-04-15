@@ -36,12 +36,14 @@ public class CollisionSimulation {
     // Simulate collision of hard spheres
     public void simulate(double time, double frameRate){
         particleSystem.writeFrameWithDirection(writer, 1, 1);
-        double t = 0;
+        double timeToNextCollision;
+        double accumulatedTime = 0;
         while(time>0){
-            t += particleSystem.timeToNextColision();
-            if(t < frameRate) {
+            timeToNextCollision = particleSystem.timeToNextColision();
+            accumulatedTime += timeToNextCollision;
+            if(accumulatedTime < frameRate) {
                 for (Particle particle : particleSystem.getParticles()) {
-                    particle.move(t);
+                    particle.move(timeToNextCollision);
                 }
                 if(particleSystem.colParticle2 == null){
                     particleSystem.collide(particleSystem.colParticle1,particleSystem.borderDirection);
@@ -49,16 +51,19 @@ public class CollisionSimulation {
                     particleSystem.collide(particleSystem.colParticle1,particleSystem.colParticle2);
                 }
             }else{
+                particleSystem.moveSystem(frameRate - (accumulatedTime - timeToNextCollision));
+                particleSystem.writeFrameWithDirection(writer, 1, 1);
+                time -= frameRate;
+                System.out.println("Faltan " + time + " segundos");
                 double j;
-                for(j = frameRate; j<t && time>0; j+= frameRate) {
+                for(j = 2*frameRate; j<accumulatedTime && time>0; j+= frameRate) {
+                    time -= frameRate;
+                    System.out.println("Faltan " + time + " segundos");
                     particleSystem.moveSystem(frameRate);
-                    time=time-frameRate;
                     particleSystem.writeFrameWithDirection(writer, 1, 1);
-                    System.out.println(time);
                 }
-                System.out.println("LLEGUE");
-                particleSystem.moveSystem(t-j);
-                t = 0;
+                particleSystem.moveSystem(accumulatedTime - (j - frameRate));
+                accumulatedTime = 0;
             }
         }
         writer.flush();

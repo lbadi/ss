@@ -52,7 +52,7 @@ public class CollisionTest {
                 /**
                  * int id, int squareCount, double radius, double l, long n, long frames, String filename
                 */
-                {1, 1, 0.2, 10,10, 100, "src/test/resources/output/offLatice10-1000-0.3.txt"},
+                {1, 1, 0.005, 0.5, 10, 20, "src/test/resources/output/offLatice10-1000-0.3.txt"},
         });
     }
 
@@ -108,6 +108,6 @@ public class CollisionTest {
 
     @Test
     public void simulate(){
-        collision.simulate(frames,1);
+        collision.simulate(frames,0.1);
     }
 }

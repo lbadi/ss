@@ -10,7 +10,7 @@ public class Particle implements PlainWritable {
     private static final String separator = " ";
     private static final double DEFAULT_RADIUS = 0.1;
     private static final double DEFAULT_COLOR = 0.5;
-    public static final double DEFAULT_SPEED = 0.3;
+    public static final double DEFAULT_SPEED = 0.1;
     public static final double DEFAULT_MASS = 1;
 
 

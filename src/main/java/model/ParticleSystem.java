@@ -419,7 +419,10 @@ public class ParticleSystem implements PlainWritable {
         if(particle.getSpeedX() > 0){
             calculatedT = (l - (particle.getX() + particle.getRadius())) / particle.getSpeedX();
         }else{
-            calculatedT = Math.abs((particle.getX() - particle.getRadius()) / particle.getSpeedX());
+            calculatedT = -1 * (particle.getX() - particle.getRadius()) / particle.getSpeedX();
+            if(calculatedT < 0 ){
+                calculatedT = 0;
+            }
         }
 
         if(t > calculatedT){
@@ -431,7 +434,10 @@ public class ParticleSystem implements PlainWritable {
         if(particle.getSpeedY() > 0){
             calculatedT = (l - (particle.getY() + particle.getRadius())) / particle.getSpeedY();
         }else{
-            calculatedT = Math.abs((particle.getY() - particle.getRadius()) / particle.getSpeedY());
+            calculatedT = -1 * (particle.getY() - particle.getRadius()) / particle.getSpeedY();
+            if(calculatedT < 0 ){
+                calculatedT = 0;
+            }
         }
         if(t > calculatedT){
             borderDirection = BorderDirection.HORIZONTAL;
