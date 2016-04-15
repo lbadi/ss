@@ -109,6 +109,11 @@ public class Particle implements PlainWritable {
         this(radius,DEFAULT_COLOR);
     }
 
+    public Particle(double radius, double color, double mass){
+        this(radius,color);
+        this.mass = mass;
+    }
+
     public Particle(double radius, double color, double angle, double speed){
         id = counter.incrementAndGet();
         this.radius = radius;
@@ -257,6 +262,7 @@ public class Particle implements PlainWritable {
     }
 
     public void setSpeed(double vx, double vy){
+        setSpeed(Math.sqrt(Math.pow(vx,2) + Math.pow(vy,2)));
         setAngle(Math.atan2(vy,vx));
     }
 

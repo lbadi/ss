@@ -11,7 +11,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Molecular dynamic simulation of Hard Spheres
@@ -28,10 +27,8 @@ public class CollisionSimulation {
             e.printStackTrace();
         }
         //Ver el radio de las particulas (No el radio de interacción). Hay que modificar para que sea el radio
-        List<Wall> walls = new ArrayList<>();
         particleSystem = new ParticleSystem(squareCount, radius, l, n, new ArrayList<Wall>());
         writer = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
-
     }
     // Simulate collision of hard spheres
     public void simulate(double time, double frameRate){

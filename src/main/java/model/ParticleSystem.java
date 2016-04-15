@@ -11,7 +11,6 @@ import java.util.List;
 
 public class ParticleSystem implements PlainWritable {
 
-    private long n;
     private double l;
     private List<Particle> particles = new ArrayList<>();
     private List<Wall> walls = new ArrayList<>();
@@ -51,7 +50,6 @@ public class ParticleSystem implements PlainWritable {
     public ParticleSystem(boolean isPeriodic, int squareCount, double interactionRadius, double l, long n){
         this(isPeriodic, squareCount,interactionRadius);
         this.l = l;
-        this.n = n;
         init();
         //Create N particles
         for(int i = 0; i < n; i++){
@@ -76,8 +74,18 @@ public class ParticleSystem implements PlainWritable {
     public ParticleSystem(int squareCount, double radius, double l, long n, List<Wall> walls){
         this(false, squareCount);
         this.l = l;
-        this.n = n;
         addWalls(walls);
+
+        /**
+         * Big Particle
+         */
+        Particle bigParticle = new Particle(0.05, 1, 100);
+        bigParticle.setSpeed(0);
+        bigParticle.setX(l/2.0);
+        bigParticle.setY(l/2.0);
+        addParticle(bigParticle);
+        n++;
+
         //Create N particles that not overlap with other particles or wall
         for(int i = 0; i < n; i++){
             Particle newParticle = new Particle(radius);
@@ -139,7 +147,7 @@ public class ParticleSystem implements PlainWritable {
     @Override
     public PlainWritable readObject(String plainObject) {
         Scanner scanner = new Scanner(plainObject);
-        setN(Long.parseLong(scanner.next()));
+//        setN(Long.parseLong(scanner.next()));
         setL(Long.parseLong(scanner.next()));
         List<Particle> particles = new ArrayList<>();
         while (scanner.hasNext()) {
@@ -203,11 +211,7 @@ public class ParticleSystem implements PlainWritable {
     }
 
     public long getN() {
-        return n;
-    }
-
-    public void setN(long n) {
-        this.n = n;
+        return particles.size();
     }
 
     public double getL() {

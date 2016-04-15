@@ -52,7 +52,7 @@ public class CollisionTest {
                 /**
                  * int id, int squareCount, double radius, double l, long n, long frames, String filename
                 */
-                {1, 1, 0.005, 0.5, 10, 20, "src/test/resources/output/offLatice10-1000-0.3.txt"},
+                {1, 1, 0.005, 0.5, 25, 20, "src/test/resources/output/dmer.txt"},
         });
     }
 
