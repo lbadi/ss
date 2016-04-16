@@ -1,6 +1,7 @@
 package model;
 
 import util.PlainWritable;
+import util.RandomUtils;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -8,11 +9,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class Particle implements PlainWritable {
 
     private static final String separator = " ";
-    private static final double DEFAULT_RADIUS = 0.1;
-    private static final double DEFAULT_COLOR = 0.5;
     public static final double DEFAULT_SPEED = 0.1;
-    public static final double DEFAULT_MASS = 1;
-
 
     private double x;
     private double y;
@@ -24,14 +21,12 @@ public class Particle implements PlainWritable {
     //Direction of the particle
     private double angle;
     //Mass of the particle
-    private double mass = DEFAULT_MASS;
+    private double mass;
 
     private Set<Particle> neighbours = new HashSet<>();
 
     private static AtomicLong counter = new AtomicLong();
     private long id;
-
-    private static Random generator = new Random(System.currentTimeMillis());
 
     @Override
     public PlainWritable readObject(String plainObject) {
@@ -83,7 +78,6 @@ public class Particle implements PlainWritable {
         return Math.sin(getAngle()) * getSpeed();
     }
 
-
     public double getAngle() {
         return angle;
     }
@@ -92,34 +86,24 @@ public class Particle implements PlainWritable {
         this.angle = angle;
     }
 
-    /**
-     * Formato de entrada del archivo estático.
-     * @param radius
-     * @param color
-     */
-    public Particle(double radius, double color) {
-        this(radius,color,generator.nextDouble() * 2 * Math.PI, DEFAULT_SPEED );
-    }
-
-    public Particle(){
-        this(DEFAULT_RADIUS,DEFAULT_COLOR);
-    }
-
-    public Particle(double radius){
-        this(radius,DEFAULT_COLOR);
-    }
-
-    public Particle(double radius, double color, double mass){
-        this(radius,color);
-        this.mass = mass;
-    }
-
-    public Particle(double radius, double color, double angle, double speed){
+    public Particle() {
         id = counter.incrementAndGet();
-        this.radius = radius;
-        this.color = color;
-        this.angle = angle;
-        this.speed = speed;
+        this.radius = Brownian.BROWNIAN_R1;
+        this.mass = Brownian.BROWNIAN_M1;
+        setSpeed(RandomUtils.between(Brownian.BROWNIAN_V_MIN, Brownian.BROWNIAN_V_MAX), RandomUtils.between(Brownian.BROWNIAN_V_MIN, Brownian.BROWNIAN_V_MAX));
+    }
+
+    public Particle(double x, double y) {
+        this();
+        setX(x);
+        setY(y);
+    }
+
+    public Particle(double x, double y, double radius) {
+        this();
+        setX(x);
+        setY(y);
+        setRadius(radius);
     }
 
     public long getId() {
@@ -268,5 +252,9 @@ public class Particle implements PlainWritable {
 
     public void setSpeed(double speed) {
         this.speed = speed;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
     }
 }

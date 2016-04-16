@@ -1,3 +1,4 @@
+import model.Brownian;
 import model.Particle;
 import model.ParticleSystem;
 import model.Wall;
@@ -7,6 +8,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import simulation.CollisionSimulation;
+import util.RandomUtils;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,28 +23,29 @@ import java.util.List;
 @RunWith(value = Parameterized.class)
 public class CollisionTest {
 
-    CollisionSimulation collision;
-    int id;
-    int squareCount;
-    double radius;
-    double l;
-    long n;
-    long frames;
-    String filename;
+    private CollisionSimulation collision;
+    private int id;
+    private int squareCount;
+    private double radius;
+    private double l;
+    private long n;
+    private long frames;
+    private double frameRate;
+    private String filename;
 
     private static FileWriter resultsWriter;
     public static final String CSV_FILENAME = "offLatice.csv";
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
-
     public CollisionTest(int id, int squareCount, double radius,
-                         double l, long n, long frames, String filename){
+                         double l, long n, long frames, double frameRate, String filename){
         this.id = id;
         this.squareCount = squareCount;
         this.radius = radius;
         this.l = l;
         this.n = n;
         this.frames = frames;
+        this.frameRate = frameRate;
         this.filename = filename;
     }
 
@@ -50,9 +53,9 @@ public class CollisionTest {
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 /**
-                 * int id, int squareCount, double radius, double l, long n, long frames, String filename
+                 * int id, int squareCount, double radius, double l, long n, long frames, double frameRate, String filename
                 */
-                {1, 1, 0.005, 0.5, 25, 20, "src/test/resources/output/dmer.txt"},
+                {1, 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1, "src/test/resources/output/dmer.txt"},
         });
     }
 
@@ -68,14 +71,8 @@ public class CollisionTest {
 
     @Test
     public void testOverlap(){
-        Particle particle = new Particle(1);
-        Particle newParticle = new Particle(1);
-
-        particle.setX(5.6341);
-        particle.setY(7.0581);
-
-        newParticle.setX(4.5741);
-        newParticle.setY(6.0848);
+        Particle particle = new Particle(5.6341, 7.0581, 1);
+        Particle newParticle = new Particle(4.5741, 6.0848, 1);
         boolean overlap = particle.overlap(newParticle);
         Assert.assertEquals(overlap,true);
     }
@@ -83,16 +80,12 @@ public class CollisionTest {
     @Test
     public void frontalCollisionTest(){
         ParticleSystem particleSystem = new ParticleSystem(squareCount, radius, l, n, new ArrayList<Wall>());
-        Particle particle = new Particle(1);
-        Particle newParticle = new Particle(1);
+        Particle particle = new Particle(2,2,1);
+        Particle newParticle = new Particle(3,3,1);
 
-        particle.setX(2);
-        particle.setY(2);
         particle.setAngle(Math.PI/2);
         particle.setSpeed(1);
 
-        newParticle.setX(3);
-        newParticle.setY(3);
         newParticle.setAngle(Math.PI);
         newParticle.setSpeed(1);
 
@@ -108,6 +101,15 @@ public class CollisionTest {
 
     @Test
     public void simulate(){
-        collision.simulate(frames,0.1);
+        collision.simulate(frames,frameRate);
     }
+
+    @Test
+    public void randomGeneratorTest() {
+        for(int i = 0; i < 10; i++) {
+            double r = RandomUtils.between(Brownian.BROWNIAN_V_MIN, Brownian.BROWNIAN_V_MAX);
+            Assert.assertTrue(r > Brownian.BROWNIAN_V_MIN & r < Brownian.BROWNIAN_V_MAX);
+        }
+    }
+
 }

@@ -17,8 +17,8 @@ import java.util.ArrayList;
  */
 public class CollisionSimulation {
 
-    ParticleSystem particleSystem;
-    PrintWriter writer;
+    private ParticleSystem particleSystem;
+    private PrintWriter writer;
 
     public CollisionSimulation(int squareCount, double radius,  double l, long n, String fileName) throws IOException {
         try {
@@ -30,9 +30,11 @@ public class CollisionSimulation {
         particleSystem = new ParticleSystem(squareCount, radius, l, n, new ArrayList<Wall>());
         writer = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
     }
+
     // Simulate collision of hard spheres
     public void simulate(double time, double frameRate){
-        particleSystem.writeFrameWithDirection(writer, 1, 1);
+        int count = 0;
+        particleSystem.writeFrameWithDirection(writer, count++);
         double timeToNextCollision;
         double accumulatedTime = 0;
         while(time>0){
@@ -49,15 +51,15 @@ public class CollisionSimulation {
                 }
             }else{
                 particleSystem.moveSystem(frameRate - (accumulatedTime - timeToNextCollision));
-                particleSystem.writeFrameWithDirection(writer, 1, 1);
+                particleSystem.writeFrameWithDirection(writer, count++);
                 time -= frameRate;
-                System.out.println("Faltan " + time + " segundos");
+                System.out.printf("Faltan %.2g segundos\n", time);
                 double j;
                 for(j = 2*frameRate; j<accumulatedTime && time>0; j+= frameRate) {
                     time -= frameRate;
-                    System.out.println("Faltan " + time + " segundos");
+                    System.out.printf("Faltan %.2g segundos\n", time);
                     particleSystem.moveSystem(frameRate);
-                    particleSystem.writeFrameWithDirection(writer, 1, 1);
+                    particleSystem.writeFrameWithDirection(writer, count++);
                 }
                 particleSystem.moveSystem(accumulatedTime - (j - frameRate));
                 accumulatedTime = 0;

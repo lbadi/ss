@@ -2,12 +2,14 @@ package model;
 
 import util.PlainWritable;
 import util.PrintFormatter;
+import util.RandomUtils;
 
 import java.awt.*;
 import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class ParticleSystem implements PlainWritable {
 
@@ -53,11 +55,7 @@ public class ParticleSystem implements PlainWritable {
         init();
         //Create N particles
         for(int i = 0; i < n; i++){
-            Particle particle = new Particle();
-
-            particle.setX(Math.random() * l);
-            particle.setY(Math.random() * l);
-
+            Particle particle = new Particle(Math.random() * l, Math.random() * l);
             addParticleInNeighbourHood(particle);
             particles.add(particle);
         }
@@ -76,49 +74,51 @@ public class ParticleSystem implements PlainWritable {
         this.l = l;
         addWalls(walls);
 
-        /**
-         * Big Particle
-         */
-        Particle bigParticle = new Particle(0.05, 1, 100);
-        bigParticle.setSpeed(0);
-        bigParticle.setX(l/2.0);
-        bigParticle.setY(l/2.0);
-        addParticle(bigParticle);
-        n++;
+        addBigParticle();
 
         //Create N particles that not overlap with other particles or wall
         for(int i = 0; i < n; i++){
-            Particle newParticle = new Particle(radius);
-            newParticle.setX(Math.random() * (l - radius) + radius);
-            newParticle.setY(Math.random() * (l - radius) + radius);
+            Particle newParticle = new Particle();
+            newParticle.setRadius(radius);
+            newParticle.setX(RandomUtils.between(radius, l - radius));
+            newParticle.setY(RandomUtils.between(radius, l - radius));
             boolean overlap = true;
             while(overlap) {
                 overlap = false;
                 if(overlapWithBorders(newParticle)){
-                    newParticle.setX(Math.random() * (l - radius) + radius);
-                    newParticle.setY(Math.random() * (l - radius) + radius);
+                    newParticle.setX(RandomUtils.between(radius, l - radius));
+                    newParticle.setY(RandomUtils.between(radius, l - radius));
                     overlap = true;
                 }
                 for(Particle particle :  particles) {
                     if (newParticle.overlap(particle)) {
-                        newParticle.setX(Math.random() * (l - radius) + radius);
-                        newParticle.setY(Math.random() * (l - radius) + radius);
+                        newParticle.setX(RandomUtils.between(radius, l - radius));
+                        newParticle.setY(RandomUtils.between(radius, l - radius));
                         overlap = true;
                     }
                 }
                 for(Wall wall : walls){
                     if (newParticle.overlap(wall)) {
-                        newParticle.setX(Math.random() * (l - radius) + radius);
-                        newParticle.setY(Math.random() * (l - radius) + radius);
+                        newParticle.setX(RandomUtils.between(radius, l - radius));
+                        newParticle.setY(RandomUtils.between(radius, l - radius));
                         overlap = true;
                     }
                 }
             }
             addParticle(newParticle);
         }
+        Logger.getAnonymousLogger().info("Sistema creado correctamente.");
     }
 
-
+    private void addBigParticle() {
+        Particle bigParticle = new Particle();
+        bigParticle.setX(RandomUtils.between(Brownian.BROWNIAN_R2, l - Brownian.BROWNIAN_R2));
+        bigParticle.setY(RandomUtils.between(Brownian.BROWNIAN_R2, l - Brownian.BROWNIAN_R2));
+        bigParticle.setRadius(Brownian.BROWNIAN_R2);
+        bigParticle.setMass(Brownian.BROWNIAN_M2) ;
+        bigParticle.setSpeed(Brownian.BROWNIAN_V2);
+        addParticle(bigParticle);
+    }
 
     public void init(){
         neighbourhood = new ArrayList[squareCount][squareCount];
@@ -337,7 +337,7 @@ public class ParticleSystem implements PlainWritable {
         writer.write(sb.toString());
     }
 
-    public void writeFrameWithDirection(PrintWriter writer, int id, int timeStep){
+    public void writeFrameWithDirection(PrintWriter writer, int timeStep){
         StringBuilder sb = new StringBuilder();
         sb.append(getN() + 4).append("\n"); //El 4 es de los corners
         sb.append(timeStep).append("\n");
@@ -420,9 +420,11 @@ public class ParticleSystem implements PlainWritable {
 
     private double timeToBorder(Particle particle, double t){
         double calculatedT;
-        if(particle.getSpeedX() > 0){
+        if(new Double(particle.getSpeedX()).compareTo(0D) == 0) {
+            calculatedT = 0;
+        } else if(particle.getSpeedX() > 0){
             calculatedT = (l - (particle.getX() + particle.getRadius())) / particle.getSpeedX();
-        }else{
+        } else {
             calculatedT = -1 * (particle.getX() - particle.getRadius()) / particle.getSpeedX();
             if(calculatedT < 0 ){
                 calculatedT = 0;
@@ -435,9 +437,11 @@ public class ParticleSystem implements PlainWritable {
             colParticle2 = null;
             t = calculatedT;
         }
-        if(particle.getSpeedY() > 0){
+        if(new Double(particle.getSpeedY()).compareTo(0D) == 0) {
+            calculatedT = 0;
+        } else if(particle.getSpeedY() > 0){
             calculatedT = (l - (particle.getY() + particle.getRadius())) / particle.getSpeedY();
-        }else{
+        } else {
             calculatedT = -1 * (particle.getY() - particle.getRadius()) / particle.getSpeedY();
             if(calculatedT < 0 ){
                 calculatedT = 0;
@@ -458,7 +462,6 @@ public class ParticleSystem implements PlainWritable {
      * -DV * DR + sqrt(d) / DV * DV
      * @return
      */
-    //TODO Aca hay algo que no cierra, el tiempo
     public double timeToNextColision(){
         Double t = Double.MAX_VALUE;
         for(int i = 0 ; i < getParticles().size() ; i++){
@@ -497,21 +500,20 @@ public class ParticleSystem implements PlainWritable {
     }
 
 
-    public double moveToNextTime(){
-        double t = timeToNextColision();
-        for(Particle particle : particles){
-            particle.move(t);
-        }
-        if(colParticle2 == null){
-            collide(colParticle1,borderDirection);
-        }else{
-            collide(colParticle1,colParticle2);
-        }
-        return t;
-    }
+//    public double moveToNextTime(){
+//        double t = timeToNextColision();
+//        for(Particle particle : particles){
+//            particle.move(t);
+//        }
+//        if(colParticle2 == null){
+//            collide(colParticle1,borderDirection);
+//        }else{
+//            collide(colParticle1,colParticle2);
+//        }
+//        return t;
+//    }
 
     public void collide(Particle particle , Particle particle2){
-        //TODO
         double deltaX = particle2.getX() - particle.getX();
         double deltaVx = particle2.getSpeedX() - particle.getSpeedX();
         double deltaY = particle2.getY() - particle.getY();
@@ -521,7 +523,7 @@ public class ParticleSystem implements PlainWritable {
 
         double jx,jy,j,vx1,vx2,vy1,vy2 ;
 
-        j = 2 * particle.getMass() * particle2.getMass() * (dvdr) / (sumRadius * (particle.getMass() + particle2.getMass() ));
+        j = 2 * particle.getMass() * particle2.getMass() * (dvdr) / (sumRadius * (particle.getMass() + particle2.getMass()));
         jx = j * deltaX / sumRadius;
         jy = j * deltaY / sumRadius;
 
@@ -533,9 +535,6 @@ public class ParticleSystem implements PlainWritable {
 
         particle.setSpeed(vx1,vy1);
         particle2.setSpeed(vx2,vy2);
-
-//        particle.move(0.01);
-//        particle2.move(0.01);
     }
 
     public void collide(Particle particle, BorderDirection border){
@@ -557,6 +556,5 @@ public class ParticleSystem implements PlainWritable {
             particle.move(deltaT);
         }
     }
-
 
 }
