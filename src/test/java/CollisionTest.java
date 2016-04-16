@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Test the collision simulation
@@ -24,7 +25,7 @@ import java.util.List;
 public class CollisionTest {
 
     private CollisionSimulation collision;
-    private int id;
+    private long id;
     private int squareCount;
     private double radius;
     private double l;
@@ -37,8 +38,10 @@ public class CollisionTest {
     public static final String CSV_FILENAME = "offLatice.csv";
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
-    public CollisionTest(int id, int squareCount, double radius,
-                         double l, long n, long frames, double frameRate, String filename){
+    private static AtomicLong counter = new AtomicLong();
+
+    public CollisionTest(long id, int squareCount, double radius,
+                         double l, long n, long frames, double frameRate){
         this.id = id;
         this.squareCount = squareCount;
         this.radius = radius;
@@ -46,27 +49,28 @@ public class CollisionTest {
         this.n = n;
         this.frames = frames;
         this.frameRate = frameRate;
-        this.filename = filename;
     }
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 /**
-                 * int id, int squareCount, double radius, double l, long n, long frames, double frameRate, String filename
+                 * int id, int squareCount, double radius, double l, long n, long frames, double frameRate
                 */
-                {1, 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1, "src/test/resources/output/dmer.txt"},
+                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
+                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
+                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 10, 20, 0.1},
+                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1},
+                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1},
+                {counter.incrementAndGet(), 1, Brownian.BROWNIAN_R1, Brownian.BROWNIAN_L, 100, 20, 0.1}
         });
     }
 
     //int squareCount, double radius,  double l, long n, String fileName
     @Before
-    public void init(){
-        try {
-            collision = new CollisionSimulation(squareCount,radius, l, n , filename);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void init() throws IOException {
+        String fileName = String.format("src/test/resources/output/dmer-%d-%d-%d-%.2g.txt", this.id, this.n, this.frames, this.frameRate);
+        collision = new CollisionSimulation(squareCount,radius, l, n, fileName);
     }
 
     @Test
