@@ -49,6 +49,7 @@ public class CollisionSimulation {
             }else {
                 timeToNextCollision = particleSystem.timeToNextColision();
             }
+            //timeToNextCollision = particleSystem.timeToNextColision();
             accumulatedTime += timeToNextCollision;
             if(accumulatedTime < frameRate) {
                 for (Particle particle : particleSystem.getParticles()) {
@@ -63,11 +64,11 @@ public class CollisionSimulation {
                 particleSystem.moveSystem(frameRate - (accumulatedTime - timeToNextCollision));
                 particleSystem.writeFrameWithDirection(writer, count++);
                 time -= frameRate;
-                System.out.printf("Faltan %.2g segundos\n", time);
+                System.out.printf("Faltan %.3g segundos\n", time);
                 double j;
                 for(j = 2*frameRate; j<accumulatedTime && time>0; j+= frameRate) {
                     time -= frameRate;
-                    System.out.printf("Faltan %.2g segundos\n", time);
+                    System.out.printf("Faltan %.3g segundos\n", time);
                     particleSystem.moveSystem(frameRate);
                     particleSystem.writeFrameWithDirection(writer, count++);
                 }

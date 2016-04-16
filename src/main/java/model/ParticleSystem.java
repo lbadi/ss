@@ -33,8 +33,9 @@ public class ParticleSystem implements PlainWritable {
     public BorderDirection borderDirection;
 
     //Para que la primera vez te de mucha diferencia entre el promedio y el ultimo.
-    private double promTimeToCollision = Double.MAX_VALUE;
-    private double lastPromTimeCollision = 0;
+    private double sumTimesToCollision = 0;
+    private double lastTimeToCollision;
+    private int promTimeCount = 0;
 
     public ParticleSystem(boolean isPeriodic, int squareCount){
         this.squareCount = squareCount;
@@ -112,6 +113,7 @@ public class ParticleSystem implements PlainWritable {
             }
             addParticle(newParticle);
         }
+        init();
         Logger.getAnonymousLogger().info("Sistema creado correctamente.");
     }
 
@@ -469,7 +471,6 @@ public class ParticleSystem implements PlainWritable {
      */
     public double timeToNextColision(){
         Double t = Double.MAX_VALUE;
-        lastPromTimeCollision = promTimeToCollision;
         for(int i = 0 ; i < getParticles().size() ; i++){
             Particle particle = getParticles().get(i);
             Double calculatedTime = timeToBorder(particle, t);
@@ -501,9 +502,10 @@ public class ParticleSystem implements PlainWritable {
                     }
                 }
             }
-            promTimeToCollision+= calculatedTime;
         }
-        promTimeToCollision/=getParticles().size();
+        lastTimeToCollision = t;
+        promTimeCount ++;
+        sumTimesToCollision += t;
         return t;
     }
 
@@ -534,12 +536,12 @@ public class ParticleSystem implements PlainWritable {
 
     public double timeToNextCollisionWithHeuristic(){
         if(neighbourhood == null){
-            interactionRadius = getMaxSpeed() * promTimeToCollision;
+            interactionRadius = getMaxSpeed() * (sumTimesToCollision / promTimeCount);
             squareSize = interactionRadius + 2 * maxRadius;
             squareCount = (int)((l / (squareSize)));
             squareSize = l / squareCount;
-            populateNeighbourhood();
         }
+        populateNeighbourhood();
         Double t = Double.MAX_VALUE;
         for(Particle particle : getParticles()){
             Double calculatedTime = timeToBorder(particle, t);
@@ -618,10 +620,14 @@ public class ParticleSystem implements PlainWritable {
         for (Particle particle : getParticles()) {
             particle.move(deltaT);
         }
+        refreshSystem(getParticles());
     }
 
     //Se necesita haber corrido timeToNextCollision por lo menos una vez antes
     public double getDifferenceBetweenPromTime(){
-        return Math.abs(promTimeToCollision - lastPromTimeCollision);
+        if(promTimeCount < 10){
+            return Double.MAX_VALUE;
+        }
+        return Math.abs((sumTimesToCollision / promTimeCount) - lastTimeToCollision);
     }
 }
