@@ -43,7 +43,7 @@ public class CollisionSimulation {
         particleSystem.writeFrameWithDirection(writer, count++);
         double timeToNextCollision;
         double accumulatedTime = 0;
-        while(time>0){
+        while(time > 0){
             if(particleSystem.getDifferenceBetweenPromTime() < DEFAULT_EPSILON){
                 timeToNextCollision = particleSystem.timeToNextCollisionWithHeuristic();
             }else {

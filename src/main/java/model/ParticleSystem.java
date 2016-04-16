@@ -29,6 +29,7 @@ public class ParticleSystem implements PlainWritable {
 
     public Particle colParticle1;
     public Particle colParticle2;
+    public Particle bigParticle;
     public BorderDirection borderDirection;
 
     //Para que la primera vez te de mucha diferencia entre el promedio y el ultimo.
@@ -74,7 +75,7 @@ public class ParticleSystem implements PlainWritable {
      * @param walls list of walls (not the borders, the borders are implicit)
      */
     public ParticleSystem(int squareCount, double radius, double l, long n, List<Wall> walls){
-        this(false, squareCount);
+        this(false, squareCount,0);
         this.l = l;
         addWalls(walls);
 
@@ -115,7 +116,7 @@ public class ParticleSystem implements PlainWritable {
     }
 
     private void addBigParticle() {
-        Particle bigParticle = new Particle();
+        bigParticle = new Particle();
         bigParticle.setX(RandomUtils.between(Brownian.BROWNIAN_R2, l - Brownian.BROWNIAN_R2));
         bigParticle.setY(RandomUtils.between(Brownian.BROWNIAN_R2, l - Brownian.BROWNIAN_R2));
         bigParticle.setRadius(Brownian.BROWNIAN_R2);
@@ -506,6 +507,17 @@ public class ParticleSystem implements PlainWritable {
         return t;
     }
 
+    public double getMaxSpeed(){
+        double maxSpeed = 0;
+        for(Particle particle : particles){
+            double speed = particle.getSpeed();
+            if(speed > maxSpeed){
+                maxSpeed = speed;
+            }
+        }
+        return maxSpeed;
+    }
+
 
 //    public double moveToNextTime(){
 //        double t = timeToNextColision();
@@ -522,10 +534,11 @@ public class ParticleSystem implements PlainWritable {
 
     public double timeToNextCollisionWithHeuristic(){
         if(neighbourhood == null){
-
-            if(squareSize <= interactionRadius + 2 * maxRadius){
-                throw new IllegalArgumentException();
-            }
+            interactionRadius = getMaxSpeed() * promTimeToCollision;
+            squareSize = interactionRadius + 2 * maxRadius;
+            squareCount = (int)((l / (squareSize)));
+            squareSize = l / squareCount;
+            populateNeighbourhood();
         }
         Double t = Double.MAX_VALUE;
         for(Particle particle : getParticles()){
@@ -533,7 +546,9 @@ public class ParticleSystem implements PlainWritable {
             if(t > calculatedTime){
                 t = calculatedTime;
             }
-            for(Particle particle2 : particle.getNeighbours()){
+            Set<Particle> neighbours = particle.getNeighbours();
+            neighbours.add(bigParticle);
+            for(Particle particle2 : neighbours){
                 if(!particle.equals(particle2)) {
                     double deltaX = particle2.getX() - particle.getX();
                     double deltaVx = particle2.getSpeedX() - particle.getSpeedX();
@@ -607,6 +622,6 @@ public class ParticleSystem implements PlainWritable {
 
     //Se necesita haber corrido timeToNextCollision por lo menos una vez antes
     public double getDifferenceBetweenPromTime(){
-        return promTimeToCollision - lastPromTimeCollision;
+        return Math.abs(promTimeToCollision - lastPromTimeCollision);
     }
 }
