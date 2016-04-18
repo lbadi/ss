@@ -212,7 +212,7 @@ public void simulate(double time, double frameRate){
 
 \section{Resultados}
 
-\subsection{Tablas}
+\subsection{Tablas y Gráficos}
 
 \begin{frame}
 \frametitle{Resultados}
@@ -237,16 +237,36 @@ public void simulate(double time, double frameRate){
 \end{center}
 \end{frame}
 
-\subsection{Gráficos}
-
 \begin{frame}
 \frametitle{Resultados}
 \framesubtitle{Gráfico Frecuencia de colisiones}
 \begin{figure}[H]
         \centering
-        \includegraphics[width=0.75\textheight]{example-image-a}
+        \includegraphics[width=\textwidth]{Frecuenciaxt.pdf}
         \caption{Gráfico de la frecuencia de colisiones por unidad de tiempo}
 \end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Frecuencia de colisiones para distintos valores de $N$}
+\begin{center}
+\begin{table}[h]
+\centering
+\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
+           max width=\textwidth}{
+\begin{tabular}{cc}
+\hline
+\textbf{$N$} & \textbf{$f (colisiones/s)$}\\ \hline
+10&0,76\\
+100&5,25\\
+250&22,33\\
+500&86,3\\
+\end{tabular}
+}
+\caption{Frecuencia de colisiones para distintos valores de $N$.}
+\end{table}
+\end{center}
 \end{frame}
 
 \begin{frame}
