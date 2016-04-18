@@ -41,8 +41,6 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \usepackage{animate}
 
-\newcommand{\@animationFrameRate}{60}
-
 \title{Movimiento Browniano}
 \subtitle{Trabajo Practico Nro. 3}
 \author{Badi Leonel, Buchhalter Nicolás Demián y Meola Franco Román}
@@ -123,7 +121,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 	\item $dt$ intrínseco variable
 	\item $dt2$ constante
 	\item \texttt{time} : Tiempo en segundos a visualizar
-	\item \texttt{frameRate} : Número de frames por segundo
+	\item $dt2 =$ \texttt{frameRate} : Número de frames por segundo
 \end{itemize}
 \end{frame}
 
@@ -191,7 +189,7 @@ public void simulate(double time, double frameRate){
 \framesubtitle{Problemas encontrados}
 \begin{itemize}
 \item Precisión del \texttt{double}: Al colisionar con bordes obtuvimos \texttt{timeToNextCollision} negativos
-\item Utilización de una heurística: Cell Index Method resultó muy costoso, aumentando el tiempo necesario para la simulación
+\item Utilización de una heurística: Cell Index Method resultó muy costoso, aumentando el tiempo necesario para la simulación con los valores de $N$ probados.
 \end{itemize}
 \end{frame}
 
@@ -232,8 +230,6 @@ public void simulate(double time, double frameRate){
 250&1 min 12 seg\\
 500&18 min\\
 1000&?\\
-10000&?\\
-100000&?\\
 \end{tabular}
 }
 \caption{Tiempo promedio para el cálculo de la simulación para distintos valores de $N$.}
@@ -280,7 +276,7 @@ public void simulate(double time, double frameRate){
 \framesubtitle{Animación de la simulación para $N = 100$}
 \begin{figure}[H]
 	\centering
-	\animategraphics[loop,controls,width=0.75\textheight]{\@animationFrameRate}{animation/dmer-100-}{0000}{0200}
+	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
 \end{figure}
 \end{frame}
 
@@ -289,7 +285,7 @@ public void simulate(double time, double frameRate){
 \framesubtitle{Animación de la simulación para $N = 500$}
 \begin{figure}[H]
 	\centering
-	\animategraphics[loop,controls,width=0.75\textheight]{\@animationFrameRate}{animation/dmer-500-}{0000}{0200}
+	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-500-}{0000}{0200}
 \end{figure}
 \end{frame}
 
