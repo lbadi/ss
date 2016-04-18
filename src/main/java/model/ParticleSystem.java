@@ -9,6 +9,7 @@ import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
+import java.util.function.ToDoubleFunction;
 import java.util.logging.Logger;
 
 public class ParticleSystem implements PlainWritable {
@@ -69,7 +70,7 @@ public class ParticleSystem implements PlainWritable {
      * @param n amount of particles
      * @param walls list of walls (not the borders, the borders are implicit)
      */
-    public ParticleSystem(int squareCount, double radius, double l, long n, List<Wall> walls){
+    public ParticleSystem(int squareCount, double radius, double l, long n, List<Wall> walls, double maxSpeed, double minSpeed){
         this(false, squareCount);
         this.l = l;
         addWalls(walls);
@@ -82,6 +83,7 @@ public class ParticleSystem implements PlainWritable {
             newParticle.setRadius(radius);
             newParticle.setX(RandomUtils.between(radius, l - radius));
             newParticle.setY(RandomUtils.between(radius, l - radius));
+            newParticle.setSpeed(RandomUtils.between(minSpeed, maxSpeed), RandomUtils.between(minSpeed, maxSpeed));
             boolean overlap = true;
             while(overlap) {
                 overlap = false;
@@ -555,6 +557,22 @@ public class ParticleSystem implements PlainWritable {
         for (Particle particle : getParticles()) {
             particle.move(deltaT);
         }
+    }
+
+    public double getPromSpeedX(){
+        double totalSpeedX = 0;
+        for(Particle particle : getParticles()){
+            totalSpeedX += particle.getSpeedX();
+        }
+        return totalSpeedX / particles.size();
+    }
+
+    public double getPromSpeedY(){
+        double totalSpeedY = 0;
+        for(Particle particle : getParticles()){
+            totalSpeedY += particle.getSpeedY();
+        }
+        return totalSpeedY / particles.size();
     }
 
 }
