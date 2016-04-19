@@ -229,7 +229,7 @@ public void simulate(double time, double frameRate){
 100&4 seg\\
 250&1 min 12 seg\\
 500&18 min\\
-1000&?\\
+1000&6hs 12 min\\
 \end{tabular}
 }
 \caption{Tiempo promedio para el cálculo de la simulación para distintos valores de $N$.}
@@ -257,11 +257,12 @@ public void simulate(double time, double frameRate){
            max width=\textwidth}{
 \begin{tabular}{cc}
 \hline
-\textbf{$N$} & \textbf{$f (colisiones/s)$}\\ \hline
+\textbf{$N$} & \textbf{$f \frac{colisiones}{s}$}\\ \hline
 10&0,76\\
 100&5,25\\
 250&22,33\\
 500&86,3\\
+1000&466,75\\
 \end{tabular}
 }
 \caption{Frecuencia de colisiones para distintos valores de $N$.}
@@ -274,8 +275,8 @@ public void simulate(double time, double frameRate){
 \framesubtitle{Gráfico de la distribución de velocidades}
 \begin{figure}[H]
         \centering
-        \includegraphics[width=0.75\textheight]{example-image-b}
-        \caption{Gráfico de la distribución de velocidades en el último tercio de la simulación}
+        \includegraphics[width=\textwidth]{graphs/velocities.png}
+        \caption{Gráfico de la distribución de velocidades}
 \end{figure}
 \end{frame}
 
@@ -306,6 +307,15 @@ public void simulate(double time, double frameRate){
 \begin{figure}[H]
 	\centering
 	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-500-}{0000}{0200}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Animación de la simulación para $N = 1000$}
+\begin{figure}[H]
+	\centering
+	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer1000-}{0000}{0200}
 \end{figure}
 \end{frame}
 
