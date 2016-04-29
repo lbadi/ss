@@ -1,12 +1,10 @@
 package model;
 
-/**
- * Created by nicolas on 27/04/16.
- */
 public class Oscilator {
-    private static double mass;
-    private static double k;
-    private static double gamma;
+
+    private double mass;
+    private double k;
+    private double gamma;
     private double acceleration;
     private double position;
     private double speed;
@@ -20,15 +18,15 @@ public class Oscilator {
         this.acceleration = (-k*position - gamma * speed) / mass;
     }
 
-    public static double getMass() {
+    public double getMass() {
         return mass;
     }
 
-    public static double getK() {
+    public double getK() {
         return k;
     }
 
-    public static double getGamma() {
+    public double getGamma() {
         return gamma;
     }
 
@@ -56,7 +54,7 @@ public class Oscilator {
         this.speed = speed;
     }
 
-    public double getAnaliticPosition(double t){
+    public double getAnalyticPosition(double t){
         return Math.exp(-(gamma/(2*mass))*t) * Math.cos(Math.sqrt((k/mass)-(Math.pow(gamma, 2)/(4*Math.pow(mass, 2))) )*t);
     }
 
@@ -81,6 +79,5 @@ public class Oscilator {
     private void updateAcceleration(){
         acceleration = (-k*position - gamma * speed) / mass;
     }
-
 
 }
