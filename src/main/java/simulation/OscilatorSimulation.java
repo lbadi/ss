@@ -56,4 +56,18 @@ public class OscilatorSimulation {
         }
     }
 
+    public void simulateGear(double time, double deltaT, FileWriter fileWriter) throws IOException {
+        double simTime = 0;
+        Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        oscilator.makeEulerStep(deltaT);
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        simTime += deltaT;
+        while (simTime < time) {
+            oscilator.makeGearStep(deltaT);
+            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getR0()) + "\n");
+            simTime += deltaT;
+        }
+    }
+
 }

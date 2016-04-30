@@ -16,10 +16,12 @@ public class OscilatorTest {
     private static FileWriter analyticWriter;
     private static FileWriter beemanWriter;
     private static FileWriter velretWriter;
+    private static FileWriter gearWriter;
 
     private static final String ANALYTIC_FILENAME = "analytic.csv";
     private static final String BEEMAN_FILENAME = "beeman.csv";
     private static final String VELRET_FILENAME = "velret.csv";
+    private static final String GEAR_FILENAME = "gear.csv";
     private static final String OUTPUT_PATH = "src/test/resources/output/";
 
     private static final double T = 5;
@@ -30,6 +32,7 @@ public class OscilatorTest {
         analyticWriter = initFileWriter(OUTPUT_PATH + ANALYTIC_FILENAME);
         beemanWriter = initFileWriter(OUTPUT_PATH + BEEMAN_FILENAME);
         velretWriter = initFileWriter(OUTPUT_PATH + VELRET_FILENAME);
+        gearWriter = initFileWriter(OUTPUT_PATH + GEAR_FILENAME);
     }
 
     @Before
@@ -52,6 +55,11 @@ public class OscilatorTest {
         oscilatorSimulation.simulateVelocityVelret(T, DELTA_T, velretWriter);
     }
 
+    @Test
+    public void gearTest() throws IOException {
+        oscilatorSimulation.simulateGear(T, DELTA_T, gearWriter);
+    }
+
     @AfterClass
     public static void closeCSV() throws IOException {
         beemanWriter.flush();
@@ -60,6 +68,8 @@ public class OscilatorTest {
         velretWriter.close();
         analyticWriter.flush();
         analyticWriter.close();
+        gearWriter.flush();
+        gearWriter.close();
     }
 
     public static FileWriter initFileWriter(String fileName) throws IOException {
