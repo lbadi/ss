@@ -17,41 +17,42 @@ public class OscilatorSimulation {
 
     private DecimalFormat df = new PrintFormatter().getDf();
 
-    public void simulateVelret(double time, double deltaT, FileWriter fileWriter) throws IOException {
+    public void simulateVelocityVelret(double time, double deltaT, FileWriter fileWriter) throws IOException {
+        double simTime = 0;
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
-        fileWriter.write(df.format(time) + "," + df.format(oscilator.getPosition()) + "\n");
-        double previousPosition = oscilator.getPosition();
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         oscilator.makeEulerStep(deltaT);
-        fileWriter.write(df.format(time) + "," + df.format(oscilator.getPosition()) + "\n");
-        time -= deltaT;
-        while (time >= 0) {
-            oscilator.makeVerletStep(deltaT, previousPosition);
-            previousPosition = oscilator.getPosition();
-            fileWriter.write(df.format(time) + "," + df.format(oscilator.getPosition()) + "\n");
-            time -= deltaT;
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        simTime += deltaT;
+        while (simTime < time) {
+            oscilator.makeVelocityVerletStep(deltaT);
+            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+            simTime += deltaT;
         }
     }
 
     public void simulateBeeman(double time, double deltaT, FileWriter fileWriter) throws IOException {
+        double simTime = 0;
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
-        fileWriter.write(df.format(time) + "," + df.format(oscilator.getPosition()) + "\n");
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         double previousAcceleration = oscilator.getAcceleration();
         oscilator.makeEulerStep(deltaT);
-        fileWriter.write(df.format(time) + "," + df.format(oscilator.getPosition()) + "\n");
-        time -= deltaT;
-        while (time >= 0) {
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        simTime += deltaT;
+        while (simTime < time) {
             oscilator.makeBeemanStep(deltaT, previousAcceleration);
             previousAcceleration = oscilator.getAcceleration();
-            fileWriter.write(df.format(time) + "," + df.format(oscilator.getPosition()) + "\n");
-            time -= deltaT;
+            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+            simTime += deltaT;
         }
     }
 
     public void simulateAnalytic(double time, double deltaT, FileWriter fileWriter) throws IOException {
+        double simTime = 0;
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
-        while (time >= 0) {
-            fileWriter.write(df.format(time) + "," + df.format(oscilator.getAnalyticPosition(time)) + "\n");
-            time -= deltaT;
+        while (simTime < time) {
+            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getAnalyticPosition(simTime)) + "\n");
+            simTime += deltaT;
         }
     }
 

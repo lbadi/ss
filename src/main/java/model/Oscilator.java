@@ -64,20 +64,20 @@ public class Oscilator {
         updateAcceleration();
     }
 
-    public void makeVerletStep(double t, double previousPosition){
-        position = 2 * position - previousPosition + Math.pow(t,2) * acceleration;
-        speed = (position - previousPosition) / (2*t);
+    public void makeVelocityVerletStep(double t){
+        position = position + (t * speed) + (Math.pow(t, 2) * acceleration);
+        speed = (speed + (t / 2) * (acceleration  - (k * position / mass))) / (1 + ((gamma * t) / (2 * mass)));
         updateAcceleration();
     }
 
     public void makeBeemanStep(double t, double previousAcceleration){
-        position = position + speed * t + (2/3.0) * acceleration * Math.pow(t,2) - (1/6.0) * previousAcceleration * Math.pow(t,2);
-        speed = (speed - (k*t*position) / (3*mass) + (5/6.0)*acceleration*t - (1/6.0)*previousAcceleration*t) / (1 + (gamma*t)/(3*mass));
+        position = position + (speed * t) + ((2.0/3) * acceleration * Math.pow(t,2)) - ((1.0/6) * previousAcceleration * Math.pow(t,2));
+        speed = (speed - ((k*position*t)/(3*mass)) + ((5.0/6)*acceleration*t) - ((1.0/6)*previousAcceleration*t)) / (1 + ((gamma*t) / (3*mass)));
         updateAcceleration();
     }
 
     private void updateAcceleration(){
-        acceleration = (-k*position - gamma * speed) / mass;
+        acceleration = (-k * position - gamma * speed) / mass;
     }
 
 }

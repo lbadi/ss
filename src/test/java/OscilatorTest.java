@@ -22,8 +22,8 @@ public class OscilatorTest {
     private static final String VELRET_FILENAME = "velret.csv";
     private static final String OUTPUT_PATH = "src/test/resources/output/";
 
-    private static final double T = 10;
-    private static final double DELTA_T = 0.05;
+    private static final double T = 5;
+    private static final double DELTA_T = 0.01;
 
     @BeforeClass
     public static void setUpCSV() throws IOException {
@@ -49,7 +49,7 @@ public class OscilatorTest {
 
     @Test
     public void velretTest() throws IOException {
-        oscilatorSimulation.simulateVelret(T, DELTA_T, velretWriter);
+        oscilatorSimulation.simulateVelocityVelret(T, DELTA_T, velretWriter);
     }
 
     @AfterClass
