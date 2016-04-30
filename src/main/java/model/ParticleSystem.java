@@ -26,7 +26,7 @@ public class ParticleSystem implements PlainWritable {
 
     private List<Particle>[][] neighbourhood;
 
-    private NumberFormat df = new PrintFormatter().getDf();
+    public NumberFormat df = new PrintFormatter().getDf();
 
     public Particle colParticle1;
     public Particle colParticle2;
@@ -212,7 +212,7 @@ public class ParticleSystem implements PlainWritable {
         return this;
     }
 
-    public long getN() {
+    public long getNgetN() {
         return particles.size();
     }
 
@@ -353,7 +353,7 @@ public class ParticleSystem implements PlainWritable {
         writer.write(sb.toString());
     }
 
-    private void writeCorners(StringBuilder sb){
+    public void writeCorners(StringBuilder sb){
         sb.append(0 + "\t" + 0 + "\t" + 0.01 + "\t");
         sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
         sb.append("\n");
@@ -584,5 +584,10 @@ public class ParticleSystem implements PlainWritable {
             particle.setX(particle.getX() + particle.getSpeedX() * t);
             particle.setY(particle.getY() + particle.getSpeedY() * t);
         }
+    }
+
+
+    public int getN(){
+        return particles.size();
     }
 }

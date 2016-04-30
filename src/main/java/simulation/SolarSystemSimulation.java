@@ -1,5 +1,6 @@
 package simulation;
 
+import model.Particle;
 import model.ParticleSystem;
 import model.SolarSystem;
 
@@ -16,8 +17,8 @@ public class SolarSystemSimulation {
     PrintWriter writer;
 
 
-    public SolarSystemSimulation(long planetQuantity, double angularMomentum, String fileName) throws IOException{
-        solarSystem = new SolarSystem(planetQuantity,angularMomentum);
+    public SolarSystemSimulation(long planetQuantity, double angularMomentum, String fileName, long l) throws IOException{
+        solarSystem = new SolarSystem(planetQuantity,angularMomentum,l);
 
         try {
             Files.deleteIfExists(Paths.get(fileName));
@@ -35,17 +36,21 @@ public class SolarSystemSimulation {
      * @param t total time of simulation
      */
     public void simulate(int k, double dt, int t){
-        solarSystem.writeFrameWithDirection(writer, 1, 0);
+        solarSystem.writeFrameWithDirection(writer, 0);
         int framesWrited = 1;
         double totalTimeSimulated = 0;
         while(totalTimeSimulated < t){
             for(int i=0 ; i<k; i++){
                 solarSystem.move(dt);
+                //Detect collisions
+                //Refresh particle position in neighbourhood
+                solarSystem.refreshSystem(solarSystem.getParticles());
+                solarSystem.populateNeighbourhood();
+                solarSystem.collidePlanets();
                 totalTimeSimulated+=dt;
-                System.out.println(totalTimeSimulated);
+                System.out.println("Tiempo simulado : " + totalTimeSimulated);
             }
-            solarSystem.writeFrameWithDirection(writer,1,framesWrited++);
-            writer.flush();
+            solarSystem.writeFrameWithDirection(writer,framesWrited++);
         }
         writer.flush();
         writer.close();

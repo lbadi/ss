@@ -16,12 +16,12 @@ public class SolarSystemTest {
     SolarSystemSimulation solarSystemSimulation;
     int id;
     int squareCount;
-    double interactionRadius;
-    boolean periodic;
-    double l;
-    long n;
-    double noise;
-    long frames;
+    int planetQuantity;
+    double angularMomentum;
+    int k;
+    double dt;
+    int t;
+    long l;
     String filename;
 
     private static FileWriter resultsWriter;
@@ -29,16 +29,17 @@ public class SolarSystemTest {
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
 
-    public SolarSystemTest(int id, int squareCount, double interactionRadius, boolean periodic,
-                         double l, long n, double noise, long frames, String filename){
+    public SolarSystemTest(int id,int planetQuantity, double angularMomentum, int k,
+                           double dt, int t, int squareCount,long l, String filename){
         this.id = id;
-        this.squareCount = squareCount;
-        this.interactionRadius = interactionRadius;
-        this .periodic = periodic;
+        this.planetQuantity = planetQuantity;
+        this.angularMomentum = angularMomentum;
+        this.k = k;
+        this.dt = dt;
+        this.t = t;
         this.l = l;
-        this.n = n;
-        this.noise = noise;
-        this.frames = frames;
+        this.squareCount = squareCount;
+
         this.filename = filename;
     }
 
@@ -46,74 +47,11 @@ public class SolarSystemTest {
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 /**
-                 * id, squareCount, interactionRadius, periodic, l, n, noise, frame
+                 * id, planetQuantity, angularMomentum, k, dt, t, squareCount, filename
                 */
 
+                {1, 20000, 100000, 1, 0.1, 10,10000,2*(long)Math.pow(11,4), "src/test/resources/output/solar.csv"},
 
-//                {1, 5, 0.5, false,10, 1000,0.3, 500, "src/test/resources/output/offLatice10-1000-0.3.txt"},
-//                {1, 5, 0.5, false,100, 100,0.3, 500, "src/test/resources/output/offLatice100-100-0.3.txt"},
-//                {1, 5, 0.5, false,1000, 100,0.3, 500, "src/test/resources/output/offLatice1000-100-0.3.txt"},
-//                {1, 5, 0.5, false,100, 10000,0.3, 500, "src/test/resources/output/offLatice100-10000-0.3.txt"}
-
-                {1, 2, 1, true,3.1, 40,0, 300, "src/test/resources/output/solar.csv"},
-//                {1, 2, 1, true,3.1, 40,0.5, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 2, 1, true,3.1, 40,1, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 2, 1, true,3.1, 40,1.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 2, 1, true,3.1, 40,2, 300, "src/test/resources/output/offLatice10-10-2.txt"},
-//                {1, 2, 1, true,3.1, 40,2.5, 300, "src/test/resources/output/offLatice10-10-2.5.txt"},
-//                {1, 2, 1, true,3.1, 40,3, 300, "src/test/resources/output/offLatice10-10-3.txt"},
-//                {1, 2, 1, true,3.1, 40,3.5, 300, "src/test/resources/output/offLatice10-10-3.5.txt"},
-//                {1, 2, 1, true,3.1, 40,4, 300, "src/test/resources/output/offLatice10-10-4.txt"},
-//                {1, 2, 1, true,3.1, 40,4.5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//                {1, 2, 1, true,3.1, 40,5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//
-//                {1, 4, 1, true,5, 100,0, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 4, 1, true,5, 100,0.5, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 4, 1, true,5, 100,1, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 4, 1, true,5, 100,1.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 4, 1, true,5, 100,2, 300, "src/test/resources/output/offLatice10-10-2.txt"},
-//                {1, 4, 1, true,5, 100,2.5, 300, "src/test/resources/output/offLatice10-10-2.5.txt"},
-//                {1, 4, 1, true,5, 100,3, 300, "src/test/resources/output/offLatice10-10-3.txt"},
-//                {1, 4, 1, true,5, 100,3.5, 300, "src/test/resources/output/offLatice10-10-3.5.txt"},
-//                {1, 4, 1, true,5, 100,4, 300, "src/test/resources/output/offLatice10-10-4.txt"},
-//                {1, 4, 1, true,5, 100,4.5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//                {1, 4, 1, true,5, 100,5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//
-//                {1, 8, 1, true,10, 400,0, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 8, 1, true,10, 400,0.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 8, 1, true,10, 400,1, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 8, 1, true,10, 400,1.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 8, 1, true,10, 400,2, 300, "src/test/resources/output/offLatice10-10-2.txt"},
-//                {1, 8, 1, true,10, 400,2.5, 300, "src/test/resources/output/offLatice10-10-2.5.txt"},
-//                {1, 8, 1, true,10, 400,3, 300, "src/test/resources/output/offLatice10-10-3.txt"},
-//                {1, 8, 1, true,10, 400,3.5, 300, "src/test/resources/output/offLatice10-10-3.5.txt"},
-//                {1, 8, 1, true,10, 400,4, 300, "src/test/resources/output/offLatice10-10-4.txt"},
-//                {1, 8, 1, true,10, 400,4.5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//                {1, 8, 1, true,10, 400,5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//
-//                {1, 28, 1, true,31.6, 4000,0, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 28, 1, true,31.6, 4000,0.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 28, 1, true,31.6, 4000,1, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 28, 1, true,31.6, 4000,1.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 28, 1, true,31.6, 4000,2, 300, "src/test/resources/output/offLatice10-10-2.txt"},
-//                {1, 28, 1, true,31.6, 4000,2.5, 300, "src/test/resources/output/offLatice10-10-2.5.txt"},
-//                {1, 28, 1, true,31.6, 4000,3, 300, "src/test/resources/output/offLatice10-10-3.txt"},
-//                {1, 28, 1, true,31.6, 4000,3.5, 300, "src/test/resources/output/offLatice10-10-3.5.txt"},
-//                {1, 28, 1, true,31.6, 4000,4, 300, "src/test/resources/output/offLatice10-10-4.txt"},
-//                {1, 28, 1, true,31.6, 4000,4.5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//                {1, 28, 1, true,31.6, 4000,5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//
-//                {1, 40, 1, true,50, 10000,0, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 40, 1, true,50, 10000,0.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 40, 1, true,50, 10000,1, 300, "src/test/resources/output/offLatice10-10-1.txt"},
-//                {1, 40, 1, true,50, 10000,1.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
-//                {1, 40, 1, true,50, 10000,2, 300, "src/test/resources/output/offLatice10-10-2.txt"},
-//                {1, 40, 1, true,50, 10000,2.5, 300, "src/test/resources/output/offLatice10-10-2.5.txt"},
-//                {1, 40, 1, true,50, 10000,3, 300, "src/test/resources/output/offLatice10-10-3.txt"},
-//                {1, 40, 1, true,50, 10000,3.5, 300, "src/test/resources/output/offLatice10-10-3.5.txt"},
-//                {1, 40, 1, true,50, 10000,4, 300, "src/test/resources/output/offLatice10-10-4.txt"},
-//                {1, 40, 1, true,50, 10000,4.5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
-//                {1, 40, 1, true,50, 10000,5, 300, "src/test/resources/output/offLatice10-10-4.5.txt"},
 
         });
     }
@@ -131,7 +69,7 @@ public class SolarSystemTest {
     @Before
     public void init(){
         try {
-            solarSystemSimulation = new SolarSystemSimulation(100,10000000000.0, filename);
+            solarSystemSimulation = new SolarSystemSimulation(planetQuantity,angularMomentum, filename,l);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -139,7 +77,7 @@ public class SolarSystemTest {
 
     @Test
     public void construct(){
-        solarSystemSimulation.simulate(1,0.1,10);
+        solarSystemSimulation.simulate(k,dt,t);
     }
 
     @After

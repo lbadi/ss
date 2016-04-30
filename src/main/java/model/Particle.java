@@ -29,6 +29,10 @@ public class Particle implements PlainWritable {
     private static AtomicLong counter = new AtomicLong();
     private long id;
 
+    private double angularMoment;
+
+    private boolean markToBeRemove = false;
+
     @Override
     public PlainWritable readObject(String plainObject) {
         Scanner scanner = new Scanner(plainObject);
@@ -177,10 +181,21 @@ public class Particle implements PlainWritable {
         double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2)) - particle.getRadius() - getRadius();
         return distance;
     }
+    public double distanceTo(Particle particle){
+        double distanceX  = Math.abs(particle.getX() - getX());
+        double distanceY = Math.abs(particle.getY() - getY());
+        double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2)) - particle.getRadius() - getRadius();
+        return distance;
+    }
 
     //Todo ARREGLAR POR QUE ESTA CALCULANDO MAL LA TANGENTE(Por ahi el angulo lo hace bien pero siempre en el mismo sentido)
     public double tangencialWith(Particle particle){
-        return (Math.atan2(Math.abs(particle.getY() - this.getY()), Math.abs(particle.getX() - this.getX())) + Math.PI/2) % (Math.PI * 2);
+        return (angleWith(particle) + Math.PI/2) % (Math.PI * 2);
+    }
+
+    //TODO Ver como hacer por que esta tomando solo un cuadrante(no hay que usar abs)
+    public double angleWith(Particle particle){
+        return Math.atan2(particle.getY() - this.getY(), particle.getX() - this.getX());
     }
 
     public void inverseDirection(){
@@ -281,5 +296,26 @@ public class Particle implements PlainWritable {
         this.speed = speed;
     }
 
+    public double getAngularMoment(Particle particle){
+        double distanceToPoint = distanceTo(particle);
+        double angularMoment = getMass() * getSpeed() * distanceToPoint * Math.sin(angleWith(particle));
+        return angularMoment;
+    }
 
+
+    public void setAngularMoment(double angularMoment) {
+        this.angularMoment = angularMoment;
+    }
+
+    public double getAngularMoment() {
+        return angularMoment;
+    }
+
+    public void markToBeRemove() {
+        markToBeRemove = true;
+    }
+
+    public boolean isMarkToBeRemove(){
+        return markToBeRemove;
+    }
 }
