@@ -62,9 +62,9 @@ public class CollisionSimulation {
                     lastTimeSaved = totalTime - time;
                 }
                 if(particleSystem.colParticle2 == null){
-                    particleSystem.collide(particleSystem.colParticle1,particleSystem.borderDirection);
+                    particleSystem.elasticCollide(particleSystem.colParticle1,particleSystem.borderDirection);
                 }else{
-                    particleSystem.collide(particleSystem.colParticle1,particleSystem.colParticle2);
+                    particleSystem.elasticCollide(particleSystem.colParticle1,particleSystem.colParticle2);
                 }
             }else{
                 particleSystem.moveSystem(frameRate - (accumulatedTime - timeToNextCollision));

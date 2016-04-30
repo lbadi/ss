@@ -2,6 +2,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import simulation.OffLatice;
+import simulation.SolarSystemSimulation;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,9 +11,9 @@ import java.util.Arrays;
 /**
  */
 @RunWith(value = Parameterized.class)
-public class OffLaticeTest {
+public class SolarSystemTest {
 
-    OffLatice offLatice;
+    SolarSystemSimulation solarSystemSimulation;
     int id;
     int squareCount;
     double interactionRadius;
@@ -28,7 +29,7 @@ public class OffLaticeTest {
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
 
-    public OffLaticeTest(int id, int squareCount, double interactionRadius, boolean periodic,
+    public SolarSystemTest(int id, int squareCount, double interactionRadius, boolean periodic,
                          double l, long n, double noise, long frames, String filename){
         this.id = id;
         this.squareCount = squareCount;
@@ -47,14 +48,14 @@ public class OffLaticeTest {
                 /**
                  * id, squareCount, interactionRadius, periodic, l, n, noise, frame
                 */
-        
+
 
 //                {1, 5, 0.5, false,10, 1000,0.3, 500, "src/test/resources/output/offLatice10-1000-0.3.txt"},
 //                {1, 5, 0.5, false,100, 100,0.3, 500, "src/test/resources/output/offLatice100-100-0.3.txt"},
 //                {1, 5, 0.5, false,1000, 100,0.3, 500, "src/test/resources/output/offLatice1000-100-0.3.txt"},
 //                {1, 5, 0.5, false,100, 10000,0.3, 500, "src/test/resources/output/offLatice100-10000-0.3.txt"}
 
-                {1, 2, 1, true,3.1, 40,0, 300, "src/test/resources/output/offLatice10-10-1.txt"},
+                {1, 2, 1, true,3.1, 40,0, 300, "src/test/resources/output/solar.csv"},
 //                {1, 2, 1, true,3.1, 40,0.5, 300, "src/test/resources/output/offLatice10-10-1.txt"},
 //                {1, 2, 1, true,3.1, 40,1, 300, "src/test/resources/output/offLatice10-10-1.txt"},
 //                {1, 2, 1, true,3.1, 40,1.5, 300, "src/test/resources/output/offLatice10-10-1.5.txt"},
@@ -130,7 +131,7 @@ public class OffLaticeTest {
     @Before
     public void init(){
         try {
-            offLatice = new OffLatice(squareCount,interactionRadius,periodic,l,n,noise, filename);
+            solarSystemSimulation = new SolarSystemSimulation(100,10000000000.0, filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -138,9 +139,7 @@ public class OffLaticeTest {
 
     @Test
     public void construct(){
-
-        offLatice.simulate(frames);
-
+        solarSystemSimulation.simulate(1,0.1,10);
     }
 
     @After
@@ -148,12 +147,12 @@ public class OffLaticeTest {
         /**
          * Agregado de resultados de cada sistema al CSV general.
          */
-        resultsWriter.append(Long.toString(offLatice.getParticleSystem().getN()));
-        resultsWriter.append(',');
-        resultsWriter.append(Double.toString(offLatice.getParticleSystem().getOrder()));
-        resultsWriter.append(',');
-        resultsWriter.append(Double.toString(offLatice.getNoise()));
-        resultsWriter.append('\n');
+//        resultsWriter.append(Long.toString(offLatice.getParticleSystem().getN()));
+//        resultsWriter.append(',');
+//        resultsWriter.append(Double.toString(offLatice.getParticleSystem().getOrder()));
+//        resultsWriter.append(',');
+//        resultsWriter.append(Double.toString(offLatice.getNoise()));
+//        resultsWriter.append('\n');
     }
 
     @AfterClass

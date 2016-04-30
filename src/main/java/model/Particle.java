@@ -3,6 +3,7 @@ package model;
 import util.PlainWritable;
 import util.RandomUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -105,6 +106,18 @@ public class Particle implements PlainWritable {
         setY(y);
         setRadius(radius);
     }
+    public Particle(double mass){
+        this();
+        this.setMass(mass);
+    }
+
+    public Particle(double radius, double color, double angle, double speed){
+        id = counter.incrementAndGet();
+        this.radius = radius;
+        this.color = color;
+        this.angle = angle;
+        this.speed = speed;
+    }
 
     public long getId() {
         return id;
@@ -152,7 +165,7 @@ public class Particle implements PlainWritable {
         return false;
     }
 
-    private double distanceTo(Particle particle, double l){
+    public double distanceTo(Particle particle, double l){
         double distanceX  = Math.abs(particle.getX() - getX());
         double distanceY = Math.abs(particle.getY() - getY());
         if(l - distanceX < distanceX){
@@ -163,6 +176,15 @@ public class Particle implements PlainWritable {
         }
         double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2)) - particle.getRadius() - getRadius();
         return distance;
+    }
+
+    //Todo ARREGLAR POR QUE ESTA CALCULANDO MAL LA TANGENTE(Por ahi el angulo lo hace bien pero siempre en el mismo sentido)
+    public double tangencialWith(Particle particle){
+        return (Math.atan2(Math.abs(particle.getY() - this.getY()), Math.abs(particle.getX() - this.getX())) + Math.PI/2) % (Math.PI * 2);
+    }
+
+    public void inverseDirection(){
+        setAngle((getAngle() + Math.PI) % (Math.PI * 2));
     }
 
     @Override
@@ -221,6 +243,14 @@ public class Particle implements PlainWritable {
         return sumAngle;
     }
 
+    public double getMass() {
+        return mass;
+    }
+
+    public void setMass(double mass) {
+        this.mass = mass;
+    }
+
     public double getSpeed() {
         return speed;
     }
@@ -241,9 +271,6 @@ public class Particle implements PlainWritable {
         setY(getY() + getSpeedY() * t);
     }
 
-    public double getMass() {
-        return mass;
-    }
 
     public void setSpeed(double vx, double vy){
         setSpeed(Math.sqrt(Math.pow(vx,2) + Math.pow(vy,2)));
@@ -254,7 +281,5 @@ public class Particle implements PlainWritable {
         this.speed = speed;
     }
 
-    public void setMass(double mass) {
-        this.mass = mass;
-    }
+
 }

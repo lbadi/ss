@@ -11,6 +11,7 @@ public class PrintFormatter {
     public PrintFormatter() {
         NumberFormat nf = NumberFormat.getNumberInstance(Locale.CANADA);
         df = (DecimalFormat)nf;
+        df.setGroupingSize(1000000);
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(1);
         df.setMaximumFractionDigits(5);
