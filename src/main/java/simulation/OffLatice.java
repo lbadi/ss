@@ -55,7 +55,11 @@ public class OffLatice {
                 double newAngle = particle.calculatePromAngle() + deltaAngle;
                 double newX = particle.getX() + particle.getSpeed() * Math.cos(particle.getAngle());
                 double newY = particle.getY() + particle.getSpeed() * Math.sin(particle.getAngle());
-                Particle newParticle = new Particle(particle.getRadius(), particle.getColor(), newAngle, particle.getSpeed());
+                Particle newParticle = new Particle();
+                newParticle.setRadius(particle.getRadius());
+                newParticle.setColor(particle.getColor());
+                newParticle.setAngle(newAngle);
+                newParticle.setSpeed(particle.getSpeed());
                 if(particleSystem.isInBorder(newX,newY)){
                     //Creo la nueva particula y la agrego al conjunto de nuevas particulas
                     //x>= l || x< 0 || y>=l || y<0
@@ -81,7 +85,7 @@ public class OffLatice {
             //Escribir el sistema de particulas en el instante i.
             //Es necesario ir escribiendo el archivo a medida que calculamos para ahorrar memoria y poder reutilizar
             // el sistema de particulas. Sino hay que guardarse N sistemas de particulas
-            particleSystem.writeFrameWithDirection(writer, 1, i);
+            particleSystem.writeFrameWithDirection(writer, i);
 
             //Crear el nuevo sistema en el instante i+1
             particleSystem.refreshSystem(particlesXn2);
