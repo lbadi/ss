@@ -25,14 +25,14 @@ public class OscilatorTest {
     private static final String OUTPUT_PATH = "src/test/resources/output/";
 
     private static final double T = 5;
-    private static final double DELTA_T = 0.01;
+    private static final double DELTA_T = 0.001;
 
     @BeforeClass
     public static void setUpCSV() throws IOException {
-        analyticWriter = initFileWriter(OUTPUT_PATH + ANALYTIC_FILENAME);
-        beemanWriter = initFileWriter(OUTPUT_PATH + BEEMAN_FILENAME);
-        velretWriter = initFileWriter(OUTPUT_PATH + VELRET_FILENAME);
-        gearWriter = initFileWriter(OUTPUT_PATH + GEAR_FILENAME);
+        analyticWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + ANALYTIC_FILENAME) ;
+        beemanWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + BEEMAN_FILENAME);
+        velretWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + VELRET_FILENAME);
+        gearWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + GEAR_FILENAME);
     }
 
     @Before

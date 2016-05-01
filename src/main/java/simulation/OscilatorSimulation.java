@@ -22,12 +22,12 @@ public class OscilatorSimulation {
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
         fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         oscilator.makeEulerStep(deltaT);
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         simTime += deltaT;
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         while (simTime < time) {
             oscilator.makeVelocityVerletStep(deltaT);
-            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
             simTime += deltaT;
+            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         }
     }
 
@@ -37,13 +37,13 @@ public class OscilatorSimulation {
         fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         double previousAcceleration = oscilator.getAcceleration();
         oscilator.makeEulerStep(deltaT);
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         simTime += deltaT;
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         while (simTime < time) {
             oscilator.makeBeemanStep(deltaT, previousAcceleration);
             previousAcceleration = oscilator.getAcceleration();
-            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
             simTime += deltaT;
+            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         }
     }
 
@@ -61,12 +61,12 @@ public class OscilatorSimulation {
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
         fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         oscilator.makeEulerStep(deltaT);
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         simTime += deltaT;
+        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
         while (simTime < time) {
             oscilator.makeGearStep(deltaT);
-            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getR0()) + "\n");
             simTime += deltaT;
+            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getR0()) + "\n");
         }
     }
 
