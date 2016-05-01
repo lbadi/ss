@@ -1,5 +1,6 @@
 package simulation;
 
+import model.Oscilator;
 import model.Particle;
 import model.ParticleSystem;
 import model.SolarSystem;
@@ -41,7 +42,13 @@ public class SolarSystemSimulation {
         double totalTimeSimulated = 0;
         while(totalTimeSimulated < t){
             for(int i=0 ; i<k; i++){
-                solarSystem.move(dt);
+                if(totalTimeSimulated == 0) {
+                    solarSystem.moveEuler(dt);
+                }
+                else{
+                    solarSystem.moveBeeman(dt);
+                }
+
                 //Detect collisions
                 //Refresh particle position in neighbourhood
                 solarSystem.refreshSystem(solarSystem.getParticles());

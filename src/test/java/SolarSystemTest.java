@@ -47,11 +47,11 @@ public class SolarSystemTest {
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 /**
-                 * id, planetQuantity, angularMomentum, k, dt, t, squareCount, filename
+                 * id, planetQuantity, angularMomentum, k, dt, t, squareCount, l, filename
                 */
 
-                {1, 20000, 100000, 1, 0.1, 10,10000,2*(long)Math.pow(11,4), "src/test/resources/output/solar.csv"},
-
+              //  {1, 10000, 100000, 1, 0.1, 10,10000,2*(long)Math.pow(11,4), "src/test/resources/output/solar.csv"},
+                {1, 10, 100000, 1, 0.1, 10,1,2000, "src/test/resources/output/solar.csv"},
 
         });
     }

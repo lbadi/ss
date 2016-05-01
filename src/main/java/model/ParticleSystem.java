@@ -586,7 +586,6 @@ public class ParticleSystem implements PlainWritable {
         }
     }
 
-
     public int getN(){
         return particles.size();
     }

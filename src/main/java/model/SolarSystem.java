@@ -3,8 +3,7 @@ package model;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -37,7 +36,7 @@ public class SolarSystem extends ParticleSystem{
 
         double planetInitialMass = SUN_MASS / planetsQuantity;
         List<Particle> celestialBodies = new ArrayList<>();
-        celestialBodies.add(sun);
+//        celestialBodies.add(sun);
         //Iniciar los planetas
         for(long i=0; i<planetsQuantity ; i++){
             Particle planet = new Particle(planetInitialMass);
@@ -117,7 +116,7 @@ public class SolarSystem extends ParticleSystem{
 
     public void writeFrameWithDirection(PrintWriter writer, int timeStep){
         StringBuilder sb = new StringBuilder();
-        sb.append(getN() + 4).append("\n"); //El 4 es de los corners
+        sb.append(getN() + 5).append("\n"); //El 5 es de los corners + sol
         sb.append(timeStep).append("\n");
         writeCorners(sb);
 
@@ -126,7 +125,37 @@ public class SolarSystem extends ParticleSystem{
             sb.append(df.format((Math.cos(particle.getAngle())+1)/2) + "\t" + df.format((Math.sin(particle.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
             sb.append("\n");
         });
+
+        sb.append(df.format(sun.getX()) + "\t" + df.format(sun.getY()) + "\t" + df.format(sun.getRadius() * 10) + "\t");
+        sb.append(df.format((Math.cos(sun.getAngle())+1)/2) + "\t" + df.format((Math.sin(sun.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
+        sb.append("\n");
+
         writer.write(sb.toString());
     }
 
+    public void moveEuler(double t){
+        for(Particle particle : getParticles()){
+            Vector acceleration = new Vector(gravityForce(particle)/particle.getMass(), particle.angleWith(sun));
+            particle.makeEulerStep(t, acceleration.getModule(), acceleration.getAngle());
+        }
+    }
+
+    public void moveBeeman(double t){
+        for(Particle particle : getParticles()){
+            Vector acceleration = new Vector(gravityForce(particle)/particle.getMass(), particle.angleWith(sun));
+            particle.makeBeemanStep(t, acceleration, sun);
+        }
+    }
+
+    public double gravityForce(Particle particle){
+        return (CONST_GRAVITY * SUN_MASS * particle.getMass()) / particle.distanceTo(sun);
+    }
+
+    public static double getConstGravity() {
+        return CONST_GRAVITY;
+    }
+
+    public static double getSunMass() {
+        return SUN_MASS;
+    }
 }
