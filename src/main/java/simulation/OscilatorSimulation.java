@@ -17,33 +17,39 @@ public class OscilatorSimulation {
 
     private DecimalFormat df = new PrintFormatter().getDf();
 
-    public void simulateVelocityVelret(double time, double deltaT, FileWriter fileWriter) throws IOException {
+    public void simulateVelocityVelret(double time, double deltaT, FileWriter resultWriter, FileWriter errorWriter) throws IOException {
         double simTime = 0;
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         oscilator.makeEulerStep(deltaT);
         simTime += deltaT;
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         while (simTime < time) {
             oscilator.makeVelocityVerletStep(deltaT);
             simTime += deltaT;
-            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+            resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+            errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         }
     }
 
-    public void simulateBeeman(double time, double deltaT, FileWriter fileWriter) throws IOException {
+    public void simulateBeeman(double time, double deltaT, FileWriter resultWriter, FileWriter errorWriter) throws IOException {
         double simTime = 0;
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         double previousAcceleration = oscilator.getAcceleration();
         oscilator.makeEulerStep(deltaT);
         simTime += deltaT;
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         while (simTime < time) {
             oscilator.makeBeemanStep(deltaT, previousAcceleration);
             previousAcceleration = oscilator.getAcceleration();
             simTime += deltaT;
-            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+            resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+            errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         }
     }
 
@@ -56,17 +62,20 @@ public class OscilatorSimulation {
         }
     }
 
-    public void simulateGear(double time, double deltaT, FileWriter fileWriter) throws IOException {
+    public void simulateGear(double time, double deltaT, FileWriter resultWriter, FileWriter errorWriter) throws IOException {
         double simTime = 0;
         Oscilator oscilator = new Oscilator(M, Math.pow(K_BASE, K_EXP), GAMMA, INITIAL_POS);
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         oscilator.makeEulerStep(deltaT);
         simTime += deltaT;
-        fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getPosition()) + "\n");
+        errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(simTime)) + "\n");
         while (simTime < time) {
             oscilator.makeGearStep(deltaT);
             simTime += deltaT;
-            fileWriter.write(df.format(simTime) + "," + df.format(oscilator.getR0()) + "\n");
+            resultWriter.write(df.format(simTime) + "," + df.format(oscilator.getR0()) + "\n");
+            errorWriter.write(df.format(simTime) + "," + df.format(oscilator.getError(oscilator.getR0(),simTime)) + "\n");
         }
     }
 

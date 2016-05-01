@@ -129,4 +129,15 @@ public class Oscilator {
         return r[0];
     }
 
+    /**
+     * Obtiene el error comparándolo con la posición analítica.
+     */
+    public double getError(double position, double t) {
+        return Math.pow(position - getAnalyticPosition(t),2);
+    }
+
+    public double getError(double t) {
+        return getError(position, t);
+    }
+
 }

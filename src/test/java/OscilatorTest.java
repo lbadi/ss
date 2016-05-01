@@ -17,22 +17,37 @@ public class OscilatorTest {
     private static FileWriter beemanWriter;
     private static FileWriter velretWriter;
     private static FileWriter gearWriter;
+    private static FileWriter beemanErrorWriter;
+    private static FileWriter velretErrorWriter;
+    private static FileWriter gearErrorWriter;
 
     private static final String ANALYTIC_FILENAME = "analytic.csv";
     private static final String BEEMAN_FILENAME = "beeman.csv";
     private static final String VELRET_FILENAME = "velret.csv";
     private static final String GEAR_FILENAME = "gear.csv";
+
+    private static final String BEEMAN_ERROR_FILENAME = "E-beeman.csv";
+    private static final String VELRET_ERROR_FILENAME = "E-velret.csv";
+    private static final String GEAR_ERROR_FILENAME = "E-gear.csv";
+
     private static final String OUTPUT_PATH = "src/test/resources/output/";
 
     private static final double T = 5;
-    private static final double DELTA_T = 0.001;
+    private static final double DELTA_T = 0.0001;
 
     @BeforeClass
     public static void setUpCSV() throws IOException {
-        analyticWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + ANALYTIC_FILENAME) ;
-        beemanWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + BEEMAN_FILENAME);
-        velretWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + VELRET_FILENAME);
-        gearWriter = initFileWriter(OUTPUT_PATH + DELTA_T + '-' + T + '-' + GEAR_FILENAME);
+        analyticWriter = initFileWriter(getFileNamePath(ANALYTIC_FILENAME));
+        beemanWriter = initFileWriter(getFileNamePath(BEEMAN_FILENAME));
+        velretWriter = initFileWriter(getFileNamePath(VELRET_FILENAME));
+        gearWriter = initFileWriter(getFileNamePath(GEAR_FILENAME));
+        beemanErrorWriter = initFileWriter(getFileNamePath(BEEMAN_ERROR_FILENAME));
+        velretErrorWriter = initFileWriter(getFileNamePath(VELRET_ERROR_FILENAME));
+        gearErrorWriter = initFileWriter(getFileNamePath(GEAR_ERROR_FILENAME));
+    }
+
+    private static String getFileNamePath(String fileName) {
+        return OUTPUT_PATH + DELTA_T + '-' + T + '-' + fileName;
     }
 
     @Before
@@ -47,17 +62,17 @@ public class OscilatorTest {
 
     @Test
     public void beemanTest() throws IOException {
-        oscilatorSimulation.simulateBeeman(T, DELTA_T, beemanWriter);
+        oscilatorSimulation.simulateBeeman(T, DELTA_T, beemanWriter, beemanErrorWriter);
     }
 
     @Test
     public void velretTest() throws IOException {
-        oscilatorSimulation.simulateVelocityVelret(T, DELTA_T, velretWriter);
+        oscilatorSimulation.simulateVelocityVelret(T, DELTA_T, velretWriter, velretErrorWriter);
     }
 
     @Test
     public void gearTest() throws IOException {
-        oscilatorSimulation.simulateGear(T, DELTA_T, gearWriter);
+        oscilatorSimulation.simulateGear(T, DELTA_T, gearWriter, gearErrorWriter);
     }
 
     @AfterClass
@@ -70,6 +85,12 @@ public class OscilatorTest {
         analyticWriter.close();
         gearWriter.flush();
         gearWriter.close();
+        beemanErrorWriter.flush();
+        beemanErrorWriter.close();
+        velretErrorWriter.flush();
+        velretErrorWriter.close();
+        gearErrorWriter.flush();
+        gearErrorWriter.close();
     }
 
     public static FileWriter initFileWriter(String fileName) throws IOException {
