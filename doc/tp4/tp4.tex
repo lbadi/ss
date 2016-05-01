@@ -78,32 +78,37 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \frametitle{Fundamentos}
 \framesubtitle{Introducción}
 \begin{itemize}
-	\item Lorem
-	\item Ipsum
-	\item Dolor
+	\item Vamos a comparar los errores cometidos por distintos sistemas de integración
+	\item Oscilador amortiguado: Sistema con sólo una partícula puntual cuya solución analítica es conocida
+	\item Se implementaron:
+	\begin{itemize}
+		\item \textit{Beeman}
+		\item \textit{Velocity Verlet}
+		\item \textit{Gear Predictor Corrector de orden 5}
+	\end{itemize}
 \end{itemize}
 \end{frame}
 
 \subsection{Variables relevantes}
 
-%\begin{frame}
-%\frametitle{Fundamentos}
-%\framesubtitle{Variables relevantes}
-%\begin{itemize}
-%	\item $N$ : número de partículas
-%	\item Dominio cuadrado de $0.5 m$ de lado
-%	\item \textbf{$N$ partículas pequeñas}
-%	\begin{itemize}
-%		\item $R_{1} = 0.005 m$
-%		\item $m_{1} = 1 kg$
-%	\end{itemize}
-%	\item \textbf{Una partícula grande}
-%	\begin{itemize}
-%		\item $R_{2} = 0.05 m$
-%		\item $m_{2} = 100 kg$
-%	\end{itemize}
-%\end{itemize}
-%\end{frame}
+\begin{frame}
+\frametitle{Fundamentos}
+\framesubtitle{Variables relevantes del oscilador}
+\begin{itemize}
+\item Parámetros
+	\begin{itemize}
+		\item $m = 70$
+		\item $k = 10000$
+		\item $\gamma = 100$
+		\item $t_{f} = 5$ 
+	\end{itemize}
+\item Condiciones iniciales
+	\begin{itemize}
+		\item $r(t=0) = 1$
+		\item $v(t=0) = -\frac{2\gamma}{m}$
+	\end{itemize}
+\end{itemize}
+\end{frame}
 
 \section{Implementación}
 
@@ -153,17 +158,17 @@ void simulateGear(double time, double deltaT) {
 \end{lstlisting}
 \end{frame}
 
-%\begin{frame}
-%\frametitle{Implementación}
-%\framesubtitle{Problemas encontrados}
-%\begin{itemize}
-%\item Precisión del \texttt{double}: Al colisionar con bordes obtuvimos \texttt{timeToNextCollision} negativos
-%\item Utilización de una heurística: Cell Index Method resultó muy costoso, aumentando el tiempo necesario para la simulación con los valores de $N$ probados.
-%\end{itemize}
-%\end{frame}
+\begin{frame}
+\frametitle{Implementación}
+\framesubtitle{Detalles de precisión}
+\begin{itemize}
+	\item Todas las operaciones se realizan en \texttt{double}
+	\item Se utilizan cinco cifras decimales como \texttt{output} en los archivos de salida de resultados y errores.
+\end{itemize}
+\end{frame}
 
-\subsection{Visualización}
-
+%\subsection{Visualización}
+%
 %\begin{frame}
 %\frametitle{Implementación}
 %\framesubtitle{Visualización}
@@ -183,33 +188,37 @@ void simulateGear(double time, double deltaT) {
 
 \subsection{Tablas y Gráficos}
 
-%\begin{frame}
-%\frametitle{Resultados}
-%\framesubtitle{Tiempo promedio para el cálculo de la simulación para distintos valores de $N$}
-%\begin{center}
-%\begin{table}[h]
-%\centering
-%\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
-%           max width=\textwidth}{
-%\begin{tabular}{cc}
-%\hline
-%\textbf{$N$} & \textbf{$t$}\\ \hline
-%10&342 ms\\
-%100&4 seg\\
-%250&1 min 12 seg\\
-%500&18 min\\
-%1000&6hs 12 min\\
-%\end{tabular}
-%}
-%\caption{Tiempo promedio para el cálculo de la simulación para distintos valores de $N$.}
-%\end{table}
-%\end{center}
-%\end{frame}
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Error total normalizado por el número total de pasos para distintos valores de $\Delta t$}
+\begin{center}
+\begin{table}[h]
+\centering
+\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
+           max width=\textwidth}{
+\begin{tabular}{ccc}
+\hline
+\textbf{$\Delta t$} & \textbf{Método} & \textbf{$E$}\\ \hline
+0.01&\textit{Beeman}&?\\
+0.01&\textit{Verlet}&?\\
+0.01&\textit{Gear}&?\\
+0.001&\textit{Beeman}&?\\
+0.001&\textit{Verlet}&?\\
+0.001&\textit{Gear}&?\\
+0.0001&\textit{Beeman}&?\\
+0.0001&\textit{Verlet}&?\\
+0.0001&\textit{Gear}&?\\
+\end{tabular}
+}
+\caption{Suma de las diferencias al cuadrado para todos los pasos temporales normalizado por el número total de pasos}
+\end{table}
+\end{center}
+\end{frame}
 
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Gráfico de $x(t)$ para el oscilador amortiguado con $\Delta t = 0.01$}
+\framesubtitle{Gráfico de $x(t)$ para el oscilador puntual amortiguado con $\Delta t = 0.01$}
 \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{{images/0.01}.png}
@@ -220,7 +229,7 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Gráfico de $x(t)$ para el oscilador amortiguado con $\Delta t = 0.001$}
+\framesubtitle{Gráfico de $x(t)$ para el oscilador puntual amortiguado con $\Delta t = 0.001$}
 \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{{images/0.001}.png}
@@ -231,7 +240,7 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Gráfico de $E$ para el oscilador amortiguado con $\Delta t = 0.01$}
+\framesubtitle{Gráfico de $E$ para el oscilador puntual amortiguado con $\Delta t = 0.01$}
 \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{{images/Error-0.01}.png}
@@ -242,7 +251,7 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Gráfico de $E$ para el oscilador amortiguado con $\Delta t = 0.001$}
+\framesubtitle{Gráfico de $E$ para el oscilador puntual amortiguado con $\Delta t = 0.001$}
 \begin{figure}[H]
         \centering
         \includegraphics[width=\textwidth]{{images/Error-0.001}.png}
@@ -282,16 +291,16 @@ void simulateGear(double time, double deltaT) {
 
 \subsection{Conclusiones}
 
-%\begin{frame}
-%\frametitle{Conclusiones}
-%\begin{itemize}
-%	\item Aumentando la energía cinética se puede simular un aumento en la temperatura. $K = n R T$
-%	\item Con $N = 1000$ el comportamiento se asemeja a un material viscoso, existiendo un límite definido por las dimensiones del dominio.
-%	\item A mayor $N$ la partícula grande se desplaza menos.
-%	\item Aumentando la velocidad de las partículas, aumentan la frecuencia de colisión y el tiempo de procesamiento.
-%	\item El sistema no se estabiliza ya que todas las fuerzas son conservativas.
-%\end{itemize}
-%\end{frame}
+\begin{frame}
+\frametitle{Conclusiones}
+\begin{itemize}
+	\item Con un $\Delta t = 0.001$ obtuvimos resultados con errores muy bajos para los tres métodos.	
+	\item \textit{Gear Predictor-Corrector} es el que dio peores resultados para el caso puntual.
+	\item Para una cantidad de pasos baja ($\Delta t = 0.001$), el error de \textit{Gear Predictor-Corrector} aumenta, simulando un oscilador que no disipa energía.
+	\item Las diferencias de los errores entre \textit{Beeman} y \textit{Velocity Verlet} son menores.
+	\item \textbf{El esquema de integración que resulta mejor para este sistema es ?}.
+	\end{itemize}	
+\end{frame}
 
 \begin{frame}[plain,c]
 \begin{center}
