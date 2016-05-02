@@ -199,15 +199,15 @@ void simulateGear(double time, double deltaT) {
 \begin{tabular}{ccc}
 \hline
 \textbf{$\Delta t$} & \textbf{Método} & \textbf{$E$}\\ \hline
-0.01&\textit{Beeman}&?\\
-0.01&\textit{Verlet}&?\\
-0.01&\textit{Gear}&?\\
-0.001&\textit{Beeman}&?\\
-0.001&\textit{Verlet}&?\\
-0.001&\textit{Gear}&?\\
-0.0001&\textit{Beeman}&?\\
-0.0001&\textit{Verlet}&?\\
-0.0001&\textit{Gear}&?\\
+0.01&\textit{Beeman}&0,00471\\
+0.01&\textit{Verlet}&0,00663\\
+0.01&\textit{Gear}&0,33624\\
+0.001&\textit{Beeman}&0,00235\\
+0.001&\textit{Verlet}&0,00225\\
+\textbf{0.001}&\textbf{\textit{Gear}}&\textbf{-0,00199}\\
+0.0001&\textit{Beeman}&0,00225\\
+0.0001&\textit{Verlet}&0,00224\\
+0.0001&\textit{Gear}&0,00228\\
 \end{tabular}
 }
 \caption{Suma de las diferencias al cuadrado para todos los pasos temporales normalizado por el número total de pasos}
@@ -294,11 +294,10 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \frametitle{Conclusiones}
 \begin{itemize}
+	\item Para una cantidad de pasos baja (500 pasos, $\Delta t = 0.01$), el error de \textit{Gear Predictor-Corrector} aumenta, simulando un oscilador no amortiguado.
 	\item Con un $\Delta t = 0.001$ obtuvimos resultados con errores muy bajos para los tres métodos.	
-	\item \textit{Gear Predictor-Corrector} es el que dio peores resultados para el caso puntual.
-	\item Para una cantidad de pasos baja ($\Delta t = 0.001$), el error de \textit{Gear Predictor-Corrector} aumenta, simulando un oscilador que no disipa energía.
-	\item Las diferencias de los errores entre \textit{Beeman} y \textit{Velocity Verlet} son menores.
-	\item \textbf{El esquema de integración que resulta mejor para este sistema es ?}.
+	\item Con 50000 pasos ($\Delta t = 0.0001$), los tres métodos tienen un error que varía recíen en la quinta cifra decimal.
+	\item El esquema de integración que mejor resulta para este sistema es \textit{Gear Predictor-Corrector} para $\Delta t = 0.001$, es decir, 5000 pasos.
 	\end{itemize}	
 \end{frame}
 
