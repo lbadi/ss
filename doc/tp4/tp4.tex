@@ -1,10 +1,14 @@
 \documentclass[hyperref={pdfpagelayout=SinglePage}]{beamer}
+
+%Template
 \usetheme{Warsaw}
 \usecolortheme{default}
 \usefonttheme[onlymath]{serif}
+
+%Packages
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,activeacute]{babel}
-
+\usepackage{lipsum}
 \usepackage{graphicx}
 \usepackage{fancyhdr}
 \usepackage{float}
@@ -12,9 +16,11 @@
 \usepackage{subfigure}
 \usepackage{amsmath}
 \usepackage{ragged2e}
-
 \usepackage{color}
 \usepackage{listings}
+\usepackage{animate}
+
+%Code
 \lstset{ %
 basicstyle=\small,       % the size of the fonts that are used for the code
 numbers=none,                   % where to put the line-numbers
@@ -32,14 +38,20 @@ breaklines=true,        % sets automatic line breaking
 breakatwhitespace=false,    % sets if automatic breaks should only happen at whitespace
 escapeinside={\%*}{*)}          % if you want to add a comment within your code
 }
+
+%Captions
 \renewcommand{\lstlistingname}{Código}
 \renewcommand\spanishtablename{Tabla}
+\renewcommand{\figurename}{Gráfico}
+
+%More
+\makeatletter
+\@addtoreset{subfigure}{framenumber}
+\makeatother
 
 \expandafter\def\expandafter\insertshorttitle\expandafter{%
   \insertshorttitle\hfill%
   \insertframenumber\,/\,\inserttotalframenumber}
-
-\usepackage{animate}
 
 \newcommand\Wider[2][5em]{%
 \makebox[\linewidth][c]{%
@@ -49,27 +61,37 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
   }%
 }
 
+%List of parts
+\makeatletter
+\AtBeginPart{%
+    \addtocontents{parttoc}{\protect\beamer@partintoc{\the\c@part}{\beamer@partnameshort}{\the\c@page}}%
+    \frame{\partpage}%
+}
+\newcommand{\parttableofcontents}{\@starttoc{parttoc}}
+\newcommand{\beamer@partintoc}[3]{#2\par}
+\makeatother
+
+%Document Data
 \title{Dinámica Molecular regida por el paso temporal}
-\subtitle{Trabajo Practico Nro. 4}
+\subtitle{Trabajo Práctico Nro. 4}
 \author{Badi Leonel, Buchhalter Nicolás Demián y Meola Franco Román}
 \subject{Simulación de Sistemas}
 \date{\today}
 
-\makeatletter
-\@addtoreset{subfigure}{framenumber}
-\makeatother
-
 \begin{document}
 
-\renewcommand{\figurename}{Grafico}
-
-\begin{frame}[plain]
+\begin{frame}
     \frametitle{} 
     \titlepage
     \centering
 	Grupo 3
 \end{frame}
 
+%Part List
+\frame{\frametitle{Que vamos a ver}\parttableofcontents}
+    
+\part{Oscilador Puntual Amortiguado}
+    
 \section{Fundamentos}
 
 \subsection{Introducción}
@@ -93,7 +115,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \begin{frame}
 \frametitle{Fundamentos}
-\framesubtitle{Variables relevantes del oscilador}
+\framesubtitle{Variables relevantes}
 \begin{itemize}
 \item Parámetros
 	\begin{itemize}
@@ -112,31 +134,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \section{Implementación}
 
-\subsection{Generación de los agentes}
-
-%\begin{frame}
-%\frametitle{Implementación}
-%\framesubtitle{Generación de los agentes}
-%\begin{itemize}
-%	\item Posiciones $(x,y)$ aleatorias para todas las partículas evitando la superposición de las mismas
-%	\item $-0.1 \frac{m}{s} < v_{0} < 0.1 \frac{m}{s}$ en $x$ e $y$ para las partículas chicas
-%	\item $v_{0} = 0$ para la partícula grande
-%	\item Todas las paredes son rígidas
-%\end{itemize}
-%\end{frame}
-
 \subsection{Simulación}
-
-%\begin{frame}
-%\frametitle{Simulación}
-%\framesubtitle{Variables relevantes}
-%\begin{itemize}
-%	\item $dt$ intrínseco variable
-%	\item $dt2$ constante
-%	\item \texttt{time} : Tiempo en segundos a visualizar
-%	\item $dt2 =$ \texttt{frameRate} : Número de frames por segundo
-%\end{itemize}
-%\end{frame}
 
 \begin{frame}[fragile]
 \frametitle{Implementación}
@@ -167,26 +165,9 @@ void simulateGear(double time, double deltaT) {
 \end{itemize}
 \end{frame}
 
-%\subsection{Visualización}
-%
-%\begin{frame}
-%\frametitle{Implementación}
-%\framesubtitle{Visualización}
-%\begin{itemize}
-%	\item La simulación y la visualización son independientes
-%	\item El algoritmo de simulación escribe un archivo \texttt{.tsv} con los siguientes datos:
-%\begin{itemize}
-%\item $(x,y)$
-%\item $r$
-%\item Color RGB para indicar las velocidades, donde R es la componente en el eje Y y G es la componente en eje X
-%\end{itemize}
-%\item Por último, se carga en \texttt{Ovito} el archivo de salida\texttt{.tsv} para realizar la visualización
-%\end{itemize}
-%\end{frame}
-
 \section{Resultados}
 
-\subsection{Tablas y Gráficos}
+\subsection{Tablas}
 
 \begin{frame}
 \frametitle{Resultados}
@@ -214,6 +195,8 @@ void simulateGear(double time, double deltaT) {
 \end{table}
 \end{center}
 \end{frame}
+
+\subsection{Gráficos}
 
 \begin{frame}
 \Wider{
@@ -259,36 +242,6 @@ void simulateGear(double time, double deltaT) {
 }
 \end{frame}
 
-
-\subsection{Animaciones}
-
-%\begin{frame}
-%\frametitle{Resultados}
-%\framesubtitle{Animación de la simulación para $N = 100$}
-%\begin{figure}[H]
-%	\centering
-%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
-%\end{figure}
-%\end{frame}
-%
-%\begin{frame}
-%\frametitle{Resultados}
-%\framesubtitle{Animación de la simulación para $N = 500$}
-%\begin{figure}[H]
-%	\centering
-%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-500-}{0000}{0200}
-%\end{figure}
-%\end{frame}
-%
-%\begin{frame}
-%\frametitle{Resultados}
-%\framesubtitle{Animación de la simulación para $N = 1000$}
-%\begin{figure}[H]
-%	\centering
-%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer1000-}{0000}{0200}
-%\end{figure}
-%\end{frame}
-
 \subsection{Conclusiones}
 
 \begin{frame}
@@ -300,11 +253,213 @@ void simulateGear(double time, double deltaT) {
 	\item El esquema de integración que mejor resulta para este sistema es \textit{Gear Predictor-Corrector} para $\Delta t = 0.001$, es decir, 5000 pasos.
 	\end{itemize}	
 \end{frame}
+    
+\part{Formación del Sistema Solar}
+    
+\section{Fundamentos}
+
+\subsection{Introducción}
+
+\begin{frame}
+\frametitle{Fundamentos}
+\framesubtitle{Introducción}
+\begin{itemize}
+	\item Usando el esquema de integración de \textit{Beeman} vamos a simular el nacimiento del sistema solar.
+	\item Se simularán $N$ partículas que orbiten alrededor del Sol.
+	\item Las partículas se irán agrupando en planetas a medida que el sistema evolucione.
+\end{itemize}
+\end{frame}
+
+\subsection{Variables relevantes}
+
+\section{Implementación}
+
+\subsection{Generación de los agentes}
+
+\begin{frame}
+\frametitle{Implementación}
+\framesubtitle{Generación de los agentes}
+\begin{itemize}
+	\item Posiciones $(x,y)$ aleatorias para todas las partículas
+	\item $v_{0t}$ tal que todas las partículas tengan el mismo $L$
+	\item $v_{0n} = 0$.
+	\item Distancia al sol entre 10 a la 9 y 10 a la 10
+	\item Angulo respecto al Sol entre 0 y 2 pi
+\end{itemize}
+\end{frame}
+
+\subsection{Simulación}
+
+\begin{frame}
+\frametitle{Simulación}
+\framesubtitle{Variables relevantes}
+\begin{itemize}
+	\item $\Delta t$: cantidad de pasos.
+	\item $k$ relación entre cantidad de pasos simulados y visualizados.
+	\item \texttt{time}: Tiempo en segundos a visualizar
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Simulación}
+\framesubtitle{Detalles de implementación}
+\begin{itemize}
+	\item utilización del cell index method del tp anterior para calcular las colisiones de las partículas.
+	%TODO 
+	%\item Se modificó el cell index method para que soporte radios de interacción distintos para cada una de las particulas
+	\item Para las partículas que se alejen más de 2 x 10 a la 4 no las consideramos dentro del sistema.
+	\item Para simplificar, luego de la colisión de dos partículas, se obtiene una nueva con un radio correspondiente a la suma de los radios de las dos. 
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Simulación}
+\framesubtitle{Problemas encontrados}
+\begin{itemize}
+	\item Manejo numérico de grandes dimensiones.
+	\begin{itemize}
+		\item Para poder mantener en memoria números tan grandes, utilizando la precisión double .
+		\item Se normalizó la distancia por 10 a la 6
+		\item Se normalizó la masa por 10 a la 25
+	\end{itemize}
+	\item El radio de las partículas en comparación con las dimensiones del sistema solar era muy chico
+	\begin{itemize}
+			\item Dificultaba la visualización, sobre todo para una gran cantidad de partículas.
+			\item El radio de interacción es diferente al radio de visualización.
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\subsection{Visualización}
+
+\begin{frame}[fragile]
+\frametitle{Implementación}
+\framesubtitle{Cálculo Numérico}
+\begin{lstlisting}[language=Java, caption = Método de Gear Predictor Corrector.]
+void simulateGear(double time, double deltaT) {
+	double simTime = 0;
+    Oscilator oscilator = new Oscilator();
+	oscilator.writePositionAndError();
+    oscilator.makeEulerStep(deltaT);
+    simTime += deltaT;
+	oscilator.writePositionAndError();
+    while (simTime < time) {
+    	oscilator.makeGearStep(deltaT);
+        simTime += deltaT;
+		oscilator.writePositionAndError();
+    }
+}
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+\frametitle{Implementación}
+\framesubtitle{Visualización}
+\begin{itemize}
+	\item La simulación y la visualización son independientes
+	\item El algoritmo de simulación escribe un archivo \texttt{.tsv} con los siguientes datos:
+\begin{itemize}
+\item $(x,y)$
+\item $r$
+\item Color RGB para indicar las velocidades, donde R es la componente en el eje Y y G es la componente en eje X
+\end{itemize}
+\item Por último, se carga en \texttt{Ovito} el archivo de salida\texttt{.tsv} para realizar la visualización
+\end{itemize}
+\end{frame}
+
+
+\section{Resultados}
+
+\subsection{Gráficos}
+
+\begin{frame}
+\Wider{
+\frametitle{Resultados}
+\framesubtitle{Gráfico de las energías $U, K y E_{T}$ para la simulación de $N = 100$}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{example-image}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}
+\Wider{
+\frametitle{Resultados}
+\framesubtitle{Gráfico de las energías $U, K y E_{T}$ para la simulación de $N = 1000$}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{example-image}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}
+\Wider{
+\frametitle{Resultados}
+\framesubtitle{Gráfico de las energías $U, K y E_{T}$ para la simulación de $N = 10000$}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{example-image}
+\end{figure}
+}
+\end{frame}
+
+\subsection{Animaciones}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Animación de la simulación para $N = 100$}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textheight]{example-image}
+%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Animación de la simulación para $N = 1000$}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textheight]{example-image}
+%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Animación de la simulación para $N = 10000$}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textheight]{example-image}
+%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
+\end{figure}
+\end{frame}
+
+\begin{frame}
+\frametitle{Resultados}
+\framesubtitle{Animación de la simulación para $N = 50000$}
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.75\textheight]{example-image}
+%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
+\end{figure}
+\end{frame}
+
+\subsection{Conclusiones}
+
+\begin{frame}
+\frametitle{Conclusiones}
+\begin{itemize}
+	\item El paso temporal ($\Delta t$) óptimo para simular el sistema es ?.
+	\end{itemize}	
+\end{frame}
 
 \begin{frame}[plain,c]
 \begin{center}
 	\Huge Gracias
 \end{center}
 \end{frame}
-
+    
 \end{document}
