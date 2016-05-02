@@ -16,17 +16,22 @@ public class SolarSystemSimulation {
 
     private SolarSystem solarSystem;
     PrintWriter writer;
+    PrintWriter csvWriter;
 
 
-    public SolarSystemSimulation(long planetQuantity, double angularMomentum, String fileName, long l) throws IOException{
-        solarSystem = new SolarSystem(planetQuantity,angularMomentum,l);
+    public SolarSystemSimulation(long planetQuantity, double angularMomentum, String fileName, String csvfilename) throws IOException{
+        solarSystem = new SolarSystem(planetQuantity,angularMomentum);
 
         try {
             Files.deleteIfExists(Paths.get(fileName));
+            Files.deleteIfExists(Paths.get(csvfilename));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
         writer = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
+        csvWriter = new PrintWriter(new BufferedWriter(new FileWriter(csvfilename, true)));
+
     }
 
     /**
@@ -37,7 +42,9 @@ public class SolarSystemSimulation {
      * @param t total time of simulation
      */
     public void simulate(int k, double dt, int t){
+        solarSystem.writeEnergysHeaderInTime(csvWriter);
         solarSystem.writeFrameWithDirection(writer, 0);
+        solarSystem.writeEnergysInTime(csvWriter,0);
         int framesWrited = 1;
         double totalTimeSimulated = 0;
         while(totalTimeSimulated < t){
@@ -48,6 +55,7 @@ public class SolarSystemSimulation {
                 else{
                     solarSystem.moveBeeman(dt);
                 }
+//                solarSystem.move(dt);
 
                 //Detect collisions
                 //Refresh particle position in neighbourhood
@@ -56,10 +64,15 @@ public class SolarSystemSimulation {
                 solarSystem.collidePlanets();
                 totalTimeSimulated+=dt;
                 System.out.println("Tiempo simulado : " + totalTimeSimulated);
+                solarSystem.writeEnergysInTime(csvWriter,totalTimeSimulated);
             }
             solarSystem.writeFrameWithDirection(writer,framesWrited++);
+
         }
+        csvWriter.flush();
+        csvWriter.close();
         writer.flush();
         writer.close();
     }
+
 }

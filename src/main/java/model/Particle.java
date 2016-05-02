@@ -190,14 +190,24 @@ public class Particle implements PlainWritable {
         return distance;
     }
 
+    public double distanceToCenterOf(Particle particle){
+        double distanceX  = Math.abs(particle.getX() - getX());
+        double distanceY = Math.abs(particle.getY() - getY());
+        double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2));
+        return distance;
+    }
+
     //Todo ARREGLAR POR QUE ESTA CALCULANDO MAL LA TANGENTE(Por ahi el angulo lo hace bien pero siempre en el mismo sentido)
     public double tangencialWith(Particle particle){
         return (angleWith(particle) + Math.PI/2) % (Math.PI * 2);
     }
 
-    //TODO Ver como hacer por que esta tomando solo un cuadrante(no hay que usar abs)
     public double angleWith(Particle particle){
-        return Math.atan2(particle.getY() - this.getY(), particle.getX() - this.getX());
+        double angle = Math.atan2(particle.getY() - this.getY(), particle.getX() - this.getX());
+        if(angle<0){
+            angle += 2 * Math.PI;
+        }
+        return angle;
     }
 
     public void inverseDirection(){
@@ -276,17 +286,13 @@ public class Particle implements PlainWritable {
 
     public double getAngularMoment(Particle particle){
         double distanceToPoint = distanceTo(particle);
-        double angularMoment = getMass() * getSpeed() * distanceToPoint * Math.sin(angleWith(particle));
+        double angularMoment = getMass() * getTangencialSpeedWith(particle) * distanceToPoint;
         return angularMoment;
     }
 
 
     public void setAngularMoment(double angularMoment) {
         this.angularMoment = angularMoment;
-    }
-
-    public double getAngularMoment() {
-        return angularMoment;
     }
 
     public void markToBeRemove() {
@@ -298,8 +304,8 @@ public class Particle implements PlainWritable {
     }
 
     public void makeEulerStep(double t, double acceleration, double accelerationAngle){
-        double speedX = speed * Math.cos(angle);
-        double speedY  = speed * Math.sin(angle);
+        double speedX = getSpeedX();
+        double speedY  = getSpeedY();
         x = x + t * speedX + Math.pow(t,2) *  (acceleration * Math.cos(accelerationAngle) / mass) / 2;
         y = y + t * speedY + Math.pow(t,2) *  (acceleration * Math.sin(accelerationAngle) / mass) / 2;
         speedX =  speedX + t * ((acceleration * Math.cos(accelerationAngle)/mass));
@@ -313,18 +319,30 @@ public class Particle implements PlainWritable {
     public void makeBeemanStep(double t, Vector acceleration, Particle sun){
         Vector previousAcceleration = this.acceleration;
         this.acceleration = acceleration;
-        double speedX = speed * Math.cos(angle);
-        double speedY  = speed * Math.sin(angle);
-        x = x + (speedX * Math.cos(angle) * t) + ((2.0/3) * acceleration.getModule() * Math.cos(acceleration.getModule()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.cos(previousAcceleration.getAngle()) * Math.pow(t,2));
-        y = y + (speedY * Math.sin(angle) * t) + ((2.0/3) * acceleration.getModule() * Math.sin(acceleration.getModule()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.sin(previousAcceleration.getAngle()) * Math.pow(t,2));
+        double speedX = getSpeedX();
+        double speedY  = getSpeedY();
+        x = x + speedX  * t + ((2.0/3) * acceleration.getModule() * Math.cos(acceleration.getAngle()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.cos(previousAcceleration.getAngle()) * Math.pow(t,2));
+        y = y + speedY  * t + ((2.0/3) * acceleration.getModule() * Math.sin(acceleration.getAngle()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.sin(previousAcceleration.getAngle()) * Math.pow(t,2));
         Vector nextAcceleration = new Vector(getSolarGravityForce(sun), angleWith(sun));
         speedX = speedX + (1.0/3) * nextAcceleration.getModule() * Math.cos(nextAcceleration.getAngle()) * t + (5.0/6) * acceleration.getModule() * Math.cos(acceleration.getAngle()) * t - (1.0/6) * previousAcceleration.getModule() * Math.cos(previousAcceleration.getAngle()) * t;
         speedY = speedY + (1.0/3) * nextAcceleration.getModule() * Math.sin(nextAcceleration.getAngle()) * t + (5.0/6) * acceleration.getModule() * Math.sin(acceleration.getAngle()) * t - (1.0/6) * previousAcceleration.getModule() * Math.sin(previousAcceleration.getAngle()) * t;
-        speed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
-        angle = Math.atan2(speedY, speedX);
+        setSpeed(Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2)));
+        setAngle(Math.atan2(speedY, speedX));
     }
 
     private double getSolarGravityForce(Particle sun){
-        return (SolarSystem.getConstGravity() * SolarSystem.getSunMass() * mass) / distanceTo(sun);
+        return (SolarSystem.getConstGravity() * SolarSystem.getSunMass() * mass) / distanceToCenterOf(sun);
+    }
+
+    public double getTangencialSpeedWith(Particle particle){
+        double tangencialAngle = tangencialWith(particle);
+        double difAngle = Math.abs(tangencialAngle - getAngle());
+        return Math.cos(difAngle) * getSpeed();
+    }
+
+    public double getNormalSpeedWith(Particle particle){
+        double tangencialSpeed = getTangencialSpeedWith(particle);
+        double normalSpeed = Math.sqrt(Math.pow(getSpeed(),2) - Math.pow(tangencialSpeed,2));
+        return normalSpeed;
     }
 }
