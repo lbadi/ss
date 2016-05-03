@@ -103,13 +103,14 @@ public class SolarSystem extends ParticleSystem{
     public void collidePlanets(){
         List<Particle> newPlanets = new ArrayList<>();
         for(Particle planet : getParticles()){
-            collideWithSun(sun);
-            for(Particle collPlanet : planet.getNeighbours()){
-                Particle newPlanet = plasticCollide(planet,collPlanet);
-                if(newPlanet != null) {
-                    newPlanets.add(newPlanet);
+            if(!collideWithSun(sun)){
+                for(Particle collPlanet : planet.getNeighbours()){
+                    Particle newPlanet = plasticCollide(planet, collPlanet);
+                    if(newPlanet != null) {
+                        newPlanets.add(newPlanet);
+                    }
+                    System.out.println("Colision");
                 }
-                System.out.println("Colision");
             }
         }
         System.out.println("Cantidad de planetas Antes : " + getParticles().size());
@@ -204,12 +205,14 @@ public class SolarSystem extends ParticleSystem{
     }
 
     private static int cant = 0;
-    public void collideWithSun(Particle particle){
+    public boolean collideWithSun(Particle particle){
 
-        if(particle.distanceToCenterOf(sun) < sun.getRadius() + particle.getRadius()){
+        if(particle.distanceTo(sun) < COLLAPSE_DISTANCE){
             System.out.println("COLISION SOl : " + ++cant);
             particle.markToBeRemove();
+            return true;
         }
+        return false;
     }
 
     private double calculateAngularMomentFor(double planetsQuantity){
