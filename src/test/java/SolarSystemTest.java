@@ -52,14 +52,23 @@ public class SolarSystemTest {
                  * id, planetQuantity, angularMomentum, k, dt, t, squareCount, l, filename, energyFilename
                 */
 
-              //  {1, 10000, 100000, 1, 0.1, 10,10000,2*(long)Math.pow(11,4), "src/test/resources/output/solar.csv"},
-//                {1, 15000, 1000000, 1, 0.1, 10,1,2000, "src/test/resources/output/solar-15000-100000.csv"},
-                {1, 100, 100000, 1, 0.01, 100,1,2000, "src/test/resources/output/solar-100-100000.csv", "src/test/resources/output/solar-100-100000-energy.csv"},
-//                {1, 1000, 250000, 1, 0.1, 100,1,2000, "src/test/resources/output/solar-1000-250000.csv", "src/test/resources/output/solar-1000-250000-energy.csv"},
-//                {1, 1000, 500000, 1, 0.1, 100,1,2000, "src/test/resources/output/solar-1000-500000.csv", "src/test/resources/output/solar-1000-500000-energy.csv"},
+                /**Orbitan**/
+                {1, 100, 5000000000.0, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-100-5000000000.csv", "src/test/resources/output/solar-100-5000000000-energy.csv"},
+                {1, 100, 4000000000.0, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-100-4000000000.csv", "src/test/resources/output/solar-100-4000000000-energy.csv"},
+                {1, 100, 3000000000.0, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-100-3000000000.csv", "src/test/resources/output/solar-100-3000000000-energy.csv"},
+                {1, 100, 2000000000.0, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-100-2000000000.csv", "src/test/resources/output/solar-100-2000000000-energy.csv"},
 
-//                {1, 10000, 500000, 1, 0.1, 10,1,2000, "src/test/resources/output/solar-10000-50000.csv", "src/test/resources/output/solar-10000-50000-energy.csv"},
-//                {1, 15000, 300000, 1, 0.1, 10,1,2000, "src/test/resources/output/solar-15000-30000.csv" , "src/test/resources/output/solar-15000-30000-ernergy.csv"},
+//                {1, 1000, 8000000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-1000-8000000.csv", "src/test/resources/output/solar-1000-8000000-energy.csv"},
+//                {1, 1000, 25000000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-1000-25000000.csv", "src/test/resources/output/solar-1000-25000000-energy.csv"},
+//                {1, 1000, 15000000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-1000-15000000.csv", "src/test/resources/output/solar-1000-15000000-energy.csv"},
+//                {1, 1000, 20000000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-1000-20000000.csv", "src/test/resources/output/solar-1000-20000000-energy.csv"},
+//                {1, 1000, 30000000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-1000-30000000.csv", "src/test/resources/output/solar-1000-30000000-energy.csv"},
+//                {1, 1000, 40000000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-1000-40000000.csv", "src/test/resources/output/solar-1000-40000000-energy.csv"},
+
+
+//                  {1, 10000, 700000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-10000-70000.csv", "src/test/resources/output/solar-10000-70000-energy.csv"},
+//                {1, 10000, 500000, 5, 0.1, 500,10000,2000, "src/test/resources/output/solar-10000-50000.csv", "src/test/resources/output/solar-10000-50000-energy.csv"},
+//                {1, 15000, 300000, 2, 0.1, 500,10000,2000, "src/test/resources/output/solar-15000-30000.csv" , "src/test/resources/output/solar-15000-30000-ernergy.csv"},
 
 
         });

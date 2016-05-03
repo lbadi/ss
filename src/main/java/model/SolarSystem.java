@@ -16,15 +16,23 @@ public class SolarSystem extends ParticleSystem{
     private static double COLLAPSE_DISTANCE = 1;
     private static double SUN_RADIUS = 20;
 
-    private static BigDecimal CONSTANT_DIST = new BigDecimal(Math.pow(10,6)); //Constantes que utilizamos para redur las distancias
-    private static BigDecimal CONSTANT_MASS = new BigDecimal(Math.pow(10,25)); //Constantes que utilizamos para reducir la masa.
+    private static double CONSTANT_DIST = Math.pow(10,6); //Constantes que utilizamos para redur las distancias
+    private static double CONSTANT_MASS = Math.pow(10,25); //Constantes que utilizamos para reducir la masa.
 
     private static double CONST_GRAVITY = 6.693 / Math.pow(10,4);
+    private static double CONST_GRAVITY_ORIGINAL = 6.693 / Math.pow(10,11);
+
     private static long  L = (long)(2*Math.pow(10,4));
+
+    private static long initialPlanetQuantity;
+
+    private static double EXPLOSION_RADIUS = 2;
+
+    List<Particle> explosions = new ArrayList<>();
 
     Particle sun;
 
-    public SolarSystem(long planetsQuantity){
+    public SolarSystem(long planetsQuantity, double angularMoment){
         super(false,1, COLLAPSE_DISTANCE);
         this.setL(L);
 //        this.setN(planetsQuantity+1); //+1 for the sun
@@ -34,6 +42,8 @@ public class SolarSystem extends ParticleSystem{
         sun.setY(L/2);
         sun.setSpeed(0);
         sun.setAngle(0);
+
+        initialPlanetQuantity = planetsQuantity;
 
         double planetInitialMass = SUN_MASS / planetsQuantity;
         List<Particle> celestialBodies = new ArrayList<>();
@@ -47,11 +57,10 @@ public class SolarSystem extends ParticleSystem{
             double y = Math.sin(randomAngle) * distanceFromCenter + sun.getY();
             planet.setX(x);
             planet.setY(y);
-            planet.setRadius(COLLAPSE_DISTANCE*2);
+            planet.setRadius(COLLAPSE_DISTANCE);
             double tangencialAngle = planet.tangencialWith(sun);
             planet.setAngle(tangencialAngle);
             double distanceToSun = planet.distanceToCenterOf(sun);
-            double angularMoment = calculateAngularMomentFor(planetsQuantity);
             double calculatedSpeed = angularMoment / distanceToSun / planet.getMass();
             planet.setSpeed(calculatedSpeed);
             planet.setAngularMoment(angularMoment);
@@ -79,10 +88,10 @@ public class SolarSystem extends ParticleSystem{
         double y = (colPlanet.getY() * colPlanet.getMass() + colPlanet2.getY() * colPlanet2.getMass()) / (colPlanet2.getMass() + colPlanet.getMass());
         newParcticle.setX(x);
         newParcticle.setY(y);
-        newParcticle.setRadius(colPlanet.getRadius() + colPlanet2.getRadius());
+        newParcticle.setRadius(colPlanet.getRadius());
         double newTangencialSpeed = (colPlanet.getAngularMoment(sun) + colPlanet2.getAngularMoment(sun)) / newParcticle.distanceToCenterOf(sun) / newParcticle.getMass();
         double newNormalSpeed = (colPlanet.getNormalSpeedWith(sun) * colPlanet.getMass() + colPlanet2.getNormalSpeedWith(sun) * colPlanet2.getMass())
-                / colPlanet.getMass() * colPlanet2.getMass();
+                / (colPlanet.getMass() + colPlanet2.getMass());
         newParcticle.setSpeed(newTangencialSpeed, newNormalSpeed);
         colPlanet.markToBeRemove();
         colPlanet2.markToBeRemove();
@@ -102,12 +111,14 @@ public class SolarSystem extends ParticleSystem{
 
     public void collidePlanets(){
         List<Particle> newPlanets = new ArrayList<>();
+        explosions.clear();
         for(Particle planet : getParticles()){
-            if(!collideWithSun(sun)){
+            if(!collideWithSun(planet)){
                 for(Particle collPlanet : planet.getNeighbours()){
                     Particle newPlanet = plasticCollide(planet, collPlanet);
                     if(newPlanet != null) {
                         newPlanets.add(newPlanet);
+                        explosions.add(createExplosion(newPlanet.getX(), newPlanet.getY()));
                     }
                     System.out.println("Colision");
                 }
@@ -120,18 +131,24 @@ public class SolarSystem extends ParticleSystem{
 
     public void writeFrameWithDirection(PrintWriter writer, int timeStep){
         StringBuilder sb = new StringBuilder();
-        sb.append(getN() + 5).append("\n"); //El 5 es de los corners + sol
+        sb.append(getN() + 5 + getExplosions().size()).append("\n"); //El 5 es de los corners + sol
         sb.append(timeStep).append("\n");
         writeCorners(sb);
 
         getParticles().stream().forEach(particle ->{
-            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius() * 10) + "\t");
-            sb.append(df.format((Math.cos(particle.getAngle())+1)/2) + "\t" + df.format((Math.sin(particle.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius() * 20) + "\t");
+            sb.append(df.format(1.0 - sun.getMass()/(initialPlanetQuantity*particle.getMass())) + "\t" + df.format(1.0) + "\t" + df.format(1.0) + "\t");
+            sb.append("\n");
+        });
+
+        getExplosions().stream().forEach(explosion ->{
+            sb.append(df.format(explosion.getX()) + "\t" + df.format(explosion.getY()) + "\t" + df.format(explosion.getRadius() * 30) + "\t");
+            sb.append(df.format(1.0) + "\t" + df.format(0.0) + "\t" + df.format(0.0) + "\t");
             sb.append("\n");
         });
 
         sb.append(df.format(sun.getX()) + "\t" + df.format(sun.getY()) + "\t" + df.format(sun.getRadius() * 10) + "\t");
-        sb.append(df.format((Math.cos(sun.getAngle())+1)/2) + "\t" + df.format((Math.sin(sun.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
+        sb.append(df.format(1.0) + "\t" + df.format(0.2) + "\t" + df.format(0.0) + "\t");
         sb.append("\n");
 
         writer.write(sb.toString());
@@ -157,7 +174,7 @@ public class SolarSystem extends ParticleSystem{
     }
 
     public double gravityForce(Particle particle){
-        return (CONST_GRAVITY * SUN_MASS * particle.getMass()) / particle.distanceToCenterOf(sun);
+        return (CONST_GRAVITY * SUN_MASS * particle.getMass()) / Math.pow(particle.distanceToCenterOf(sun),2);
     }
 
     public static double getConstGravity() {
@@ -171,22 +188,38 @@ public class SolarSystem extends ParticleSystem{
     public double getKineticEnergy(){
         double totalKineticEnergy = 0;
         for(Particle particle : getParticles()){
-            totalKineticEnergy += particle.getSpeed() * particle.getMass();
+            totalKineticEnergy += Math.pow(particle.getSpeed() ,2) * particle.getMass()  / 2;
         }
         return totalKineticEnergy;
+    }
+
+    public double getKineticTangencialEnergy(){
+        double totalKineticTangencialEneregy = 0;
+        for(Particle particle : getParticles()){
+            totalKineticTangencialEneregy += Math.pow(particle.getTangencialSpeedWith(sun) ,2) * particle.getMass()  / 2;
+        }
+        return totalKineticTangencialEneregy;
     }
 
     public double getPotentialEnergy(){
         double totalPotentialEnergy = 0;
         for(Particle particle : getParticles()){
-            totalPotentialEnergy += (particle.getMass() * sun.getMass() * getConstGravity() / particle.distanceToCenterOf(sun)) * -1;
+            totalPotentialEnergy += (particle.getMass()  * sun.getMass()  * CONST_GRAVITY  / particle.distanceToCenterOf(sun)) * -1;
         }
         return totalPotentialEnergy;
     }
 
+    public double getOrbitalEnergy(){
+        double totalOrbitalEnergy = 0;
+        for(Particle particle : getParticles()){
+            totalOrbitalEnergy += (particle.getMass()  * sun.getMass()  * CONST_GRAVITY  / particle.distanceToCenterOf(sun) / 2) * -1;
+        }
+        return totalOrbitalEnergy;
+    }
+
     public void writeEnergysInTime(PrintWriter writer, double timeStep){
         StringBuilder sb = new StringBuilder();
-        double kinetic = getKineticEnergy();
+        double kinetic = getKineticTangencialEnergy();
         double potential = getPotentialEnergy();
         sb.append(df.format(timeStep)).append(",")
                 .append(df.format(kinetic)).append(",")
@@ -204,11 +237,8 @@ public class SolarSystem extends ParticleSystem{
         writer.write(sb.toString());
     }
 
-    private static int cant = 0;
     public boolean collideWithSun(Particle particle){
-
         if(particle.distanceTo(sun) < COLLAPSE_DISTANCE){
-            System.out.println("COLISION SOl : " + ++cant);
             particle.markToBeRemove();
             return true;
         }
@@ -222,4 +252,20 @@ public class SolarSystem extends ParticleSystem{
         return Math.sqrt((CONST_GRAVITY * SUN_MASS * (initialMass) / promDistanceToSun) * 2 * mu * Math.pow(promDistanceToSun, 2));
     }
 
+    private double calculateAngularMomentFor(Particle particle){
+        double promDistanceToSun = particle.distanceToCenterOf(sun);
+        double initialMass = particle.getMass();
+        double mu = (SUN_MASS * initialMass) / (SUN_MASS + initialMass);
+
+        return Math.sqrt((CONST_GRAVITY * SUN_MASS * (initialMass) / promDistanceToSun) * 2 * mu * Math.pow(promDistanceToSun, 2));
+    }
+
+    private Particle createExplosion(double x, double y){
+        Particle explosion = new Particle(x,y,EXPLOSION_RADIUS);
+        return explosion;
+    }
+
+    public List<Particle> getExplosions() {
+        return explosions;
+    }
 }

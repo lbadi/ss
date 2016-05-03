@@ -14,7 +14,7 @@ public class PrintFormatter {
         df.setGroupingSize(1000000);
         df.setMinimumIntegerDigits(1);
         df.setMinimumFractionDigits(1);
-        df.setMaximumFractionDigits(2);
+        df.setMaximumFractionDigits(1);
     }
 
     public DecimalFormat getDf() {
