@@ -117,17 +117,17 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \frametitle{Fundamentos}
 \framesubtitle{Variables relevantes}
 \begin{itemize}
-\item Parámetros
+\item \textbf{Parámetros del oscilador}
 	\begin{itemize}
 		\item $m = 70$
 		\item $k = 10000$
 		\item $\gamma = 100$
 		\item $t_{f} = 5$ 
 	\end{itemize}
-\item Condiciones iniciales
+\item \textbf{Condiciones iniciales del oscilador}
 	\begin{itemize}
-		\item $r(t=0) = 1$
-		\item $v(t=0) = -\frac{2\gamma}{m}$
+		\item $r_{0} = 1$
+		\item $v_{0} = -\frac{2\gamma}{m}$
 	\end{itemize}
 \end{itemize}
 \end{frame}
@@ -139,7 +139,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \begin{frame}[fragile]
 \frametitle{Implementación}
 \framesubtitle{Cálculo Numérico}
-\begin{lstlisting}[language=Java, caption = Método de Gear Predictor Corrector.]
+\begin{lstlisting}[language=Java, caption = Método de Gear Predictor Corrector]
 void simulateGear(double time, double deltaT) {
 	double simTime = 0;
     Oscilator oscilator = new Oscilator();
@@ -161,7 +161,7 @@ void simulateGear(double time, double deltaT) {
 \framesubtitle{Detalles de precisión}
 \begin{itemize}
 	\item Todas las operaciones se realizan en \texttt{double}
-	\item Se utilizan cinco cifras decimales como \texttt{output} en los archivos de salida de resultados y errores.
+	\item Se utilizan cinco cifras decimales como \texttt{output} en los archivos de salida de resultados y errores
 \end{itemize}
 \end{frame}
 
@@ -247,10 +247,10 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \frametitle{Conclusiones}
 \begin{itemize}
-	\item Para una cantidad de pasos baja (500 pasos, $\Delta t = 0.01$), el error de \textit{Gear Predictor-Corrector} aumenta, simulando un oscilador no amortiguado.
-	\item Con un $\Delta t = 0.001$ obtuvimos resultados con errores muy bajos para los tres métodos.	
-	\item Con 50000 pasos ($\Delta t = 0.0001$), los tres métodos tienen un error que varía recíen en la quinta cifra decimal.
-	\item El esquema de integración que mejor resulta para este sistema es \textit{Gear Predictor-Corrector} para $\Delta t = 0.001$, es decir, 5000 pasos.
+	\item Para una cantidad de pasos baja (500 pasos, $\Delta t = 0.01$), el error de \textit{Gear Predictor-Corrector} aumenta, simulando un oscilador no amortiguado
+	\item Con un $\Delta t = 0.001$ obtuvimos resultados con errores muy bajos para los tres métodos
+	\item Con 50000 pasos ($\Delta t = 0.0001$), los tres métodos tienen un error que varía recíen en la quinta cifra decimal
+	\item El esquema de integración que mejor resulta para este sistema es \textit{Gear Predictor-Corrector} para $\Delta t = 0.001$, es decir, 5000 pasos
 	\end{itemize}	
 \end{frame}
     
@@ -264,9 +264,9 @@ void simulateGear(double time, double deltaT) {
 \frametitle{Fundamentos}
 \framesubtitle{Introducción}
 \begin{itemize}
-	\item Usando el esquema de integración de \textit{Beeman} vamos a simular el nacimiento del sistema solar.
-	\item Se simularán $N$ partículas que orbiten alrededor del Sol.
-	\item Las partículas se irán agrupando en planetas a medida que el sistema evolucione.
+	\item Usando el esquema de integración de \textit{Beeman} vamos a simular el nacimiento del sistema solar
+	\item Se simularán $N$ partículas que orbitan alrededor del Sol
+	\item Las partículas se irán agrupando en planetas a medida que el sistema evolucione
 \end{itemize}
 \end{frame}
 
@@ -281,10 +281,11 @@ void simulateGear(double time, double deltaT) {
 \framesubtitle{Generación de los agentes}
 \begin{itemize}
 	\item Posiciones $(x,y)$ aleatorias para todas las partículas
-	\item $v_{0t}$ tal que todas las partículas tengan el mismo $L$
-	\item $v_{0n} = 0$.
-	\item Distancia al sol entre 10 a la 9 y 10 a la 10
-	\item Angulo respecto al Sol entre 0 y 2 pi
+	\item $v_{t_0}$ tal que todas las partículas tengan el mismo $L$
+	\item $v_{n_0} = 0$
+	\item Distancia al sol entre $1 \times 10^{9}$
+ y $1 \times 10^{10}$
+	\item Ángulo respecto al Sol $\epsilon$  $[0, 2 \pi]$
 \end{itemize}
 \end{frame}
 
@@ -294,8 +295,8 @@ void simulateGear(double time, double deltaT) {
 \frametitle{Simulación}
 \framesubtitle{Variables relevantes}
 \begin{itemize}
-	\item $\Delta t$: cantidad de pasos.
-	\item $k$ relación entre cantidad de pasos simulados y visualizados.
+	\item $\Delta t$: cantidad de pasos
+	\item $k$: relación entre cantidad de pasos simulados y visualizados.
 	\item \texttt{time}: Tiempo en segundos a visualizar
 \end{itemize}
 \end{frame}
@@ -304,11 +305,11 @@ void simulateGear(double time, double deltaT) {
 \frametitle{Simulación}
 \framesubtitle{Detalles de implementación}
 \begin{itemize}
-	\item utilización del cell index method del tp anterior para calcular las colisiones de las partículas.
+	\item Utilizamos el \textit{Cell Index Method} para calcular las colisiones de las partículas
 	%TODO 
-	%\item Se modificó el cell index method para que soporte radios de interacción distintos para cada una de las particulas
-	\item Para las partículas que se alejen más de 2 x 10 a la 4 no las consideramos dentro del sistema.
-	\item Para simplificar, luego de la colisión de dos partículas, se obtiene una nueva con un radio correspondiente a la suma de los radios de las dos. 
+	%\item Se modificó el \textit{Cell Index Method} para que soporte radios de interacción distintos para cada una de las partículas
+	\item Para las partículas que se alejen más de $2 \times 10^{4}$ del centro, no las consideramos dentro del sistema
+	\item Para simplificar, luego de la colisión de dos partículas, se obtiene una nueva con un radio correspondiente a la suma de los radios de las dos
 \end{itemize}
 \end{frame}
 
@@ -316,41 +317,45 @@ void simulateGear(double time, double deltaT) {
 \frametitle{Simulación}
 \framesubtitle{Problemas encontrados}
 \begin{itemize}
-	\item Manejo numérico de grandes dimensiones.
+	\item \textbf{Tratamiento de números de grandes dimensiones}
 	\begin{itemize}
-		\item Para poder mantener en memoria números tan grandes, utilizando la precisión double .
-		\item Se normalizó la distancia por 10 a la 6
-		\item Se normalizó la masa por 10 a la 25
+		\item Necesitamos poder mantener en memoria números grandes utilizando la precisión \texttt{double}
+		\item Se normalizó $r$ a $1 \times 10^{6}$
+		\item Se normalizó $m$ a $2 \times 10^{25}$
 	\end{itemize}
-	\item El radio de las partículas en comparación con las dimensiones del sistema solar era muy chico
+	\item \textbf{El radio de las partículas es muy chico en comparación con las dimensiones del sistema solar}
 	\begin{itemize}
-			\item Dificultaba la visualización, sobre todo para una gran cantidad de partículas.
-			\item El radio de interacción es diferente al radio de visualización.
+			\item Esto dificulta la visualización, sobre todo para una gran cantidad de partículas
+			\item El $r_{c}$ es distinto al $r_{v}$ (radio de visualización)
 	\end{itemize}
 \end{itemize}
 \end{frame}
 
-\subsection{Visualización}
-
 \begin{frame}[fragile]
 \frametitle{Implementación}
-\framesubtitle{Cálculo Numérico}
-\begin{lstlisting}[language=Java, caption = Método de Gear Predictor Corrector.]
-void simulateGear(double time, double deltaT) {
-	double simTime = 0;
-    Oscilator oscilator = new Oscilator();
-	oscilator.writePositionAndError();
-    oscilator.makeEulerStep(deltaT);
-    simTime += deltaT;
-	oscilator.writePositionAndError();
-    while (simTime < time) {
-    	oscilator.makeGearStep(deltaT);
-        simTime += deltaT;
-		oscilator.writePositionAndError();
+\framesubtitle{Simulación}
+\begin{lstlisting}[language=Java, caption = Simulación]
+void simulate(int k, double dt, int time){
+	write();
+	moveEuler(dt);
+	int framesWrited = 1;
+	double totalTimeSimulated = dt;
+	while(totalTimeSimulated < time) {
+ 		for(int i=0; i<k; i++) {
+			moveBeeman(dt);
+			findNeighbours();
+			collidePlanets();
+            totalTimeSimulated += dt;
+			write();
+		}
+		write();
+		framesWrited++;
     }
 }
 \end{lstlisting}
 \end{frame}
+
+\subsection{Visualización}
 
 \begin{frame}
 \frametitle{Implementación}
@@ -375,7 +380,7 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Gráfico de las energías $U, K y E_{T}$ para la simulación de $N = 100$}
+\framesubtitle{Gráfico de las energías $U$, $K$ y $E_{T}$ para la simulación de $N = 100$}
 \begin{figure}[H]
 	\centering
     \includegraphics[width=\textwidth]{example-image}
@@ -386,7 +391,7 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Gráfico de las energías $U, K y E_{T}$ para la simulación de $N = 1000$}
+\framesubtitle{Gráfico de las energías $U$, $K$ y $E_{T}$ para la simulación de $N = 1000$}
 \begin{figure}[H]
 	\centering
     \includegraphics[width=\textwidth]{example-image}
@@ -397,7 +402,7 @@ void simulateGear(double time, double deltaT) {
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Gráfico de las energías $U, K y E_{T}$ para la simulación de $N = 10000$}
+\framesubtitle{Gráfico de las energías $U$, $K$ y $E_{T}$ para la simulación de $N = 10000$}
 \begin{figure}[H]
 	\centering
     \includegraphics[width=\textwidth]{example-image}
