@@ -20,7 +20,7 @@ public class SolarSystemSimulation {
 
 
     public SolarSystemSimulation(long planetQuantity, double angularMomentum, String fileName, String csvfilename) throws IOException{
-        solarSystem = new SolarSystem(planetQuantity,angularMomentum);
+        solarSystem = new SolarSystem(planetQuantity);
 
         try {
             Files.deleteIfExists(Paths.get(fileName));

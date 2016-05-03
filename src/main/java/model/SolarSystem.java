@@ -24,7 +24,7 @@ public class SolarSystem extends ParticleSystem{
 
     Particle sun;
 
-    public SolarSystem(long planetsQuantity, double angularMoment){
+    public SolarSystem(long planetsQuantity){
         super(false,1, COLLAPSE_DISTANCE);
         this.setL(L);
 //        this.setN(planetsQuantity+1); //+1 for the sun
@@ -48,15 +48,14 @@ public class SolarSystem extends ParticleSystem{
             planet.setX(x);
             planet.setY(y);
             planet.setRadius(COLLAPSE_DISTANCE*2);
+            double tangencialAngle = planet.tangencialWith(sun);
+            planet.setAngle(tangencialAngle);
             double distanceToSun = planet.distanceToCenterOf(sun);
+            double angularMoment = calculateAngularMomentFor(planetsQuantity);
             double calculatedSpeed = angularMoment / distanceToSun / planet.getMass();
             planet.setSpeed(calculatedSpeed);
             planet.setAngularMoment(angularMoment);
-            double tangencialAngle = planet.tangencialWith(sun);
-            planet.setAngle(tangencialAngle);
-//            if(Math.random() > 0.5){
-//                planet.inverseDirection();
-//            }
+
 
             celestialBodies.add(planet);
         }
@@ -212,4 +211,12 @@ public class SolarSystem extends ParticleSystem{
             particle.markToBeRemove();
         }
     }
+
+    private double calculateAngularMomentFor(double planetsQuantity){
+        double promDistanceToSun = (MIN_POS + MAX_POS) / 2.0;
+        double initialMass = SUN_MASS / planetsQuantity;
+        double mu = (SUN_MASS * initialMass) / (SUN_MASS + initialMass);
+        return Math.sqrt((CONST_GRAVITY * SUN_MASS * (initialMass) / promDistanceToSun) * 2 * mu * Math.pow(promDistanceToSun, 2));
+    }
+
 }
