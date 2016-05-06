@@ -99,13 +99,7 @@ public class ParticleSystem implements PlainWritable {
                         overlap = true;
                     }
                 }
-                for(Wall wall : walls){
-                    if (newParticle.overlap(wall)) {
-                        newParticle.setX(RandomUtils.between(radius, l - radius));
-                        newParticle.setY(RandomUtils.between(radius, l - radius));
-                        overlap = true;
-                    }
-                }
+
             }
             addParticle(newParticle);
         }

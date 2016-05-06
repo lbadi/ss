@@ -262,13 +262,6 @@ public class Particle implements PlainWritable {
         return !(Math.pow(particle.getX() - getX(),2) + Math.pow(particle.getY() - getY(),2) > Math.pow(particle.getRadius() + getRadius(),2));
     }
 
-    public boolean overlap(Wall wall) {
-        //Distance of a point(particle) o a line(wall)
-        double distancePointToRect = Math.abs(wall.getA() * getX() + wall.getB() * getY() + wall.getC())
-                / Math.sqrt(Math.pow(wall.getA(),2) + Math.pow(wall.getB(),2));
-        return getRadius() >= distancePointToRect;
-    }
-
     public void move(double t){
         setX(getX() + getSpeedX() * t);
         setY(getY() + getSpeedY() * t);

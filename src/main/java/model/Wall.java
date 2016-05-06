@@ -5,41 +5,55 @@ import util.PlainWritable;
 /**
  * Represent a wall or barrier
  */
-public class Wall implements PlainWritable {
+public class Wall{
 
-    //A * x + B*y + C = 0
-    private double a;
-    private double b;
-    private double c;
-
-    //The lenght of a barrier
     private double lenght;
+    private double normal;
+    private double positionX;
+    private double positionY;
+    private double width;
 
-    @Override
-    public PlainWritable readObject(String plainObject) {
-        return null;
+    public Wall(double lenght, double normal, double positionX, double positionY, double width) {
+        this.lenght = lenght;
+        this.normal = normal;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.width = width;
     }
 
-    public Wall(double a, double b, double c){
-        this.a = a;
-        this.b = b;
-        this.c = c;
+    public double getLenght() {
+        return lenght;
     }
 
-    @Override
-    public String writeObject() {
-        return null;
+    public void setLenght(double lenght) {
+        this.lenght = lenght;
     }
 
-    public double getA() {
-        return a;
+    public double getNormal() {
+        return normal;
     }
 
-    public double getB() {
-        return b;
+    public void setNormal(double normal) {
+        this.normal = normal;
     }
 
-    public double getC() {
-        return c;
+    public double getPositionX() {
+        return positionX;
+    }
+
+    public void setPositionX(double positionX) {
+        this.positionX = positionX;
+    }
+
+    public double getPositionY() {
+        return positionY;
+    }
+
+    public void setPositionY(double positionY) {
+        this.positionY = positionY;
+    }
+
+    public double getWidth() {
+        return width;
     }
 }
