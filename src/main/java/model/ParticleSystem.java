@@ -26,7 +26,7 @@ public class ParticleSystem implements PlainWritable {
 
     private List<Particle>[][] neighbourhood;
 
-    private NumberFormat df = new PrintFormatter().getDf();
+    public NumberFormat df = new PrintFormatter().getDf();
 
     public Particle colParticle1;
     public Particle colParticle2;
@@ -212,7 +212,7 @@ public class ParticleSystem implements PlainWritable {
         return this;
     }
 
-    public long getN() {
+    public long getNgetN() {
         return particles.size();
     }
 
@@ -353,7 +353,7 @@ public class ParticleSystem implements PlainWritable {
         writer.write(sb.toString());
     }
 
-    private void writeCorners(StringBuilder sb){
+    public void writeCorners(StringBuilder sb){
         sb.append(0 + "\t" + 0 + "\t" + 0.01 + "\t");
         sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
         sb.append("\n");
@@ -401,7 +401,6 @@ public class ParticleSystem implements PlainWritable {
 
         return order;
     }
-
     public void addWalls(List<Wall> walls){
         this.walls.addAll(walls);
     }
@@ -508,14 +507,14 @@ public class ParticleSystem implements PlainWritable {
 //            particle.move(t);
 //        }
 //        if(colParticle2 == null){
-//            collide(colParticle1,borderDirection);
+//            elasticCollide(colParticle1,borderDirection);
 //        }else{
-//            collide(colParticle1,colParticle2);
+//            elasticCollide(colParticle1,colParticle2);
 //        }
 //        return t;
 //    }
 
-    public void collide(Particle particle , Particle particle2){
+    public void elasticCollide(Particle particle , Particle particle2){
         double deltaX = particle2.getX() - particle.getX();
         double deltaVx = particle2.getSpeedX() - particle.getSpeedX();
         double deltaY = particle2.getY() - particle.getY();
@@ -539,7 +538,7 @@ public class ParticleSystem implements PlainWritable {
         particle2.setSpeed(vx2,vy2);
     }
 
-    public void collide(Particle particle, BorderDirection border){
+    public void elasticCollide(Particle particle, BorderDirection border){
         if(border == BorderDirection.HORIZONTAL){
             //(vx, -vy)
             particle.setAngle(-particle.getAngle() + 2 * Math.PI);
@@ -575,4 +574,23 @@ public class ParticleSystem implements PlainWritable {
         return totalSpeedY / particles.size();
     }
 
+    /**
+     * Move the system using an aproximated method.
+     * @param t
+     */
+    public void move(double t){
+        //TODO utilizar uno de los metodos implementados en el punto 1 considerando la fuerza gravitatoria.
+        for(Particle particle : getParticles()){
+            particle.setX(particle.getX() + particle.getSpeedX() * t);
+            particle.setY(particle.getY() + particle.getSpeedY() * t);
+        }
+    }
+
+    public int getN(){
+        return particles.size();
+    }
+
+    public boolean isPeriodic() {
+        return isPeriodic;
+    }
 }
