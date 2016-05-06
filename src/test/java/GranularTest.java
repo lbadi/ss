@@ -57,7 +57,7 @@ public class GranularTest {
 
     @Test
     public void construct(){
-        granularSystemSimulation.simulate(1,0.1,1);
+        granularSystemSimulation.simulate(1,0.01,10);
     }
 
 }

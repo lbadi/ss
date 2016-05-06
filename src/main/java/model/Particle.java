@@ -299,10 +299,10 @@ public class Particle implements PlainWritable {
     public void makeEulerStep(double t, double acceleration, double accelerationAngle){
         double speedX = getSpeedX();
         double speedY  = getSpeedY();
-        x = x + t * speedX + Math.pow(t,2) *  (acceleration * Math.cos(accelerationAngle) / mass) / 2;
-        y = y + t * speedY + Math.pow(t,2) *  (acceleration * Math.sin(accelerationAngle) / mass) / 2;
-        speedX =  speedX + t * ((acceleration * Math.cos(accelerationAngle)/mass));
-        speedY = speedY + t * ((acceleration * Math.sin(accelerationAngle)/mass));
+        x = x + t * speedX + Math.pow(t,2) *  (acceleration * Math.cos(accelerationAngle)) / 2;
+        y = y + t * speedY + Math.pow(t,2) *  (acceleration * Math.sin(accelerationAngle)) / 2;
+        speedX =  speedX + t * ((acceleration * Math.cos(accelerationAngle)));
+        speedY = speedY + t * ((acceleration * Math.sin(accelerationAngle)));
         speed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
         angle = Math.atan2(speedY, speedX);
         this.acceleration.setModule(acceleration);
@@ -338,4 +338,21 @@ public class Particle implements PlainWritable {
         double normalSpeed = Math.sqrt(Math.pow(getSpeed(),2) - Math.pow(tangencialSpeed,2));
         return normalSpeed;
     }
+
+    public double getPosition(){
+        return Math.sqrt(Math.pow(getX(),2) + Math.pow(getY(),2));
+    }
+
+    public double getOverlap(Particle particle){
+        return this.getRadius() + particle.getRadius() - Math.abs(getPosition() - particle.getPosition());
+    }
+
+
+    public double getNormalVersorWith(Particle particle){
+        double xNormal = (particle.getX() - getX()) / Math.abs(getPosition() - particle.getPosition());
+        double yNormal = (particle.getY() - getY()) / Math.abs(getPosition() - particle.getPosition());
+        return Math.sqrt(Math.pow(xNormal,2) + Math.pow(yNormal,2));
+    }
+
+
 }

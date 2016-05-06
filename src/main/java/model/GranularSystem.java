@@ -4,6 +4,8 @@ import util.RandomUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  */
@@ -17,14 +19,20 @@ public class GranularSystem extends ParticleSystem{
     private static final int MAX_TRIES = 10000;
     private static final double MASS = 0.01;
 
+    private static final double KN = Math.pow(10,5);
+    private static final double KT = 2*KN;
+
+
 
 
     public GranularSystem(double width , double height, double apperture, int particleCount){
         super(false,1);
+        this.setL((long)height + FALL_HEIGHT);
         this.width = width;
         this.height = height;
         this.apperture = apperture;
         double particleSize = apperture/10;
+        setInteractionRadius(particleSize);
         createWalls(width,height, particleSize);
         createGrains(particleSize, particleCount);
     }
@@ -49,6 +57,7 @@ public class GranularSystem extends ParticleSystem{
             int tries = 0;
             Particle newParticle = new Particle(RandomUtils.between(leftBound,rightBound),RandomUtils.between(buttomBound,topBound));
             newParticle.setMass(MASS);
+            newParticle.setSpeed(0,0);
             newParticle.setRadius(particleSize / 2);
             boolean overlap = true;
             while ( overlap && (tries++ < MAX_TRIES)) {
@@ -71,5 +80,82 @@ public class GranularSystem extends ParticleSystem{
                 break;
             }
         }
+
+    }
+
+    public void moveEuler(double t){
+        for(Particle particle : getParticles()){
+            Vector force = new Vector(0,0);
+            for(Particle neighbour : particle.getNeighbours()){
+                if(!neighbour.equals(particle)) {
+                    force.sum(getNormalForce(particle, neighbour))
+                            .sum(getTangencialForce(particle, neighbour));
+                }
+            }
+            for(Wall wall : getWalls()){
+                //TODO Falta ver el overlap con los muros
+            }
+            Vector acceleration = new Vector(force.getModule()/particle.getMass(),force.getAngle());
+            acceleration.sum(getGravityAceleration());
+            particle.makeEulerStep(t, acceleration.getModule(), acceleration.getAngle());
+        }
+        removeOuterParticles();
+    }
+
+    //TODO hacerlo eficiente
+    public void removeOuterParticles(){
+        List<Particle> newParticles = new ArrayList<>();
+        for(Particle particle : getParticles()){
+            if(!isInBorder(particle.getX(),particle.getY())){
+                newParticles.add(particle);
+            }
+        }
+        refreshSystem(newParticles);
+    }
+
+    private Vector getGravityAceleration(){
+        return new Vector(9.8,3.0/2*Math.PI);
+    }
+
+//    public void moveBeeman(double t){
+//        for(Particle particle : getParticles()){
+//            Vector acceleration = new Vector(gravityForce(particle)/particle.getMass(), particle.angleWith(sun));
+//            particle.makeBeemanStep(t, acceleration, sun);
+//            if(!isPeriodic()){
+//                if(isInBorder(particle.getX() , particle.getY())){
+//                    particle.markToBeRemove();
+//                }
+//            }
+//        }
+//    }
+
+//    private void makeBeemanStep(double t, Vector acceleration){
+//        Vector previousAcceleration = this.acceleration;
+//        this.acceleration = acceleration;
+//        double speedX = getSpeedX();
+//        double speedY  = getSpeedY();
+//        x = x + speedX  * t + ((2.0/3) * acceleration.getModule() * Math.cos(acceleration.getAngle()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.cos(previousAcceleration.getAngle()) * Math.pow(t,2));
+//        y = y + speedY  * t + ((2.0/3) * acceleration.getModule() * Math.sin(acceleration.getAngle()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.sin(previousAcceleration.getAngle()) * Math.pow(t,2));
+//        Vector nextAcceleration = new Vector(getSolarGravityForce(sun), angleWith(sun));
+//        speedX = speedX + (1.0/3) * nextAcceleration.getModule() * Math.cos(nextAcceleration.getAngle()) * t + (5.0/6) * acceleration.getModule() * Math.cos(acceleration.getAngle()) * t - (1.0/6) * previousAcceleration.getModule() * Math.cos(previousAcceleration.getAngle()) * t;
+//        speedY = speedY + (1.0/3) * nextAcceleration.getModule() * Math.sin(nextAcceleration.getAngle()) * t + (5.0/6) * acceleration.getModule() * Math.sin(acceleration.getAngle()) * t - (1.0/6) * previousAcceleration.getModule() * Math.sin(previousAcceleration.getAngle()) * t;
+//        setSpeed(Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2)));
+//        setAngle(Math.atan2(speedY, speedX));
+//    }
+
+    private Vector getNormalForce(Particle particle, Particle particle2){
+        double normalForce = -KN * (particle.getOverlap(particle2));
+        double angleNormalForce = particle.getNormalVersorWith(particle2);
+        return new Vector(normalForce,angleNormalForce);
+    }
+
+    private Vector getTangencialForce(Particle particle, Particle particle2){
+        double tangencialSpeed = particle.getTangencialSpeedWith(particle2);
+        double tangencialSpeed2 = particle2.getTangencialSpeedWith(particle);
+        double tangencialRelativeSpeed = tangencialSpeed + tangencialSpeed2; //Por ahi es menos
+        double tangencialForce = - KT * particle.getOverlap(particle2) * tangencialRelativeSpeed;
+        double tangencialAngle = particle.tangencialWith(particle2);
+
+        return new Vector(tangencialForce,tangencialAngle);
     }
 }

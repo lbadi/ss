@@ -35,6 +35,26 @@ public class GranularSystemSimulation {
 
     public void simulate(int k, double dt, int t){
         granularSystem.writeFrameWithDirection(writer,0);
+
+        int framesWrited = 1;
+        double totalTimeSimulated = 0;
+        granularSystem.moveEuler(dt);
+        totalTimeSimulated += dt;
+        while(totalTimeSimulated < t){
+            for(int i=0 ; i<k; i++){
+//                granularSystem.moveBeeman(dt);
+                granularSystem.moveEuler(dt);
+                //Detect collisions
+                //Refresh particle position in neighbourhood
+//                granularSystem.refreshSystem(granularSystem.getParticles());
+                granularSystem.populateNeighbourhood();
+                totalTimeSimulated+=dt;
+                System.out.println("Tiempo simulado : " + totalTimeSimulated);
+            }
+            granularSystem.writeFrameWithDirection(writer,framesWrited++);
+
+        }
+
         writer.flush();
         writer.close();
     }

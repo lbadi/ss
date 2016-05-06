@@ -233,6 +233,7 @@ public class ParticleSystem implements PlainWritable {
         if(isInBorder(x,y)){
             return;
         }
+
         neighbourhood[x][y].add(particle);
     }
 
@@ -259,7 +260,7 @@ public class ParticleSystem implements PlainWritable {
     }
 
     private boolean isInBorder(int i, int j){
-        return ( i == -1 || j == -1 || i >= squareCount || j >= squareCount);
+        return ( i <= -1 || j <= -1 || i >= squareCount || j >= squareCount);
     }
 
     public boolean isInBorder(double x, double y){
@@ -580,11 +581,19 @@ public class ParticleSystem implements PlainWritable {
         }
     }
 
+    public List<Wall> getWalls() {
+        return walls;
+    }
+
     public int getN(){
         return particles.size();
     }
 
     public boolean isPeriodic() {
         return isPeriodic;
+    }
+
+    public void setInteractionRadius(double interactionRadius) {
+        this.interactionRadius = interactionRadius;
     }
 }
