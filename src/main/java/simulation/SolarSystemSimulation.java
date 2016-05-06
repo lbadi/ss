@@ -42,7 +42,7 @@ public class SolarSystemSimulation {
      * @param t total time of simulation
      */
     public void simulate(int k, double dt, int t){
-        solarSystem.writeEnergysHeaderInTime(csvWriter);
+//        solarSystem.writeEnergysHeaderInTime(csvWriter);
         solarSystem.writeFrameWithDirection(writer, 0);
         solarSystem.writeEnergysInTime(csvWriter,0);
         int framesWrited = 1;

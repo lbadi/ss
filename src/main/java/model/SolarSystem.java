@@ -136,13 +136,13 @@ public class SolarSystem extends ParticleSystem{
         writeCorners(sb);
 
         getParticles().stream().forEach(particle ->{
-            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius() * 20) + "\t");
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius() * 25) + "\t");
             sb.append(df.format(1.0 - sun.getMass()/(initialPlanetQuantity*particle.getMass())) + "\t" + df.format(1.0) + "\t" + df.format(1.0) + "\t");
             sb.append("\n");
         });
 
         getExplosions().stream().forEach(explosion ->{
-            sb.append(df.format(explosion.getX()) + "\t" + df.format(explosion.getY()) + "\t" + df.format(explosion.getRadius() * 30) + "\t");
+            sb.append(df.format(explosion.getX()) + "\t" + df.format(explosion.getY()) + "\t" + df.format(explosion.getRadius() * 50) + "\t");
             sb.append(df.format(1.0) + "\t" + df.format(0.0) + "\t" + df.format(0.0) + "\t");
             sb.append("\n");
         });
@@ -188,7 +188,7 @@ public class SolarSystem extends ParticleSystem{
     public double getKineticEnergy(){
         double totalKineticEnergy = 0;
         for(Particle particle : getParticles()){
-            totalKineticEnergy += Math.pow(particle.getSpeed() ,2) * particle.getMass()  / 2;
+            totalKineticEnergy += Math.pow(particle.getSpeed() * CONSTANT_DIST ,2) * particle.getMass() * CONSTANT_MASS  / 2;
         }
         return totalKineticEnergy;
     }
@@ -196,7 +196,7 @@ public class SolarSystem extends ParticleSystem{
     public double getKineticTangencialEnergy(){
         double totalKineticTangencialEneregy = 0;
         for(Particle particle : getParticles()){
-            totalKineticTangencialEneregy += Math.pow(particle.getTangencialSpeedWith(sun) ,2) * particle.getMass()  / 2;
+            totalKineticTangencialEneregy += Math.pow(particle.getTangencialSpeedWith(sun) * CONSTANT_DIST ,2) * particle.getMass() * CONSTANT_MASS  / 2;
         }
         return totalKineticTangencialEneregy;
     }
@@ -204,7 +204,7 @@ public class SolarSystem extends ParticleSystem{
     public double getPotentialEnergy(){
         double totalPotentialEnergy = 0;
         for(Particle particle : getParticles()){
-            totalPotentialEnergy += (particle.getMass()  * sun.getMass()  * CONST_GRAVITY  / particle.distanceToCenterOf(sun)) * -1;
+            totalPotentialEnergy += (particle.getMass() *CONSTANT_MASS * sun.getMass() *CONSTANT_MASS * CONST_GRAVITY  / particle.distanceToCenterOf(sun) / CONSTANT_DIST) * -1;
         }
         return totalPotentialEnergy;
     }
@@ -212,14 +212,14 @@ public class SolarSystem extends ParticleSystem{
     public double getOrbitalEnergy(){
         double totalOrbitalEnergy = 0;
         for(Particle particle : getParticles()){
-            totalOrbitalEnergy += (particle.getMass()  * sun.getMass()  * CONST_GRAVITY  / particle.distanceToCenterOf(sun) / 2) * -1;
+            totalOrbitalEnergy += Math.pow(particle.getSpeed() * CONSTANT_DIST,2) / 2 - CONST_GRAVITY_ORIGINAL * (sun.getMass() * CONSTANT_MASS + particle.getMass() * CONSTANT_MASS) / particle.distanceToCenterOf(sun) / CONSTANT_DIST;
         }
         return totalOrbitalEnergy;
     }
 
     public void writeEnergysInTime(PrintWriter writer, double timeStep){
         StringBuilder sb = new StringBuilder();
-        double kinetic = getKineticTangencialEnergy();
+        double kinetic = getKineticEnergy();
         double potential = getPotentialEnergy();
         sb.append(df.format(timeStep)).append(",")
                 .append(df.format(kinetic)).append(",")

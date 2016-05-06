@@ -1,0 +1,21 @@
+\frametitle{Implementación}
+\framesubtitle{Simulación}
+\begin{lstlisting}[language=Java, caption = Simulación]
+void simulate(int k, double dt, int time){
+	write();
+	moveEuler(dt);
+	int framesWrited = 1;
+	double totalTimeSimulated = dt;
+	while(totalTimeSimulated < time) {
+ 		for(int i=0; i<k; i++) {
+			moveBeeman(dt);
+			findNeighbours();
+			collidePlanets();
+            totalTimeSimulated += dt;
+			write();
+		}
+		write();
+		framesWrited++;
+    }
+}
+\end{lstlisting}
