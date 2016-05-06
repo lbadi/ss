@@ -41,7 +41,7 @@ public class GranularTest {
                  * id, squareCount, widht, height, apperture,grainsCount, filename
                 */
 
-                {1, 1, 10, 20, 1,5000, OUTPUT_PATH + CSV_FILENAME},
+                {1, 1, 10, 20, 5,5000, OUTPUT_PATH + CSV_FILENAME},
 
 
         });
@@ -57,7 +57,7 @@ public class GranularTest {
 
     @Test
     public void construct(){
-        granularSystemSimulation.simulate(1,0.01,10);
+        granularSystemSimulation.simulate(100,0.00003,5);
     }
 
 }

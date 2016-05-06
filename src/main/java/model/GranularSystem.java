@@ -39,11 +39,11 @@ public class GranularSystem extends ParticleSystem{
 
     private void createWalls(double width, double height, double size){
         List<Wall> walls = new ArrayList<>();
-        walls.add(new Wall(height, 0,0 , height/2 + FALL_HEIGHT, size)); //left wall
-        walls.add(new Wall(height, Math.PI,width, height/2 + FALL_HEIGHT, size));//right wall
-        walls.add(new Wall(width, (3/2)*Math.PI,width/2, height + FALL_HEIGHT, size)); //top wall
-        walls.add(new Wall((width - apperture) / 2, (1/2)*Math.PI,(width-apperture)/2 /2, FALL_HEIGHT,size)); //bottom left wall
-        walls.add(new Wall((width - apperture) / 2, (1/2)*Math.PI,width/2 + apperture, FALL_HEIGHT,size)); //bottom right wall
+        walls.add(new Wall(0,height+FALL_HEIGHT,0,FALL_HEIGHT)); //left wall
+        walls.add(new Wall(width,FALL_HEIGHT,width,FALL_HEIGHT+height));//right wall
+        walls.add(new Wall(0,height+FALL_HEIGHT,width,FALL_HEIGHT+height)); //top wall
+        walls.add(new Wall(0,FALL_HEIGHT,(width-apperture)/2,FALL_HEIGHT)); //bottom left wall
+        walls.add(new Wall((width+apperture)/2,FALL_HEIGHT,width,FALL_HEIGHT)); //bottom right wall
         addWalls(walls);
     }
 
@@ -51,8 +51,8 @@ public class GranularSystem extends ParticleSystem{
         double offset = particleSize * 2;
         double leftBound = 0 + offset;
         double rightBound = width - offset;
-        double buttomBound = FALL_HEIGHT + particleSize*2;
-        double topBound = FALL_HEIGHT+height;
+        double buttomBound = FALL_HEIGHT + offset;
+        double topBound = FALL_HEIGHT+height - offset;
         for (int i = 0; i < particleCount; i++) {
             int tries = 0;
             Particle newParticle = new Particle(RandomUtils.between(leftBound,rightBound),RandomUtils.between(buttomBound,topBound));
@@ -88,19 +88,55 @@ public class GranularSystem extends ParticleSystem{
             Vector force = new Vector(0,0);
             for(Particle neighbour : particle.getNeighbours()){
                 if(!neighbour.equals(particle)) {
-                    force.sum(getNormalForce(particle, neighbour))
-                            .sum(getTangencialForce(particle, neighbour));
+                    force.sum(getNormalForce(particle, neighbour));
+//                            .sum(getTangencialForce(particle, neighbour));
                 }
             }
             for(Wall wall : getWalls()){
+                force.sum(getNormalForce(particle,wall));
                 //TODO Falta ver el overlap con los muros
             }
             Vector acceleration = new Vector(force.getModule()/particle.getMass(),force.getAngle());
             acceleration.sum(getGravityAceleration());
-            particle.makeEulerStep(t, acceleration.getModule(), acceleration.getAngle());
+            particle.setAcceleration(acceleration);
         }
+        makeEulerStep(t);
         removeOuterParticles();
     }
+
+    public void makeEulerStep(double t){
+        List<Particle> newParticles= new ArrayList<>();
+        for(Particle particle : getParticles()){
+            Particle newParticle = new Particle();
+            newParticle.setMass(particle.getMass());
+            newParticle.setRadius(particle.getRadius());
+            double speedX = particle.getSpeedX();
+            double speedY  = particle.getSpeedY();
+            newParticle.setX(particle.getX()+ t * speedX + Math.pow(t,2) *  (particle.getAcceleration().getModuleX()) / 2);
+            newParticle.setY(particle.getY()+ t * speedY + Math.pow(t,2) *  (particle.getAcceleration().getModuleY()) / 2);
+            speedX =  speedX + t * particle.getAcceleration().getModuleX();
+            speedY = speedY + t * particle.getAcceleration().getModuleY();
+            newParticle.setSpeed(speedX,speedY);
+            newParticle.setAcceleration(particle.getAcceleration());
+            newParticles.add(newParticle);
+        }
+        setParticles(newParticles);
+
+    }
+
+//    public void makeBeemanStep(double t, Vector acceleration, Particle sun){
+//        Vector previousAcceleration = this.acceleration;
+//        this.acceleration = acceleration;
+//        double speedX = getSpeedX();
+//        double speedY  = getSpeedY();
+//        x = x + speedX  * t + ((2.0/3) * acceleration.getModule() * Math.cos(acceleration.getAngle()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.cos(previousAcceleration.getAngle()) * Math.pow(t,2));
+//        y = y + speedY  * t + ((2.0/3) * acceleration.getModule() * Math.sin(acceleration.getAngle()) * Math.pow(t,2)) - ((1.0/6) * previousAcceleration.getModule() * Math.sin(previousAcceleration.getAngle()) * Math.pow(t,2));
+//        Vector nextAcceleration = new Vector(getSolarGravityForce(sun), angleWith(sun));
+//        speedX = speedX + (1.0/3) * nextAcceleration.getModule() * Math.cos(nextAcceleration.getAngle()) * t + (5.0/6) * acceleration.getModule() * Math.cos(acceleration.getAngle()) * t - (1.0/6) * previousAcceleration.getModule() * Math.cos(previousAcceleration.getAngle()) * t;
+//        speedY = speedY + (1.0/3) * nextAcceleration.getModule() * Math.sin(nextAcceleration.getAngle()) * t + (5.0/6) * acceleration.getModule() * Math.sin(acceleration.getAngle()) * t - (1.0/6) * previousAcceleration.getModule() * Math.sin(previousAcceleration.getAngle()) * t;
+//        setSpeed(Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2)));
+//        setAngle(Math.atan2(speedY, speedX));
+//    }
 
     //TODO hacerlo eficiente
     public void removeOuterParticles(){
@@ -144,10 +180,17 @@ public class GranularSystem extends ParticleSystem{
 //    }
 
     private Vector getNormalForce(Particle particle, Particle particle2){
-        double normalForce = -KN * (particle.getOverlap(particle2));
+        double normalForce = KN * (particle.getOverlap(particle2));
         double angleNormalForce = particle.getNormalVersorWith(particle2);
         return new Vector(normalForce,angleNormalForce);
     }
+
+    private Vector getNormalForce(Particle particle, Wall wall){
+        double normalForce = KN * (particle.getOverlap(wall));
+        double angleNormalForce = wall.getNormalAngle(particle);
+        return new Vector(normalForce,angleNormalForce);
+    }
+
 
     private Vector getTangencialForce(Particle particle, Particle particle2){
         double tangencialSpeed = particle.getTangencialSpeedWith(particle2);

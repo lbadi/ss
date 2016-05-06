@@ -7,53 +7,67 @@ import util.PlainWritable;
  */
 public class Wall{
 
-    private double lenght;
-    private double normal;
-    private double positionX;
-    private double positionY;
-    private double width;
+    private double x1;
+    private double x2;
 
-    public Wall(double lenght, double normal, double positionX, double positionY, double width) {
-        this.lenght = lenght;
-        this.normal = normal;
-        this.positionX = positionX;
-        this.positionY = positionY;
-        this.width = width;
+    private double y1;
+    private double y2;
+
+    /**
+     * Considerar que depende el orden de los puntos, la direccion del vector normal cambia.
+     * @param x1
+     * @param y1
+     * @param x2
+     * @param y2
+     */
+    public Wall(double x1, double y1, double x2, double y2) {
+        this.x1 = x1;
+        this.x2 = x2;
+        this.y1 = y1;
+        this.y2 = y2;
     }
 
-    public double getLenght() {
-        return lenght;
+    public double pDistance(double x, double y) {
+
+        double A = x - x1;
+        double B = y - y1;
+        double C = x2 - x1;
+        double D = y2 - y1;
+
+        double dot = A * C + B * D;
+        double len_sq = C * C + D * D;
+        double param = -1;
+        if (len_sq != 0) //in case of 0 length line
+            param = dot / len_sq;
+
+        double xx, yy;
+
+        if (param < 0) {
+            xx = x1;
+            yy = y1;
+        }
+        else if (param > 1) {
+            xx = x2;
+            yy = y2;
+        }
+        else {
+            xx = x1 + param * C;
+            yy = y1 + param * D;
+        }
+
+        double dx = x - xx;
+        double dy = y - yy;
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
-    public void setLenght(double lenght) {
-        this.lenght = lenght;
+    public double getNormalAngle(Particle particle){
+        double mod = Math.sqrt(Math.pow(x1-x2,2) + Math.pow(y1-y2,2));
+        double x = x1-x2;
+        double y = y1-y2;
+        double tangAngle = Math.atan2(y,x);
+        return tangAngle - Math.PI/2;
+//        Vector normal  = new Vector(mod,)
     }
 
-    public double getNormal() {
-        return normal;
-    }
 
-    public void setNormal(double normal) {
-        this.normal = normal;
-    }
-
-    public double getPositionX() {
-        return positionX;
-    }
-
-    public void setPositionX(double positionX) {
-        this.positionX = positionX;
-    }
-
-    public double getPositionY() {
-        return positionY;
-    }
-
-    public void setPositionY(double positionY) {
-        this.positionY = positionY;
-    }
-
-    public double getWidth() {
-        return width;
-    }
 }

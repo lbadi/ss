@@ -180,7 +180,7 @@ public class Particle implements PlainWritable {
         if(l - distanceY < distanceY){
             distanceY = l-distanceY;
         }
-        double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2)) - particle.getRadius() - getRadius();
+        double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2));
         return distance;
     }
     public double distanceTo(Particle particle){
@@ -344,6 +344,9 @@ public class Particle implements PlainWritable {
     }
 
     public double getOverlap(Particle particle){
+        if(this.getRadius() + particle.getRadius() - Math.abs(getPosition() - particle.getPosition()) <0){
+            return 0;
+        }
         return this.getRadius() + particle.getRadius() - Math.abs(getPosition() - particle.getPosition());
     }
 
@@ -354,5 +357,19 @@ public class Particle implements PlainWritable {
         return Math.sqrt(Math.pow(xNormal,2) + Math.pow(yNormal,2));
     }
 
+    public void setAcceleration(Vector acceleration) {
+        this.acceleration = acceleration;
+    }
 
+    public Vector getAcceleration() {
+        return acceleration;
+    }
+
+    public double getOverlap(Wall wall){
+        double distance = wall.pDistance(getX(),getY());
+        if(distance < getRadius()){
+            return Math.abs(distance-getRadius());
+        }
+        return 0;
+    }
 }

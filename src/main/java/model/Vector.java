@@ -38,4 +38,11 @@ public class Vector {
         setAngle(newAngle);
         return this;
     }
+
+    public double getModuleX(){
+        return Math.cos(getAngle()) * getModule();
+    }
+    public double getModuleY(){
+        return Math.sin(getAngle()) * getModule();
+    }
 }
