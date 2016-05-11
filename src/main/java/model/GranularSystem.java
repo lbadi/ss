@@ -48,7 +48,7 @@ public class GranularSystem extends ParticleSystem{
     }
 
     private void createGrains(double particleSize, int particleCount) {
-        double offset = particleSize * 2;
+        double offset = particleSize * 1.01;
         double leftBound = 0 + offset;
         double rightBound = width - offset;
         double buttomBound = FALL_HEIGHT + offset;
@@ -86,10 +86,17 @@ public class GranularSystem extends ParticleSystem{
     public void moveEuler(double t){
         for(Particle particle : getParticles()){
             Vector force = new Vector(0,0);
-            for(Particle neighbour : particle.getNeighbours()){
-                if(!neighbour.equals(particle)) {
-                    force.sum(getNormalForce(particle, neighbour));
-//                            .sum(getTangencialForce(particle, neighbour));
+//            for(Particle neighbour : particle.getNeighbours()){
+//                if(!neighbour.equals(particle)) {
+//                    force.sum(getNormalForce(particle, neighbour));
+////                            .sum(getTangencialForce(particle, neighbour));
+//                }
+//            }
+            for(Particle particle1 : getParticles()){
+                if(!particle.equals(particle1)){
+                    if(particle.getOverlap(particle1)!=0) {
+                        force.sum(getNormalForce(particle, particle1));
+                    }
                 }
             }
             for(Wall wall : getWalls()){
@@ -121,7 +128,6 @@ public class GranularSystem extends ParticleSystem{
             newParticles.add(newParticle);
         }
         setParticles(newParticles);
-
     }
 
 //    public void makeBeemanStep(double t, Vector acceleration, Particle sun){
@@ -181,24 +187,35 @@ public class GranularSystem extends ParticleSystem{
 
     private Vector getNormalForce(Particle particle, Particle particle2){
         double normalForce = KN * (particle.getOverlap(particle2));
-        double angleNormalForce = particle.getNormalVersorWith(particle2);
+        double angleNormalForce = particle.getNormalAngleWith(particle2);
         return new Vector(normalForce,angleNormalForce);
     }
 
     private Vector getNormalForce(Particle particle, Wall wall){
         double normalForce = KN * (particle.getOverlap(wall));
+        if(particle.getOverlap(wall) > 0){
+            System.out.println();
+        }
         double angleNormalForce = wall.getNormalAngle(particle);
         return new Vector(normalForce,angleNormalForce);
     }
 
 
-    private Vector getTangencialForce(Particle particle, Particle particle2){
-        double tangencialSpeed = particle.getTangencialSpeedWith(particle2);
-        double tangencialSpeed2 = particle2.getTangencialSpeedWith(particle);
-        double tangencialRelativeSpeed = tangencialSpeed + tangencialSpeed2; //Por ahi es menos
-        double tangencialForce = - KT * particle.getOverlap(particle2) * tangencialRelativeSpeed;
-        double tangencialAngle = particle.tangencialWith(particle2);
+    public Vector getTangencialForce(Particle particle, Particle particle2){
+        Vector tangencialVector = particle.getTangencialVector(particle2);
+//        double tangencialSpeed = particle.getTangencialSpeedWith(particle2);
+//        double tangencialSpeed2 = particle2.getTangencialSpeedWith(particle);
+        Vector relativeSpeed = particle.getSpeedAsVector().sum(particle2.getSpeedAsVector().mult(-1));
+        double proyectedSpeed = relativeSpeed.scalarProductWith(tangencialVector);
+        Vector tangencialForce = tangencialVector.mult(KT * particle.getOverlap(particle2) * Math.abs(proyectedSpeed));
+        if(proyectedSpeed>=0){
+            tangencialForce.invert();
+        }
+//        double tangencialRelativeSpeed = tangencialSpeed + tangencialSpeed2; //Por ahi es menos
+//        double tangencialForce =KT * particle.getOverlap(particle2) * tangencialRelativeSpeed;
+//        double tangencialAngle = particle.tangencialWith(particle2) ;
 
-        return new Vector(tangencialForce,tangencialAngle);
+        return tangencialForce;
+//        return new Vector(tangencialForce,tangencialAngle);
     }
 }

@@ -328,9 +328,15 @@ public class Particle implements PlainWritable {
     }
 
     public double getTangencialSpeedWith(Particle particle){
-        double tangencialAngle = tangencialWith(particle);
-        double difAngle = Math.abs(tangencialAngle - getAngle());
+        Vector tangencialVector = getTangencialVector(particle);
+        Vector speedVector = new Vector(getSpeed(),getAngle());
+        double difAngle = tangencialVector.angleWith(speedVector);
         return Math.cos(difAngle) * getSpeed();
+    }
+
+    public Vector getTangencialVector(Particle particle){
+        double tangencialAngle = tangencialWith(particle);
+        return new Vector(1,tangencialAngle);
     }
 
     public double getNormalSpeedWith(Particle particle){
@@ -344,17 +350,19 @@ public class Particle implements PlainWritable {
     }
 
     public double getOverlap(Particle particle){
-        if(this.getRadius() + particle.getRadius() - Math.abs(getPosition() - particle.getPosition()) <0){
+        double overlap = this.getRadius() + particle.getRadius() - Math.abs(distanceToCenterOf(particle));
+        if(overlap <0){
             return 0;
         }
-        return this.getRadius() + particle.getRadius() - Math.abs(getPosition() - particle.getPosition());
+        //Ri + Rj - |rj - ri|
+        return overlap;
     }
 
 
-    public double getNormalVersorWith(Particle particle){
+    public double getNormalAngleWith(Particle particle){
         double xNormal = (particle.getX() - getX()) / Math.abs(getPosition() - particle.getPosition());
         double yNormal = (particle.getY() - getY()) / Math.abs(getPosition() - particle.getPosition());
-        return Math.sqrt(Math.pow(xNormal,2) + Math.pow(yNormal,2));
+        return Math.atan2(yNormal,xNormal);
     }
 
     public void setAcceleration(Vector acceleration) {
@@ -371,5 +379,9 @@ public class Particle implements PlainWritable {
             return Math.abs(distance-getRadius());
         }
         return 0;
+    }
+
+    public Vector getSpeedAsVector(){
+        return new Vector(getSpeed(),getAngle());
     }
 }

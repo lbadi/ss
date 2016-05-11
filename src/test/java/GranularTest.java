@@ -1,10 +1,14 @@
+import model.Particle;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import simulation.GranularSystemSimulation;
+import util.RandomUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  */
@@ -41,7 +45,7 @@ public class GranularTest {
                  * id, squareCount, widht, height, apperture,grainsCount, filename
                 */
 
-                {1, 1, 10, 20, 5,5000, OUTPUT_PATH + CSV_FILENAME},
+                {1, 1, 10, 20, 5,100, OUTPUT_PATH + CSV_FILENAME},
 
 
         });
@@ -54,10 +58,80 @@ public class GranularTest {
             e.printStackTrace();
         }
     }
+    @Test
+    public void particleNormalTest(){
+        Particle particle1 = new Particle(0,0);
+        particle1.setMass(10);
+        particle1.setSpeed(0,1);
+        particle1.setRadius(10 / 2);
+
+        Particle particle2 = new Particle(0,10);
+        particle2.setMass(10);
+        particle2.setSpeed(0,-1);
+        particle2.setRadius(10 / 2);
+
+        double normal1 = particle1.getNormalAngleWith(particle2);
+        double normal2 = particle2.getNormalAngleWith(particle1);
+        System.out.println(normal2);
+
+    }
+
+    @Test
+    public void particleTangencialTest(){
+        Particle particle1 = new Particle(0,0);
+        particle1.setMass(10);
+        particle1.setSpeed(1,0);
+        particle1.setRadius(1);
+
+        Particle particle2 = new Particle(0,1);
+        particle2.setMass(10);
+        particle2.setSpeed(2,0);
+        particle2.setRadius(1);
+
+        double tang1 = particle1.getTangencialSpeedWith(particle2);
+        double tang2 = particle2.getTangencialSpeedWith(particle1);
+
+        granularSystemSimulation.getGranularSystem().getTangencialForce(particle1,particle2);
+        granularSystemSimulation.getGranularSystem().getTangencialForce(particle2,particle1);
+
+
+        System.out.println(tang1);
+
+    }
+
+    @Test
+    public void twoParticles(){
+        Particle particle1 = new Particle(2,15);
+        particle1.setMass(0.01);
+        particle1.setSpeed(0,0);
+        particle1.setRadius(0.25);
+
+        Particle particle2 = new Particle(9,3);
+        particle2.setMass(0.01);
+        particle2.setSpeed(0,0);
+        particle2.setRadius(0.25);
+
+        Particle particle3 = new Particle(9.1,6);
+        particle3.setMass(0.01);
+        particle3.setSpeed(0,0);
+        particle3.setRadius(0.25);
+
+
+
+        List<Particle> particles = new ArrayList<>();
+        particles.add(particle1);
+        particles.add(particle2);
+        particles.add(particle3);
+
+
+        granularSystemSimulation.getGranularSystem().setParticles(particles);
+//        granularSystemSimulation.getGranularSystem().se
+        granularSystemSimulation.simulate(4000,0.0000005,3);
+    }
 
     @Test
     public void construct(){
-        granularSystemSimulation.simulate(100,0.00003,5);
+        granularSystemSimulation.simulate(4000,0.000005,3);
     }
 
 }

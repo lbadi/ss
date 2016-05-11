@@ -58,4 +58,8 @@ public class GranularSystemSimulation {
         writer.flush();
         writer.close();
     }
+
+    public GranularSystem getGranularSystem() {
+        return granularSystem;
+    }
 }
