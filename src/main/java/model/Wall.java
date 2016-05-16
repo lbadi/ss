@@ -13,6 +13,8 @@ public class Wall{
     private double y1;
     private double y2;
 
+    boolean open = false;
+
     /**
      * Considerar que depende el orden de los puntos, la direccion del vector normal cambia.
      * @param x1
@@ -91,5 +93,13 @@ public class Wall{
 
     public double getY2() {
         return y2;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 }

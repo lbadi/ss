@@ -21,11 +21,11 @@ public class GranularSystemSimulation {
     private PrintWriter writer;
     private PrintWriter csvWriter;
 
-    public GranularSystemSimulation(double width , double height, double apperture,int grainsCount, String fileName, int squareCount,  String csvfilename) throws IOException{
+    public GranularSystemSimulation(double width , double height, double apperture,int grainsCount, String fileName, int squareCount,  String csvfilename, boolean open) throws IOException{
         if(apperture >= width || width >= height){
             throw new IllegalArgumentException();
         }
-        granularSystem = new GranularSystem(width,height,apperture,grainsCount, squareCount);
+        granularSystem = new GranularSystem(width,height,apperture,grainsCount, squareCount, open);
 
         try {
             Files.deleteIfExists(Paths.get(fileName));

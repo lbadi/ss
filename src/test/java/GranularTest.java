@@ -25,12 +25,13 @@ public class GranularTest {
     int grainsCount;
     String filename;
     String resultFilename;
+    boolean open;
 
-    public static final String CSV_FILENAME = "granular.csv";
-    public static final String CSV_RESULT_FILENAME = "energy.csv";
+    public static final String CSV_FILENAME = "granular";
+    public static final String CSV_RESULT_FILENAME = "energy";
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
-    public GranularTest(int id, int squareCount, double width, double height, double apperture,int grainsCount, String filename, String resultFilename) {
+    public GranularTest(int id, int squareCount, double width, double height, double apperture,int grainsCount, String filename, String resultFilename, boolean open) {
         this.id = id;
         this.squareCount = squareCount;
         this.width = width;
@@ -39,6 +40,7 @@ public class GranularTest {
         this.grainsCount = grainsCount;
         this.filename = filename;
         this.resultFilename = resultFilename;
+        this.open = open;
     }
 
     @Parameterized.Parameters
@@ -47,14 +49,25 @@ public class GranularTest {
                 /**
                  * id, squareCount, width, height, aperture, grainsCount, filename, resultFilename
                  */
-                {1, 100, 10, 20, 2, 1000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME},
+//                {1, 100, 5, 20, 1, 1000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
+
+//                {2, 100, 5, 20, 1, 1000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
+                {2, 50, 2, 10, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
+                {3, 100, 2, 20, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
+                {4, 100, 2, 30, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
+
+                {5, 100, 2, 10, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH +  CSV_RESULT_FILENAME, false},
+                {6, 100, 2, 20, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
+                {7, 100, 2, 30, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
+
+
         });
     }
 
     @Before
     public void init(){
         try {
-            granularSystemSimulation = new GranularSystemSimulation(width,height, apperture,grainsCount, filename,squareCount, resultFilename);
+            granularSystemSimulation = new GranularSystemSimulation(width,height, apperture,grainsCount, filename + id + ".csv",squareCount,resultFilename+ id + ".csv", open);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,7 +142,7 @@ public class GranularTest {
 
     @Test
     public void construct(){
-        granularSystemSimulation.simulate(400,0.00001,4);
+        granularSystemSimulation.simulate(400,0.00001,5);
     }
 
 }

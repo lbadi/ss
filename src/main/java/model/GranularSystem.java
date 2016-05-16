@@ -27,28 +27,28 @@ public class GranularSystem extends ParticleSystem{
     private static final double KN = Math.pow(10,5);
     private static final double KT = 2*KN;
 
-
-
-
-    public GranularSystem(double width , double height, double apperture, int particleCount, int squareCount){
-        super(false,100);
+    public GranularSystem(double width , double height, double apperture, int particleCount, int squareCount, boolean open){
+        super(false,squareCount);
         this.setL((long)height + FALL_HEIGHT);
         this.width = width;
         this.height = height;
         this.apperture = apperture;
         double particleSize = apperture/10;
         setInteractionRadius(particleSize);
-        createWalls(width,height, particleSize);
+        createWalls(width,height, particleSize, open);
         createGrains(particleSize, particleCount);
     }
 
-    private void createWalls(double width, double height, double size){
+    private void createWalls(double width, double height, double size, boolean open){
         List<Wall> walls = new ArrayList<>();
         walls.add(new Wall(0,height+FALL_HEIGHT,0,FALL_HEIGHT)); //left wall
         walls.add(new Wall(width,FALL_HEIGHT,width,FALL_HEIGHT+height));//right wall
         walls.add(new Wall(0,height+FALL_HEIGHT,width,FALL_HEIGHT+height)); //top wall
         walls.add(new Wall(0,FALL_HEIGHT,(width-apperture)/2,FALL_HEIGHT)); //bottom left wall
         walls.add(new Wall((width+apperture)/2,FALL_HEIGHT,width,FALL_HEIGHT)); //bottom right wall
+        Wall trap = new Wall((width-apperture)/2 , FALL_HEIGHT ,(width+apperture)/2, FALL_HEIGHT);
+        trap.setOpen(open);
+        walls.add(trap);
         addWalls(walls);
         particleDetectorWall = new ParticleDetectorWall((width-apperture)/2 , FALL_HEIGHT ,(width+apperture)/2, FALL_HEIGHT);
     }
@@ -135,9 +135,11 @@ public class GranularSystem extends ParticleSystem{
             }
         }
         for(Wall wall : getWalls()){
-            force.sum(getNormalForce(particle,wall))
-                    .sum(getTangencialForce(particle,wall));
-            //TODO Falta ver el overlap con los muros
+            if(!wall.isOpen()) {
+                force.sum(getNormalForce(particle, wall))
+                        .sum(getTangencialForce(particle, wall));
+                //TODO Falta ver el overlap con los muros
+            }
         }
         if(!particle.isAlreadyCounted()){
             if (particle.getOverlap(particleDetectorWall) != 0){
@@ -261,7 +263,7 @@ public class GranularSystem extends ParticleSystem{
     public void writeFrameWithDirection(PrintWriter writer, int timeStep){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(getN() + getWalls().size() * 2).append("\n"); // 2 particulas por cada pared
+        sb.append(getN() + getWalls().size() * 2 + 1).append("\n"); // 2 particulas por cada pared
         sb.append(timeStep).append("\n");
         writeCorners(sb);
 
@@ -275,13 +277,17 @@ public class GranularSystem extends ParticleSystem{
 
     public void writeCorners(StringBuilder sb){
         for(Wall wall : getWalls()){
-            sb.append(wall.getX1() + "\t" + wall.getY1() + "\t" + 1.0 + "\t");
+            sb.append(wall.getX1() + "\t" + wall.getY1() + "\t" + 0.1 + "\t");
             sb.append(1.0 + "\t" + 1.0 + "\t" + 1.0 + "\t");
             sb.append("\n");
 
-            sb.append(wall.getX2() + "\t" + wall.getY2() + "\t" + 1.0 + "\t");
+            sb.append(wall.getX2() + "\t" + wall.getY2() + "\t" + 0.1 + "\t");
             sb.append(1.0 + "\t" + 1.0 + "\t" + 1.0 + "\t");
             sb.append("\n");
         }
+        sb.append(0 + "\t" + 0 + "\t" + 0.1 + "\t");
+        sb.append(0.0 + "\t" + 0.0 + "\t" + 0.0 + "\t");
+        sb.append("\n");
+
     }
 }
