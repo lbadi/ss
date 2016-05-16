@@ -188,6 +188,15 @@ public void simulate(double t, double dt, int k){
 \end{lstlisting}
 \end{frame}
 
+\begin{frame}
+\frametitle{Simulación}
+\framesubtitle{Problemas encontrados}
+\begin{itemize}
+	\item Velocidades muy altas de las partículas debido a que no se estaba invirtiendo el ángulo de la normal cuando las mismas colisionaban.
+	\item Con un valor de $\Delta t$ del orden del sugerido en la teórica ($0.1 \sqrt{\frac{m}{K_{n}}}$), obtuvimos malos resultados, impidiendo detectar correctamente todas las colisiones.
+\end{itemize}
+\end{frame}
+
 \subsection{Visualización}
 
 \begin{frame}

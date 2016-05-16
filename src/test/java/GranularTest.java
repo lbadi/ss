@@ -24,12 +24,13 @@ public class GranularTest {
     double apperture;
     int grainsCount;
     String filename;
+    String resultFilename;
 
     public static final String CSV_FILENAME = "granular.csv";
+    public static final String CSV_RESULT_FILENAME = "energy.csv";
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
-
-    public GranularTest(int id, int squareCount, double width, double height, double apperture,int grainsCount, String filename) {
+    public GranularTest(int id, int squareCount, double width, double height, double apperture,int grainsCount, String filename, String resultFilename) {
         this.id = id;
         this.squareCount = squareCount;
         this.width = width;
@@ -37,28 +38,28 @@ public class GranularTest {
         this.apperture = apperture;
         this.grainsCount = grainsCount;
         this.filename = filename;
+        this.resultFilename = resultFilename;
     }
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 /**
-                 * id, squareCount, widht, height, apperture,grainsCount,squareCount, filename
-                */
-
-                {1, 100, 10, 20, 1 ,10000, OUTPUT_PATH + CSV_FILENAME},
-
-
+                 * id, squareCount, width, height, aperture, grainsCount, filename, resultFilename
+                 */
+                {1, 100, 10, 20, 2, 1000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME},
         });
     }
+
     @Before
     public void init(){
         try {
-            granularSystemSimulation = new GranularSystemSimulation(width,height, apperture,grainsCount, filename,squareCount);
+            granularSystemSimulation = new GranularSystemSimulation(width,height, apperture,grainsCount, filename,squareCount, resultFilename);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     @Test
     public void particleNormalTest(){
         Particle particle1 = new Particle(0,0);
@@ -116,13 +117,10 @@ public class GranularTest {
         particle3.setSpeed(0,0);
         particle3.setRadius(0.25);
 
-
-
         List<Particle> particles = new ArrayList<>();
         particles.add(particle1);
         particles.add(particle2);
         particles.add(particle3);
-
 
         granularSystemSimulation.getGranularSystem().setParticles(particles);
 //        granularSystemSimulation.getGranularSystem().se
