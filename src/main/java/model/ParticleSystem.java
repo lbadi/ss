@@ -596,4 +596,12 @@ public class ParticleSystem implements PlainWritable {
     public void setInteractionRadius(double interactionRadius) {
         this.interactionRadius = interactionRadius;
     }
+
+    public double getKineticEnergy(){
+        double totalKineticEnergy = 0;
+        for(Particle particle : getParticles()){
+            totalKineticEnergy += Math.pow(particle.getSpeed() ,2) * particle.getMass()  / 2;
+        }
+        return totalKineticEnergy;
+    }
 }

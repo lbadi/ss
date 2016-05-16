@@ -27,6 +27,8 @@ public class Particle implements PlainWritable {
     private Vector acceleration = new Vector(0,0);
     private Vector previousAcceleration = new Vector(0,0);
 
+    private boolean alreadyCounted = false;
+
 
     private Set<Particle> neighbours = new HashSet<>();
 
@@ -390,5 +392,13 @@ public class Particle implements PlainWritable {
 
     public Vector getPreviousAcceleration() {
         return previousAcceleration;
+    }
+
+    public boolean isAlreadyCounted() {
+        return alreadyCounted;
+    }
+
+    public void setAlreadyCounted(boolean alreadyCounted) {
+        this.alreadyCounted = alreadyCounted;
     }
 }

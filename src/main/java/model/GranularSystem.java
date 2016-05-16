@@ -15,7 +15,11 @@ public class GranularSystem extends ParticleSystem{
     public double height;
     public double apperture;
 
+    public ParticleDetectorWall particleDetectorWall;
+
     private static final int FALL_HEIGHT = 1;
+    private static final int INCLINATION = 5;
+
     private static final int MAX_TRIES = 10000;
     private static final double MASS = 0.01;
 
@@ -25,8 +29,8 @@ public class GranularSystem extends ParticleSystem{
 
 
 
-    public GranularSystem(double width , double height, double apperture, int particleCount){
-        super(false,1);
+    public GranularSystem(double width , double height, double apperture, int particleCount, int squareCount){
+        super(false,100);
         this.setL((long)height + FALL_HEIGHT);
         this.width = width;
         this.height = height;
@@ -45,6 +49,7 @@ public class GranularSystem extends ParticleSystem{
         walls.add(new Wall(0,FALL_HEIGHT,(width-apperture)/2,FALL_HEIGHT)); //bottom left wall
         walls.add(new Wall((width+apperture)/2,FALL_HEIGHT,width,FALL_HEIGHT)); //bottom right wall
         addWalls(walls);
+        particleDetectorWall = new ParticleDetectorWall((width-apperture)/2 , FALL_HEIGHT ,(width+apperture)/2, FALL_HEIGHT);
     }
 
     private void createGrains(double particleSize, int particleCount) {
@@ -69,6 +74,14 @@ public class GranularSystem extends ParticleSystem{
                         newParticle.setX(RandomUtils.between(leftBound,rightBound));
                         newParticle.setY(RandomUtils.between(buttomBound , topBound));
                         break;
+                    }
+                    for(Wall wall  : getWalls()){
+                        if (newParticle.getOverlap(wall) != 0) {
+                            overlap = true;
+                            newParticle.setX(RandomUtils.between(leftBound,rightBound));
+                            newParticle.setY(RandomUtils.between(buttomBound , topBound));
+                            break;
+                        }
                     }
                 }
                 if(!overlap) {
@@ -98,6 +111,7 @@ public class GranularSystem extends ParticleSystem{
             Particle newParticle = new Particle();
             newParticle.setMass(particle.getMass());
             newParticle.setRadius(particle.getRadius());
+            newParticle.setAlreadyCounted(particle.isAlreadyCounted());
             double speedX = particle.getSpeedX();
             double speedY  = particle.getSpeedY();
             newParticle.setX(particle.getX()+ t * speedX + Math.pow(t,2) *  (particle.getAcceleration().getModuleX()) / 2);
@@ -120,8 +134,15 @@ public class GranularSystem extends ParticleSystem{
             }
         }
         for(Wall wall : getWalls()){
-            force.sum(getNormalForce(particle,wall));
+            force.sum(getNormalForce(particle,wall))
+                    .sum(getTangencialForce(particle,wall));
             //TODO Falta ver el overlap con los muros
+        }
+        if(!particle.isAlreadyCounted()){
+            if (particle.getOverlap(particleDetectorWall) != 0){
+                particle.setAlreadyCounted(true);
+                particleDetectorWall.incCount();
+            }
         }
         force.sum(getGravityAceleration().mult(particle.getMass()));
         Vector acceleration = new Vector(force.getModule()/particle.getMass(),force.getAngle());
@@ -135,6 +156,7 @@ public class GranularSystem extends ParticleSystem{
             Particle newParticle = new Particle();
             newParticle.setMass(particle.getMass());
             newParticle.setRadius(particle.getRadius());
+            newParticle.setAlreadyCounted(particle.isAlreadyCounted());
             double speedX = particle.getSpeedX();
             double speedY  = particle.getSpeedY();
             double x = particle.getX() + speedX  * t + ((2.0/3) * particle.getAcceleration().getModule() * Math.cos(particle.getAcceleration().getAngle()) * Math.pow(t,2)) - ((1.0/6) * particle.getPreviousAcceleration().getModule() * Math.cos(particle.getPreviousAcceleration().getAngle()) * Math.pow(t,2));
@@ -211,19 +233,27 @@ public class GranularSystem extends ParticleSystem{
 
     public Vector getTangencialForce(Particle particle, Particle particle2){
         Vector tangencialVector = particle.getTangencialVector(particle2);
-//        double tangencialSpeed = particle.getTangencialSpeedWith(particle2);
-//        double tangencialSpeed2 = particle2.getTangencialSpeedWith(particle);
         Vector relativeSpeed = particle.getSpeedAsVector().sum(particle2.getSpeedAsVector().mult(-1));
         double proyectedSpeed = relativeSpeed.scalarProductWith(tangencialVector);
         Vector tangencialForce = tangencialVector.mult(KT * particle.getOverlap(particle2) * Math.abs(proyectedSpeed));
         if(proyectedSpeed>=0){
             tangencialForce.invert();
         }
-//        double tangencialRelativeSpeed = tangencialSpeed + tangencialSpeed2; //Por ahi es menos
-//        double tangencialForce =KT * particle.getOverlap(particle2) * tangencialRelativeSpeed;
-//        double tangencialAngle = particle.tangencialWith(particle2) ;
-
         return tangencialForce;
-//        return new Vector(tangencialForce,tangencialAngle);
+    }
+
+    public Vector getTangencialForce(Particle particle, Wall wall){
+        Vector tangencialVector = wall.getTangencialVector(particle);
+        Vector relativeSpeed = particle.getSpeedAsVector();
+        double proyectedSpeed = relativeSpeed.scalarProductWith(tangencialVector);
+        Vector tangencialForce = tangencialVector.mult(KT * particle.getOverlap(wall) * Math.abs(proyectedSpeed));
+        if(proyectedSpeed>=0){
+            tangencialForce.invert();
+        }
+        return tangencialForce;
+    }
+
+    public ParticleDetectorWall getParticleDetectorWall() {
+        return particleDetectorWall;
     }
 }

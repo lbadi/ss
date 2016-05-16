@@ -1,4 +1,5 @@
 import model.Particle;
+import model.Wall;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -42,10 +43,10 @@ public class GranularTest {
     public static Iterable<Object[]> data1() {
         return Arrays.asList(new Object[][]{
                 /**
-                 * id, squareCount, widht, height, apperture,grainsCount, filename
+                 * id, squareCount, widht, height, apperture,grainsCount,squareCount, filename
                 */
 
-                {1, 1, 10, 20, 5,10000, OUTPUT_PATH + CSV_FILENAME},
+                {1, 100, 10, 20, 1 ,10000, OUTPUT_PATH + CSV_FILENAME},
 
 
         });
@@ -53,7 +54,7 @@ public class GranularTest {
     @Before
     public void init(){
         try {
-            granularSystemSimulation = new GranularSystemSimulation(width,height, apperture,grainsCount, filename);
+            granularSystemSimulation = new GranularSystemSimulation(width,height, apperture,grainsCount, filename,squareCount);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,7 +81,7 @@ public class GranularTest {
     public void particleTangencialTest(){
         Particle particle1 = new Particle(0,0);
         particle1.setMass(10);
-        particle1.setSpeed(1,0);
+        particle1.setSpeed(-1,2);
         particle1.setRadius(1);
 
         Particle particle2 = new Particle(0,1);
@@ -88,14 +89,13 @@ public class GranularTest {
         particle2.setSpeed(2,0);
         particle2.setRadius(1);
 
-        double tang1 = particle1.getTangencialSpeedWith(particle2);
-        double tang2 = particle2.getTangencialSpeedWith(particle1);
+        List<Wall> walls = granularSystemSimulation.getGranularSystem().getWalls();
 
         granularSystemSimulation.getGranularSystem().getTangencialForce(particle1,particle2);
         granularSystemSimulation.getGranularSystem().getTangencialForce(particle2,particle1);
-
-
-        System.out.println(tang1);
+        for(Wall wall : walls) {
+            granularSystemSimulation.getGranularSystem().getTangencialForce(particle1, wall);
+        }
 
     }
 

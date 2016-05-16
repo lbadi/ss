@@ -61,13 +61,22 @@ public class Wall{
     }
 
     public double getNormalAngle(Particle particle){
+        double tangAngle = getTangencialAngle(particle);
+        return tangAngle - Math.PI/2;
+    }
+
+    public double getTangencialAngle(Particle particle){
         double mod = Math.sqrt(Math.pow(x1-x2,2) + Math.pow(y1-y2,2));
         double x = x1-x2;
         double y = y1-y2;
         double tangAngle = Math.atan2(y,x);
-        return tangAngle - Math.PI/2;
-//        Vector normal  = new Vector(mod,)
+        return tangAngle;
     }
+    public Vector getTangencialVector(Particle particle){
+        double tangencialAngle = getTangencialAngle(particle);
+        return new Vector(1,tangencialAngle);
+    }
+
 
 
 }
