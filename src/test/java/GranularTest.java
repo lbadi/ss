@@ -45,7 +45,7 @@ public class GranularTest {
                  * id, squareCount, widht, height, apperture,grainsCount, filename
                 */
 
-                {1, 1, 10, 20, 5,100, OUTPUT_PATH + CSV_FILENAME},
+                {1, 1, 10, 20, 5,10000, OUTPUT_PATH + CSV_FILENAME},
 
 
         });
@@ -111,7 +111,7 @@ public class GranularTest {
         particle2.setSpeed(0,0);
         particle2.setRadius(0.25);
 
-        Particle particle3 = new Particle(9.1,6);
+        Particle particle3 = new Particle(9.1,4.0);
         particle3.setMass(0.01);
         particle3.setSpeed(0,0);
         particle3.setRadius(0.25);
@@ -131,7 +131,7 @@ public class GranularTest {
 
     @Test
     public void construct(){
-        granularSystemSimulation.simulate(4000,0.000005,3);
+        granularSystemSimulation.simulate(400,0.00001,4);
     }
 
 }

@@ -25,6 +25,8 @@ public class Particle implements PlainWritable {
     private double mass;
 
     private Vector acceleration = new Vector(0,0);
+    private Vector previousAcceleration = new Vector(0,0);
+
 
     private Set<Particle> neighbours = new HashSet<>();
 
@@ -366,6 +368,7 @@ public class Particle implements PlainWritable {
     }
 
     public void setAcceleration(Vector acceleration) {
+        this.previousAcceleration = this.acceleration;
         this.acceleration = acceleration;
     }
 
@@ -383,5 +386,9 @@ public class Particle implements PlainWritable {
 
     public Vector getSpeedAsVector(){
         return new Vector(getSpeed(),getAngle());
+    }
+
+    public Vector getPreviousAcceleration() {
+        return previousAcceleration;
     }
 }
