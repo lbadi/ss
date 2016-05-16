@@ -2,6 +2,7 @@ package model;
 
 import util.RandomUtils;
 
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
@@ -255,5 +256,32 @@ public class GranularSystem extends ParticleSystem{
 
     public ParticleDetectorWall getParticleDetectorWall() {
         return particleDetectorWall;
+    }
+
+    public void writeFrameWithDirection(PrintWriter writer, int timeStep){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getN() + getWalls().size() * 2).append("\n"); // 2 particulas por cada pared
+        sb.append(timeStep).append("\n");
+        writeCorners(sb);
+
+        getParticles().stream().forEach(particle ->{
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
+            sb.append(df.format((Math.cos(particle.getAngle())+1)/2) + "\t" + df.format((Math.sin(particle.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
+            sb.append("\n");
+        });
+        writer.write(sb.toString());
+    }
+
+    public void writeCorners(StringBuilder sb){
+        for(Wall wall : getWalls()){
+            sb.append(wall.getX1() + "\t" + wall.getY1() + "\t" + 1.0 + "\t");
+            sb.append(1.0 + "\t" + 1.0 + "\t" + 1.0 + "\t");
+            sb.append("\n");
+
+            sb.append(wall.getX2() + "\t" + wall.getY2() + "\t" + 1.0 + "\t");
+            sb.append(1.0 + "\t" + 1.0 + "\t" + 1.0 + "\t");
+            sb.append("\n");
+        }
     }
 }
