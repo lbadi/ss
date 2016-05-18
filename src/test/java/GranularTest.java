@@ -52,13 +52,13 @@ public class GranularTest {
 //                {1, 100, 5, 20, 1, 1000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
 
 //                {2, 100, 5, 20, 1, 1000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
-                {2, 50, 2, 10, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
-                {3, 100, 2, 20, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
-                {4, 100, 2, 30, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
-
-                {5, 100, 2, 10, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH +  CSV_RESULT_FILENAME, false},
-                {6, 100, 2, 20, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
-                {7, 100, 2, 30, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
+                {99, 15, 2, 3, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
+//                {3, 100, 2, 20, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
+//                {4, 100, 2, 30, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, true},
+//
+//                {5, 100, 2, 10, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH +  CSV_RESULT_FILENAME, false},
+//                {6, 100, 2, 20, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
+//                {7, 100, 2, 30, 1, 10000, OUTPUT_PATH + CSV_FILENAME, OUTPUT_PATH + CSV_RESULT_FILENAME, false},
 
 
         });
@@ -142,7 +142,7 @@ public class GranularTest {
 
     @Test
     public void construct(){
-        granularSystemSimulation.simulate(400,0.00001,5);
+        granularSystemSimulation.simulate(400,0.00001,30);
     }
 
 }

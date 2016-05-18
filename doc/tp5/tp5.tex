@@ -128,9 +128,9 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 	\begin{itemize}
 		\item Verificando que no se superpongan
 		\item Intentando hasta 10000 veces por partícula para obtener una ubicación válida 
-		\item De esta forma se obtiene el máximo valor de $N$ para un tiempo razonable
 	\end{itemize}
-	\item $r = \begin{cases} \frac{D}{20} & \mbox{si } D \neq 0 \\ ? & \mbox{si } D = 0 \end{cases}$
+	\item $D = 1$
+	\item $r = \frac{D}{20}$
 	\item $v_{0} = 0$
 \end{itemize}
 \end{frame}
@@ -144,16 +144,6 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 	\item $k_{N} = 10^5 \frac{N}{m}$
 	\item $k_{T} = 2 k_{N}$
 	\item $m = 0.01 kg$
-\end{itemize}
-\end{frame}
-
-\begin{frame}
-\frametitle{Simulación}
-\framesubtitle{Detalles de implementación}
-\begin{itemize}
-	\item Se utiliza \textit{Euler} como método integrador para el primer paso de la simulación
-	\item Se utiliza \textit{Velocity Verlet} como método integrador para el resto de los pasos de la simulación
-	\item Se utiliza \textit{Cell Index Method} para el manejo de colisiones de las partículas 
 \end{itemize}
 \end{frame}
 
@@ -175,11 +165,11 @@ public void simulate(double t, double dt, int k){
 	granularSystem.writeFrame(0);
     int framesWrited = 1;
     double totalTimeSimulated = 0;
-    granularSystem.moveEuler(dt);
+    granularSystem.move(dt);
     totalTimeSimulated += dt;
     while(totalTimeSimulated < t){
 		for(int i = 0; i < k; i++){
-			granularSystem.moveVerlet(dt);
+			granularSystem.move(dt);
         	totalTimeSimulated += dt;
     	}
     	granularSystem.writeFrame(framesWrited++);
@@ -193,7 +183,22 @@ public void simulate(double t, double dt, int k){
 \framesubtitle{Problemas encontrados}
 \begin{itemize}
 	\item Velocidades muy altas de las partículas debido a que no se estaba invirtiendo el ángulo de la normal cuando las mismas colisionaban.
-	\item Con un valor de $\Delta t$ del orden del sugerido en la teórica ($0.1 \sqrt{\frac{m}{K_{n}}}$), obtuvimos malos resultados, impidiendo detectar correctamente todas las colisiones.
+	\item Valores de \textit{overlap} muy altos en las inmediaciones a los bordes del silo.
+	\item Con un valor de $\Delta t$ del orden del sugerido en la teórica ($0.1 \sqrt{\frac{m}{K_{n}}}$), obtuvimos malos resultados:
+	\begin{itemize}
+		\item Utilizando \textit{Beeman} como método de integración
+		\item No se detectaban correctamente las colisiones a tiempo
+		\item Ocasionaba la pérdida de una gran cantidad de partículas
+	\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Simulación}
+\framesubtitle{Detalles de implementación}
+\begin{itemize}
+	\item Se utiliza \textit{Euler} como método integrador para todos los pasos de la simulación
+	\item Se utiliza \textit{Cell Index Method} para el manejo de colisiones de las partículas 
 \end{itemize}
 \end{frame}
 
@@ -231,7 +236,7 @@ public void simulate(double t, double dt, int k){
 
 \begin{frame}
 \frametitle{Resultados}
-\framesubtitle{Evolución temporal de $C$ y $C_{M}$}
+\framesubtitle{$C_{M}$ para distintos valores de $L$}
 \begin{center}
 \begin{table}[h]
 \centering
@@ -239,11 +244,13 @@ public void simulate(double t, double dt, int k){
            max width=\textwidth}{
 \begin{tabular}{ccc}
 \hline
-\textbf{$L$} & \textbf{$C$} & \textbf{$C_{M}$}\\ \hline
-?&?&?\\
+\textbf{$L$} & \textbf{$C_{M}$}\\ \hline
+3&0,0219\\ 
+7&0,5069\\ 
+10&0,5668\\
 \end{tabular}
 }
-\caption{Evolución temporal de $C$ y $C_{M}$}
+\caption{$C_{M}$ para distintos valores de $L$}
 \end{table}
 \end{center}
 \end{frame}
@@ -251,10 +258,10 @@ public void simulate(double t, double dt, int k){
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Evolución temporal de $C$ y $C_{M}$}
+\framesubtitle{Evolución temporal de $C$ para distintos valores de $L$}
 \begin{figure}[H]
 	\centering
-    \includegraphics[width=\textwidth]{example-image}
+    \includegraphics[width=\textwidth]{charts/caudal.png}
 \end{figure}
 }
 \end{frame}
@@ -262,10 +269,10 @@ public void simulate(double t, double dt, int k){
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Evolución temporal de $E_{c}$ para $L = ?$}
+\framesubtitle{Evolución temporal de $E_{c}$ para distintos valores de $L$}
 \begin{figure}[H]
 	\centering
-    \includegraphics[width=\textwidth]{example-image}
+    \includegraphics[width=\textwidth]{charts/energiaabierto.png}
 \end{figure}
 }
 \end{frame}
@@ -281,7 +288,9 @@ public void simulate(double t, double dt, int k){
 \begin{tabular}{cc}
 \hline
 \textbf{$L$} & \textbf{$t_{r}$}\\ \hline
-?&?\\
+3&0.38401\\
+7&0.55601\\
+10&0.69601\\
 \end{tabular}
 }
 \caption{$t_{r}$ para distintos valores de $L$}
@@ -292,31 +301,40 @@ public void simulate(double t, double dt, int k){
 \begin{frame}
 \Wider{
 \frametitle{Resultados}
-\framesubtitle{Evolución temporal de $E_{c}$ para el silo cerrado ($D = 0$) con $L = ?$ y $W = ?$}
+\framesubtitle{Evolución temporal de $E_{c}$ para el silo cerrado ($D = 0$) para distintos valores de $L$}
 \begin{figure}[H]
 	\centering
-    \includegraphics[width=\textwidth]{example-image}
+    \includegraphics[width=\textwidth]{charts/energycerrado.png}
 \end{figure}
 }
 \end{frame}
 
 \subsection{Animaciones}
 
-\begin{frame}
+\begin{frame}[plain]
 \frametitle{Resultados}
-\framesubtitle{Animación de la simulación del silo para $L = ?$, $W = ?$ y $D = ?$}
+\framesubtitle{Animación de la simulación del silo para $L = 10$}
 \begin{figure}[H]
 	\centering
-%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
+	\animategraphics[loop,controls,width=0.90\textheight]{60}{animation/completo}{00001}{00625}
 \end{figure}
 \end{frame}
 
-\begin{frame}
+\begin{frame}[plain]
 \frametitle{Resultados}
-\framesubtitle{Animación de la simulación del silo cerrado ($D = 0$) para $L = ?$ y $W = ?$}
+\framesubtitle{Animación de la simulación del silo para $L = 10$}
 \begin{figure}[H]
 	\centering
-%	\animategraphics[loop,controls,width=0.75\textheight]{10}{animation/dmer-100-}{0000}{0200}
+	\animategraphics[loop,controls,width=0.90\textheight]{60}{animation/zoom}{00001}{02070}
+\end{figure}
+\end{frame}
+
+\begin{frame}[plain]
+\frametitle{Resultados}
+\framesubtitle{Animación de la simulación del silo cerrado para $L = 10$}
+\begin{figure}[H]
+	\centering
+	\animategraphics[loop,controls,width=0.90\textheight]{60}{animation/cerrado}{00001}{00501}
 \end{figure}
 \end{frame}
 
@@ -324,12 +342,56 @@ public void simulate(double t, double dt, int k){
 
 \begin{frame}
 \frametitle{Conclusiones}
+\framesubtitle{Para el silo abierto}
 \begin{itemize}
-	\item Se debería ? el parámetro ? para alcanzar más rápidamente el equilibrio
-	\item Para el silo cerrado, se alcanza el equilibrio cuando ?
-	\item El tiempo de relajación es proporcional a ?
+	\item Formación de arcos cerca de la apertura
+	\item Una vez que el $L$ es suficientemente superior al $W$, se aprecia que el $C_{M}$ es constante (Regla de \textit{Janssen})
+	\item Pérdida de solidez de la superficie
 \end{itemize}	
 \end{frame} 
+
+\begin{frame}
+\Wider{
+\frametitle{Conclusiones}
+\framesubtitle{Formación de arcos cerca de la apertura}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=0.75\textheight]{images/arco.png}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}
+\Wider{
+\frametitle{Conclusiones}
+\framesubtitle{Pérdida de solidez de la superficie}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=0.75\textheight]{images/solidez.png}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}
+\frametitle{Conclusiones}
+\framesubtitle{Para el silo cerrado}
+\begin{itemize}
+	\item A mayor $L$, mayor $t_{r}$
+	\item Se alcanza el equilibrio cuando la $E_{c}$ se mantiene constante dentro de un intervalo acotado cercano a cero
+	\item Se pueden apreciar \textit{clusters} en función de la dirección de la velocidad de las partículas
+\end{itemize}	
+\end{frame}
+
+\begin{frame}
+\Wider{
+\frametitle{Conclusiones}
+\framesubtitle{\textit{Clusters} en función de la dirección de la velocidad de las partículas}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=0.75\textheight]{images/cluster.jpg}
+\end{figure}
+}
+\end{frame}
 
 \begin{frame}[plain]
     \centering
