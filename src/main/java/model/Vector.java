@@ -13,6 +13,13 @@ public class Vector {
         this.module = module;
     }
 
+    public Vector(double x1, double y1, double x2, double y2){
+        double deltaX = x2 - x1;
+        double deltaY = y2 - y1;
+        angle = Math.atan2(deltaY,deltaX);
+        module = Math.sqrt(Math.pow(deltaY,2) + Math.pow(deltaX,2));
+    }
+
     public double getModule() {
         return module;
     }
@@ -68,4 +75,5 @@ public class Vector {
         setAngle((getAngle() + Math.PI) % (Math.PI*2));
         return this;
     }
+
 }

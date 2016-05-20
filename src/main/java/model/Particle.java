@@ -15,6 +15,8 @@ public class Particle implements PlainWritable {
     private double x;
     private double y;
     private double radius;
+    private double rMax;
+    private double rMin;
     private double color;
 
     //Speed without direction (mod)
@@ -400,5 +402,21 @@ public class Particle implements PlainWritable {
 
     public void setAlreadyCounted(boolean alreadyCounted) {
         this.alreadyCounted = alreadyCounted;
+    }
+
+    public double getrMax() {
+        return rMax;
+    }
+
+    public double getrMin() {
+        return rMin;
+    }
+
+    public void setrMax(double rMax) {
+        this.rMax = rMax;
+    }
+
+    public void setrMin(double rMin) {
+        this.rMin = rMin;
     }
 }
