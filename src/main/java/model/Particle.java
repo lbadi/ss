@@ -25,6 +25,10 @@ public class Particle implements PlainWritable {
     private double mass;
 
     private Vector acceleration = new Vector(0,0);
+    private Vector previousAcceleration = new Vector(0,0);
+
+    private boolean alreadyCounted = false;
+
 
     private Set<Particle> neighbours = new HashSet<>();
 
@@ -180,7 +184,7 @@ public class Particle implements PlainWritable {
         if(l - distanceY < distanceY){
             distanceY = l-distanceY;
         }
-        double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2)) - particle.getRadius() - getRadius();
+        double distance = Math.sqrt(Math.pow(distanceX,2) + Math.pow(distanceY,2));
         return distance;
     }
     public double distanceTo(Particle particle){
@@ -262,13 +266,6 @@ public class Particle implements PlainWritable {
         return !(Math.pow(particle.getX() - getX(),2) + Math.pow(particle.getY() - getY(),2) > Math.pow(particle.getRadius() + getRadius(),2));
     }
 
-    public boolean overlap(Wall wall) {
-        //Distance of a point(particle) o a line(wall)
-        double distancePointToRect = Math.abs(wall.getA() * getX() + wall.getB() * getY() + wall.getC())
-                / Math.sqrt(Math.pow(wall.getA(),2) + Math.pow(wall.getB(),2));
-        return getRadius() >= distancePointToRect;
-    }
-
     public void move(double t){
         setX(getX() + getSpeedX() * t);
         setY(getY() + getSpeedY() * t);
@@ -306,10 +303,10 @@ public class Particle implements PlainWritable {
     public void makeEulerStep(double t, double acceleration, double accelerationAngle){
         double speedX = getSpeedX();
         double speedY  = getSpeedY();
-        x = x + t * speedX + Math.pow(t,2) *  (acceleration * Math.cos(accelerationAngle) / mass) / 2;
-        y = y + t * speedY + Math.pow(t,2) *  (acceleration * Math.sin(accelerationAngle) / mass) / 2;
-        speedX =  speedX + t * ((acceleration * Math.cos(accelerationAngle)/mass));
-        speedY = speedY + t * ((acceleration * Math.sin(accelerationAngle)/mass));
+        x = x + t * speedX + Math.pow(t,2) *  (acceleration * Math.cos(accelerationAngle)) / 2;
+        y = y + t * speedY + Math.pow(t,2) *  (acceleration * Math.sin(accelerationAngle)) / 2;
+        speedX =  speedX + t * ((acceleration * Math.cos(accelerationAngle)));
+        speedY = speedY + t * ((acceleration * Math.sin(accelerationAngle)));
         speed = Math.sqrt(Math.pow(speedX, 2) + Math.pow(speedY, 2));
         angle = Math.atan2(speedY, speedX);
         this.acceleration.setModule(acceleration);
@@ -335,14 +332,73 @@ public class Particle implements PlainWritable {
     }
 
     public double getTangencialSpeedWith(Particle particle){
-        double tangencialAngle = tangencialWith(particle);
-        double difAngle = Math.abs(tangencialAngle - getAngle());
+        Vector tangencialVector = getTangencialVector(particle);
+        Vector speedVector = new Vector(getSpeed(),getAngle());
+        double difAngle = tangencialVector.angleWith(speedVector);
         return Math.cos(difAngle) * getSpeed();
+    }
+
+    public Vector getTangencialVector(Particle particle){
+        double tangencialAngle = tangencialWith(particle);
+        return new Vector(1,tangencialAngle);
     }
 
     public double getNormalSpeedWith(Particle particle){
         double tangencialSpeed = getTangencialSpeedWith(particle);
         double normalSpeed = Math.sqrt(Math.pow(getSpeed(),2) - Math.pow(tangencialSpeed,2));
         return normalSpeed;
+    }
+
+    public double getPosition(){
+        return Math.sqrt(Math.pow(getX(),2) + Math.pow(getY(),2));
+    }
+
+    public double getOverlap(Particle particle){
+        double overlap = this.getRadius() + particle.getRadius() - Math.abs(distanceToCenterOf(particle));
+        if(overlap <0){
+            return 0;
+        }
+        //Ri + Rj - |rj - ri|
+        return overlap;
+    }
+
+
+    public double getNormalAngleWith(Particle particle){
+        double xNormal = (particle.getX() - getX()) / Math.abs(getPosition() - particle.getPosition());
+        double yNormal = (particle.getY() - getY()) / Math.abs(getPosition() - particle.getPosition());
+        return Math.atan2(yNormal,xNormal);
+    }
+
+    public void setAcceleration(Vector acceleration) {
+        this.previousAcceleration = this.acceleration;
+        this.acceleration = acceleration;
+    }
+
+    public Vector getAcceleration() {
+        return acceleration;
+    }
+
+    public double getOverlap(Wall wall){
+        double distance = wall.pDistance(getX(),getY());
+        if(distance < getRadius()){
+            return Math.abs(distance-getRadius());
+        }
+        return 0;
+    }
+
+    public Vector getSpeedAsVector(){
+        return new Vector(getSpeed(),getAngle());
+    }
+
+    public Vector getPreviousAcceleration() {
+        return previousAcceleration;
+    }
+
+    public boolean isAlreadyCounted() {
+        return alreadyCounted;
+    }
+
+    public void setAlreadyCounted(boolean alreadyCounted) {
+        this.alreadyCounted = alreadyCounted;
     }
 }

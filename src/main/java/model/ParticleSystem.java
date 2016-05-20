@@ -99,13 +99,7 @@ public class ParticleSystem implements PlainWritable {
                         overlap = true;
                     }
                 }
-                for(Wall wall : walls){
-                    if (newParticle.overlap(wall)) {
-                        newParticle.setX(RandomUtils.between(radius, l - radius));
-                        newParticle.setY(RandomUtils.between(radius, l - radius));
-                        overlap = true;
-                    }
-                }
+
             }
             addParticle(newParticle);
         }
@@ -239,6 +233,7 @@ public class ParticleSystem implements PlainWritable {
         if(isInBorder(x,y)){
             return;
         }
+
         neighbourhood[x][y].add(particle);
     }
 
@@ -265,7 +260,7 @@ public class ParticleSystem implements PlainWritable {
     }
 
     private boolean isInBorder(int i, int j){
-        return ( i == -1 || j == -1 || i >= squareCount || j >= squareCount);
+        return ( i <= -1 || j <= -1 || i >= squareCount || j >= squareCount);
     }
 
     public boolean isInBorder(double x, double y){
@@ -586,11 +581,27 @@ public class ParticleSystem implements PlainWritable {
         }
     }
 
+    public List<Wall> getWalls() {
+        return walls;
+    }
+
     public int getN(){
         return particles.size();
     }
 
     public boolean isPeriodic() {
         return isPeriodic;
+    }
+
+    public void setInteractionRadius(double interactionRadius) {
+        this.interactionRadius = interactionRadius;
+    }
+
+    public double getKineticEnergy(){
+        double totalKineticEnergy = 0;
+        for(Particle particle : getParticles()){
+            totalKineticEnergy += Math.pow(particle.getSpeed() ,2) * particle.getMass()  / 2;
+        }
+        return totalKineticEnergy;
     }
 }
