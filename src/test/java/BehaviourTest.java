@@ -27,6 +27,7 @@ public class BehaviourTest {
     int squareCount;
     double innerRadius;
     double outterRadius;
+    double vMax;
     int k;
     double dt;
     double t;
@@ -35,7 +36,7 @@ public class BehaviourTest {
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
     public BehaviourTest(int id,double width, double height, double apperture, int maxAgents, String fileName, int squareCount,
-                         double innerRadius, double outterRadius, int k, double dt, double t) {
+                         double innerRadius, double outterRadius,double vMax, int k, double dt, double t) {
         this.width = width;
         this.height = height;
         this.apperture = apperture;
@@ -44,6 +45,7 @@ public class BehaviourTest {
         this.squareCount = squareCount;
         this.innerRadius = innerRadius;
         this.outterRadius = outterRadius;
+        this.vMax = vMax;
         this.k = k;
         this.dt = dt;
         this.t = t;
@@ -56,7 +58,7 @@ public class BehaviourTest {
         return Arrays.asList(new Object[][]{
 //        int id, double width , double height, double apperture, int maxAgents, String fileName,
 //        int squareCount,double innerRadius, double outterRadius, int k, double dt, double t
-                {1, 2.0, 10.0, 1.0, 2000, OUTPUT_PATH + CSV_FILENAME,1,0.02,0.05,400,0.00001,1.0}
+                {1, 20.0, 20.0, 1.2, 300, OUTPUT_PATH + CSV_FILENAME,1,0.15,0.32,1.55,5,0.05,80.0}
         });
     }
 
@@ -65,7 +67,7 @@ public class BehaviourTest {
     @Before
     public void init() throws IOException {
             behaviourSystemSimulation = new BehaviourSystemSimulation(width,height, apperture,maxAgents, fileName + id + ".csv",
-                    squareCount,innerRadius,outterRadius);
+                    squareCount,innerRadius,outterRadius,vMax);
     }
 
     @Test

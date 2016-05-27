@@ -14,18 +14,20 @@ public class BehaviourSystem extends ParticleSystem{
 
     private static final int MAX_TRIES = 10000;
     private static final double MASS = 0.01;
+    private static final double beta = 0.9;
+    private static final double tau = 0.5;
 
     public double apperture;
 
 
-    public BehaviourSystem(double width, double height,double apperture,int squareCount, double innerRadius,double outterRadius, int maxAgents){
+    public BehaviourSystem(double width, double height,double apperture,int squareCount, double innerRadius,double outterRadius, int maxAgents, double vMax){
         super(false,squareCount);
         this.setL((long)height + FALL_HEIGHT);
         this.apperture = apperture;
         setInteractionRadius(outterRadius);
 
         createWalls(width,height);
-        createAgents(outterRadius,maxAgents, width, height, innerRadius);
+        createAgents(outterRadius,maxAgents, width, height, innerRadius, vMax);
 
 
     }
@@ -46,7 +48,7 @@ public class BehaviourSystem extends ParticleSystem{
     }
 
     private void createAgents(double rMax, int particleCount, double width, double
-                              height, double rMin) {
+                              height, double rMin, double vMax) {
         double offset = rMax * 1.01;
         double leftBound = 0 + offset;
         double rightBound = width - offset;
@@ -60,6 +62,8 @@ public class BehaviourSystem extends ParticleSystem{
             newParticle.setRadius(rMax);
             newParticle.setrMax(rMax);
             newParticle.setrMin(rMin);
+            newParticle.setMaxSpeed(vMax);
+            newParticle.setTarget(new Particle(10,0,0.5));
             boolean overlap = true;
             while ( overlap && (tries++ < MAX_TRIES)) {
                 overlap=false;
@@ -124,20 +128,80 @@ public class BehaviourSystem extends ParticleSystem{
 
     /**
      * Move the system using an aproximated method.
-     * @param t
+     * @param dt
      */
-    public void move(double t){
+    public void move(double dt){
         for(Particle particle : getParticles()){
-            Vector direction = getTargetDirection(particle,1,0);
+            Vector direction = new Vector(0,0);
+            for(Particle particle2 : getParticles()){
+                if(!particle.equals(particle2)){
+                    if(particle.overlap(particle2)){
+                        particle.dirty();
+                        direction.sum(getContactVelocity(particle,particle2));
+                    }
+                }
+            }
+            for(Wall wall : getWalls()){
+                if(particle.getOverlap(wall) != 0 && !wall.isOpen()){
+                    particle.dirty();
+                    direction.sum(getContactVelocity(particle,wall));
+                }
+            }
+            if(!particle.isDirty()) {
+                direction = getDesireVelocity(particle, particle.getTarget().getX(), particle.getTarget().getY());
+            }
             particle.setSpeed(direction.getModuleX(),direction.getModuleY());
-            particle.setX(particle.getX() + particle.getSpeedX() * t);
-            particle.setY(particle.getY() + particle.getSpeedY() * t);
+            particle.setX(particle.getX() + particle.getSpeedX() * dt);
+            particle.setY(particle.getY() + particle.getSpeedY() * dt);
         }
+        refreshRadius(dt);
+        removeParticlesThatReachTheObjective();
+
     }
 
     public Vector getTargetDirection(Particle particle,double x, double y){
         Vector targetDirection = new Vector(particle.getX(),particle.getY(), x, y);
         return targetDirection;
+    }
+
+    public void removeParticlesThatReachTheObjective(){
+        List<Particle> newParticles = new ArrayList<>();
+        for(Particle particle : getParticles()){
+            if(!particle.reachTarget()){
+                newParticles.add(particle);
+            }
+        }
+        setParticles(newParticles);
+    }
+
+    public Vector getDesireVelocity(Particle particle, double x, double y){
+        Vector targetDirection = getTargetDirection(particle,x,y);
+        //| vd | = vd = vd max [(r-rmin)/(r-rmax)]β
+        double module = particle.getMaxSpeed() * Math.pow((particle.getRadius() - particle.getrMin()) / (particle.getrMax() - particle.getrMin()),beta);
+        targetDirection.setModule(module);
+        return targetDirection;
+    }
+
+    public Vector getContactVelocity(Particle particle, Particle particle2){
+        return new Vector(particle.getMaxSpeed(),particle2.getNormalAngleWith(particle));
+    }
+    public Vector getContactVelocity(Particle particle, Wall wall){
+        return new Vector(particle.getMaxSpeed(),wall.getNormalAngle(particle));
+    }
+
+
+    public void refreshRadius(double dt){
+        for(Particle particle : getParticles()){
+            if(particle.isDirty()){
+                particle.setRadius(particle.getrMin());
+                particle.clean();
+            }else if (particle.getRadius() < particle.getrMax()){
+                particle.setRadius(particle.getRadius() + (particle.getrMax() / (tau/dt)));
+                if(particle.getRadius() > particle.getrMax()){
+                    particle.setRadius(particle.getrMax());
+                }
+            }
+        }
     }
 
 

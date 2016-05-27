@@ -20,11 +20,11 @@ public class BehaviourSystemSimulation {
     private PrintWriter writer;
 
     public BehaviourSystemSimulation(double width , double height, double apperture, int maxAgents, String fileName,
-                                     int squareCount,double innerRadius, double outterRadius ) throws IOException{
-        if(apperture >= width || width >= height){
+                                     int squareCount,double innerRadius, double outterRadius, double vMax ) throws IOException{
+        if(apperture >= width || width > height){
             throw new IllegalArgumentException();
         }
-        behaviourSystem = new BehaviourSystem(width,height,apperture,squareCount,innerRadius,outterRadius,maxAgents);
+        behaviourSystem = new BehaviourSystem(width,height,apperture,squareCount,innerRadius,outterRadius,maxAgents, vMax);
 
         try {
             Files.deleteIfExists(Paths.get(fileName));

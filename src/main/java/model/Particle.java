@@ -3,6 +3,7 @@ package model;
 import util.PlainWritable;
 import util.RandomUtils;
 
+import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -21,6 +22,7 @@ public class Particle implements PlainWritable {
 
     //Speed without direction (mod)
     private double speed;
+    private double maxSpeed;
     //Direction of the particle
     private double angle;
     //Mass of the particle
@@ -31,6 +33,8 @@ public class Particle implements PlainWritable {
 
     private boolean alreadyCounted = false;
 
+    private boolean dirty = false;
+
 
     private Set<Particle> neighbours = new HashSet<>();
 
@@ -40,6 +44,8 @@ public class Particle implements PlainWritable {
     private double angularMoment;
 
     private boolean markToBeRemove = false;
+
+    private Particle target;
 
     @Override
     public PlainWritable readObject(String plainObject) {
@@ -117,6 +123,13 @@ public class Particle implements PlainWritable {
         setX(x);
         setY(y);
         setRadius(radius);
+    }
+    public Particle(double x, double y, double radius, Particle target) {
+        this();
+        setX(x);
+        setY(y);
+        setRadius(radius);
+        this.target = target;
     }
     public Particle(double mass){
         this();
@@ -418,5 +431,37 @@ public class Particle implements PlainWritable {
 
     public void setrMin(double rMin) {
         this.rMin = rMin;
+    }
+
+    public void setMaxSpeed(double maxSpeed) {
+        this.maxSpeed = maxSpeed;
+    }
+
+    public double getMaxSpeed() {
+        return maxSpeed;
+    }
+
+    public void clean(){
+        dirty = false;
+    }
+
+    public void dirty(){
+        dirty = true;
+    }
+
+    public boolean isDirty(){
+        return dirty;
+    }
+
+    public Particle getTarget() {
+        return target;
+    }
+
+    public boolean reachTarget(){
+        return this.getOverlap(getTarget()) != 0;
+    }
+
+    public void setTarget(Particle target) {
+        this.target = target;
     }
 }
