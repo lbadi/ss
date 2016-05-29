@@ -11,7 +11,6 @@ public class BehaviourSystem extends ParticleSystem{
     private static final int FALL_HEIGHT = 1;
 
     private static final int MAX_TRIES = 10000;
-    private static final double MASS = 0.01;
     private static final double beta = 0.9;
     private static final double tau = 0.5;
 
@@ -49,7 +48,6 @@ public class BehaviourSystem extends ParticleSystem{
         for (int i = 0; i < particleCount; i++) {
             int tries = 0;
             Particle newParticle = new Particle(RandomUtils.between(leftBound,rightBound),RandomUtils.between(buttomBound,topBound));
-            newParticle.setMass(MASS);
             newParticle.setSpeed(0,0);
             newParticle.setRadius(rMax);
             newParticle.setrMax(rMax);
