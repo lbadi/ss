@@ -6,8 +6,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-/*
- */
 public class BehaviourSystem extends ParticleSystem{
 
     private static final int FALL_HEIGHT = 1;
@@ -19,19 +17,14 @@ public class BehaviourSystem extends ParticleSystem{
 
     public double apperture;
 
-
     public BehaviourSystem(double width, double height,double apperture,int squareCount, double innerRadius,double outterRadius, int maxAgents, double vMax){
         super(false,squareCount);
         this.setL((long)height + FALL_HEIGHT);
         this.apperture = apperture;
         setInteractionRadius(outterRadius);
-
         createWalls(width,height);
         createAgents(outterRadius,maxAgents, width, height, innerRadius, vMax);
-
-
     }
-
 
     private void createWalls(double width, double height){
         List<Wall> walls = new ArrayList<>();
@@ -44,11 +37,10 @@ public class BehaviourSystem extends ParticleSystem{
         trap.setOpen(true);
         walls.add(trap);
         addWalls(walls);
-//        particleDetectorWall = new ParticleDetectorWall((width-apperture)/2 , FALL_HEIGHT ,(width+apperture)/2, FALL_HEIGHT);
     }
 
     private void createAgents(double rMax, int particleCount, double width, double
-                              height, double rMin, double vMax) {
+            height, double rMin, double vMax) {
         double offset = rMax * 1.01;
         double leftBound = 0 + offset;
         double rightBound = width - offset;
@@ -65,7 +57,7 @@ public class BehaviourSystem extends ParticleSystem{
             newParticle.setMaxSpeed(vMax);
             newParticle.setTarget(new Particle(10,0,0.5));
             boolean overlap = true;
-            while ( overlap && (tries++ < MAX_TRIES)) {
+            while (overlap && (tries++ < MAX_TRIES)) {
                 overlap=false;
                 for (Particle particle : getParticles()) {
                     overlap=false;
@@ -189,7 +181,6 @@ public class BehaviourSystem extends ParticleSystem{
         return new Vector(particle.getMaxSpeed(),wall.getNormalAngle(particle));
     }
 
-
     public void refreshRadius(double dt){
         for(Particle particle : getParticles()){
             if(particle.isDirty()){
@@ -203,6 +194,5 @@ public class BehaviourSystem extends ParticleSystem{
             }
         }
     }
-
 
 }

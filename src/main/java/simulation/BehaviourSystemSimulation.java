@@ -1,8 +1,7 @@
 package simulation;
 
 import model.BehaviourSystem;
-import model.GranularSystem;
-import util.PrintFormatter;
+import org.apache.log4j.Logger;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -10,10 +9,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 
-/**
- */
 public class BehaviourSystemSimulation {
 
     private BehaviourSystem behaviourSystem;
@@ -25,10 +21,8 @@ public class BehaviourSystemSimulation {
             throw new IllegalArgumentException();
         }
         behaviourSystem = new BehaviourSystem(width,height,apperture,squareCount,innerRadius,outterRadius,maxAgents, vMax);
-
         try {
             Files.deleteIfExists(Paths.get(fileName));
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,34 +31,20 @@ public class BehaviourSystemSimulation {
 
     public void simulate(int k, double dt, double t){
         behaviourSystem.writeFrameWithDirection(writer,0);
-
         int framesWrited = 1;
         double totalTimeSimulated = 0;
         behaviourSystem.move(dt);
         totalTimeSimulated += dt;
         while(totalTimeSimulated < t){
-            for(int i=0 ; i<k; i++){
-//                granularSystem.moveBeeman(dt);
+            for(int i = 0; i < k; i++){
                 behaviourSystem.move(dt);
-                //Detect collisions
-                //Refresh particle position in neighbourhood
-//                granularSystem.refreshSystem(granularSystem.getParticles());
-//                behaviourSystem.populateNeighbourhood();
-                totalTimeSimulated+=dt;
-
-                System.out.println("Tiempo simulado : " + totalTimeSimulated);
+                totalTimeSimulated += dt;
             }
             behaviourSystem.writeFrameWithDirection(writer,framesWrited++);
-//            behaviourSystem.getParticleDetectorWall().resetCounts();
+            Logger.getLogger(this.getClass()).info("Tiempo simulado: " + String.format("%.2f",totalTimeSimulated) + "s");
         }
-
         writer.flush();
         writer.close();
-
     }
 
-
-    public BehaviourSystem getBehaviourSystem() {
-        return behaviourSystem;
-    }
 }
