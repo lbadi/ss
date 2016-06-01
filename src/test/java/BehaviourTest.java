@@ -25,6 +25,7 @@ public class BehaviourTest {
     double t;
 
     public static final String CSV_FILENAME = "behaviour";
+    public static final String RESULT_CSV_FILENAME = "result";
     public static final String OUTPUT_PATH = "src/test/resources/output/";
 
     public BehaviourTest(int id,double width, double height, double apperture, int maxAgents, int squareCount,
@@ -78,7 +79,7 @@ public class BehaviourTest {
 
     @Before
     public void init() throws IOException {
-            behaviourSystemSimulation = new BehaviourSystemSimulation(width,height, apperture,maxAgents, OUTPUT_PATH + CSV_FILENAME + id + ".csv",
+            behaviourSystemSimulation = new BehaviourSystemSimulation(width,height, apperture,maxAgents, OUTPUT_PATH + CSV_FILENAME + id + ".csv", OUTPUT_PATH + RESULT_CSV_FILENAME + id + ".csv",
                     squareCount,innerRadius,outterRadius,vMax);
     }
 

@@ -40,7 +40,6 @@ public class BehaviourSystem extends ParticleSystem{
         walls.add(trap);
         addWalls(walls);
         particleDetectorWall = new ParticleDetectorWall((width-apperture)/2 , FALL_HEIGHT ,(width+apperture)/2, FALL_HEIGHT);
-
     }
 
     private void createAgents(double rMax, int particleCount, double width, double
@@ -238,6 +237,10 @@ public class BehaviourSystem extends ParticleSystem{
                 }
             }
         }
+    }
+
+    public ParticleDetectorWall getParticleDetectorWall() {
+        return particleDetectorWall;
     }
 
 }
