@@ -70,6 +70,9 @@ public class BehaviourTest {
                 {31, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
                 {32, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
                 {33, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+
+                {41, width, height, apperture * 3, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+
         });
     }
 

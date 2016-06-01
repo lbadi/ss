@@ -6,6 +6,7 @@ import util.RandomUtils;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class Particle implements PlainWritable {
@@ -45,7 +46,7 @@ public class Particle implements PlainWritable {
 
     private boolean markToBeRemove = false;
 
-    private Particle target;
+    private List<Particle> targets = new ArrayList<>();
 
     @Override
     public PlainWritable readObject(String plainObject) {
@@ -129,7 +130,7 @@ public class Particle implements PlainWritable {
         setX(x);
         setY(y);
         setRadius(radius);
-        this.target = target;
+        targets.add(target);
     }
     public Particle(double mass){
         this();
@@ -454,14 +455,28 @@ public class Particle implements PlainWritable {
     }
 
     public Particle getTarget() {
-        return target;
+        if(targets.size()>0) {
+            return targets.get(0);
+        }
+        return null;
     }
 
     public boolean reachTarget(){
-        return this.getOverlap(getTarget()) != 0;
+        if(getTarget() == null){
+            return true;
+        }
+        double overlap = this.getOverlap(getTarget());
+        if(overlap != 0){
+            targets.remove(0);
+        }
+        return overlap != 0;
     }
 
-    public void setTarget(Particle target) {
-        this.target = target;
+    public void addTarget(Particle target) {
+        targets.add(target);
+    }
+
+    public void addTargets(List<Particle> targets){
+        this.targets.addAll(targets);
     }
 }

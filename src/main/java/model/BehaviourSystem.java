@@ -8,13 +8,16 @@ import java.util.List;
 
 public class BehaviourSystem extends ParticleSystem{
 
-    private static final int FALL_HEIGHT = 1;
+    private static final int FALL_HEIGHT = 10;
 
     private static final int MAX_TRIES = 10000;
     private static final double beta = 0.9;
     private static final double tau = 0.5;
 
     public double apperture;
+
+    public List<Particle> targets = new ArrayList<>();
+    public ParticleDetectorWall particleDetectorWall;
 
     public BehaviourSystem(double width, double height,double apperture,int squareCount, double innerRadius,double outterRadius, int maxAgents, double vMax){
         super(false,squareCount);
@@ -29,13 +32,15 @@ public class BehaviourSystem extends ParticleSystem{
         List<Wall> walls = new ArrayList<>();
         walls.add(new Wall(0,height+FALL_HEIGHT,0,FALL_HEIGHT)); //left wall
         walls.add(new Wall(width,FALL_HEIGHT,width,FALL_HEIGHT+height));//right wall
-        walls.add(new Wall(0,height+FALL_HEIGHT,width,FALL_HEIGHT+height)); //top wall
+        walls.add(new Wall(width,FALL_HEIGHT+height,0,height+FALL_HEIGHT)); //top wall
         walls.add(new Wall(0,FALL_HEIGHT,(width-apperture)/2,FALL_HEIGHT)); //bottom left wall
         walls.add(new Wall((width+apperture)/2,FALL_HEIGHT,width,FALL_HEIGHT)); //bottom right wall
         Wall trap = new Wall((width-apperture)/2 , FALL_HEIGHT ,(width+apperture)/2, FALL_HEIGHT);
         trap.setOpen(true);
         walls.add(trap);
         addWalls(walls);
+        particleDetectorWall = new ParticleDetectorWall((width-apperture)/2 , FALL_HEIGHT ,(width+apperture)/2, FALL_HEIGHT);
+
     }
 
     private void createAgents(double rMax, int particleCount, double width, double
@@ -45,6 +50,14 @@ public class BehaviourSystem extends ParticleSystem{
         double rightBound = width - offset;
         double buttomBound = FALL_HEIGHT + offset;
         double topBound = FALL_HEIGHT+height - offset;
+//        targets.add(new Particle(0,FALL_HEIGHT,1));
+//        targets.add(new Particle(1,height+FALL_HEIGHT,1));
+//        targets.add(new Particle(width-1,height-1,1));
+//        targets.add(new Particle(width-1,FALL_HEIGHT+1,1));
+        targets.add(new Particle(width/2.0,FALL_HEIGHT - 0.5,0.5));
+        targets.add(new Particle(width/2.0,FALL_HEIGHT/2,0.5));
+
+
         for (int i = 0; i < particleCount; i++) {
             int tries = 0;
             Particle newParticle = new Particle(RandomUtils.between(leftBound,rightBound),RandomUtils.between(buttomBound,topBound));
@@ -53,7 +66,8 @@ public class BehaviourSystem extends ParticleSystem{
             newParticle.setrMax(rMax);
             newParticle.setrMin(rMin);
             newParticle.setMaxSpeed(vMax);
-            newParticle.setTarget(new Particle(10,0,0.5));
+
+            newParticle.addTargets(targets);
             boolean overlap = true;
             while (overlap && (tries++ < MAX_TRIES)) {
                 overlap=false;
@@ -88,16 +102,25 @@ public class BehaviourSystem extends ParticleSystem{
     public void writeFrameWithDirection(PrintWriter writer, int timeStep){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(getN() + getWalls().size() * 2 + 1).append("\n"); // 2 particulas por cada pared
+        sb.append(getN() + targets.size() +getWalls().size() * 2 + 1).append("\n"); // 2 particulas por cada pared
         sb.append(timeStep).append("\n");
         writeCorners(sb);
+        writeObjectives(sb);
 
         getParticles().stream().forEach(particle ->{
             sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
-            sb.append(df.format((Math.cos(particle.getAngle())+1)/2) + "\t" + df.format((Math.sin(particle.getAngle())+1)/2) + "\t" + df.format(0.0) + "\t");
+            sb.append(df.format(1.0) + "\t" + df.format(1.0) + "\t" + df.format(1.0) + "\t");
             sb.append("\n");
         });
         writer.write(sb.toString());
+    }
+
+    public void writeObjectives(StringBuilder sb){
+        targets.stream().forEach(particle ->{
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
+            sb.append(df.format(1.0) + "\t" + df.format(0.0) + "\t" + df.format(0.0) + "\t");
+            sb.append("\n");
+        });
     }
 
     public void writeCorners(StringBuilder sb){
@@ -138,15 +161,33 @@ public class BehaviourSystem extends ParticleSystem{
                 }
             }
             if(!particle.isDirty()) {
-                direction = getDesireVelocity(particle, particle.getTarget().getX(), particle.getTarget().getY());
+                if(particle.getTarget() == null){
+                    direction = new Vector(0,0);
+                }else {
+                    direction = getDesireVelocity(particle, particle.getTarget().getX(), particle.getTarget().getY());
+                }
             }
             particle.setSpeed(direction.getModuleX(),direction.getModuleY());
             particle.setX(particle.getX() + particle.getSpeedX() * dt);
             particle.setY(particle.getY() + particle.getSpeedY() * dt);
+
+            detectCollisionWithDetector(particle);
         }
         refreshRadius(dt);
-        removeParticlesThatReachTheObjective();
+        refreshObjectives();
 
+//        removeParticlesThatReachTheObjective();
+//        removeParticlesThatReachTheObjective();
+
+    }
+
+    public void detectCollisionWithDetector(Particle particle){
+        if(!particle.isAlreadyCounted()){
+            if (particle.getOverlap(particleDetectorWall) != 0){
+                particle.setAlreadyCounted(true);
+                particleDetectorWall.incCount();
+            }
+        }
     }
 
     public Vector getTargetDirection(Particle particle,double x, double y){
@@ -154,10 +195,16 @@ public class BehaviourSystem extends ParticleSystem{
         return targetDirection;
     }
 
+    public void refreshObjectives(){
+        for(Particle particle : getParticles()){
+            particle.reachTarget();
+        }
+    }
+
     public void removeParticlesThatReachTheObjective(){
         List<Particle> newParticles = new ArrayList<>();
         for(Particle particle : getParticles()){
-            if(!particle.reachTarget()){
+            if(particle.getTarget() != null){
                 newParticles.add(particle);
             }
         }
