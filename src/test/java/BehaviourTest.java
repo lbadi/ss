@@ -60,20 +60,21 @@ public class BehaviourTest {
 //        int id, double width, double height, double apperture, int maxAgents (<= N),
 //        int squareCount, double innerRadius, double outterRadius, double vMax, int k, double dt, double t
                 //N = 100
-                {11, width, height, apperture, 100, squareCount, rMin, rMax, vMax, k, dt, t},
-                {12, width, height, apperture, 100, squareCount, rMin, rMax, vMax, k, dt, t},
-                {13, width, height, apperture, 100, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {11, width, height, apperture, 100, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {12, width, height, apperture, 100, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {13, width, height, apperture, 100, squareCount, rMin, rMax, vMax, k, dt, t},
                 //N = 200
-                {21, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
-                {22, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
-                {23, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {21, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {22, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {23, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
                 //N = 300
                 {31, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
                 {32, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
                 {33, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+                {34, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+                {35, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
 
-                {41, width, height, apperture * 3, 300, squareCount, rMin, rMax, vMax, k, dt, t},
-
+//                {41, width, height, apperture * 3, 300, squareCount, rMin, rMax, vMax, k, dt, t},
         });
     }
 

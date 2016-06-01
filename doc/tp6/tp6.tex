@@ -89,13 +89,13 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \end{frame}
 
 %Part List
-\begin{frame}
-\frametitle{Que vamos a ver}
-\parttableofcontents
-\end{frame}
+%\begin{frame}
+%\frametitle{Que vamos a ver}
+%\parttableofcontents
+%\end{frame}
 
 %First Part
-\part{Egreso de una habitación}
+%\part{Egreso de una habitación}
 
 \section{Fundamentos}
 
@@ -126,7 +126,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 		\item Verificando que no se superpongan
 		\item Intentando hasta 10000 veces por partícula para obtener una ubicación válida 
 	\end{itemize}
-	\item $100 < N < 300$
+	\item $N = 300$
 	\item $r_{min} = 0.15m$
 	\item $r_{max} = 0.32m$
 	\item $v_{d}^{max} = 1.55 \frac{m}{s}$
@@ -246,11 +246,11 @@ public void simulate(double t, double dt, int k){
 
 \begin{frame}
 \Wider{
-\frametitle{Resultados}
-\framesubtitle{Evolución temporal de ? para distintos valores de ?}
+\frametitle{Gráfico de número de evacuados en función del tiempo}
+\framesubtitle{Para $N = 300$, $r_{min} = 0.15m$, $r_{max} = 0.32m$ y $v_{d}^{max} = 1.55 \frac{m}{s}$}
 \begin{figure}[H]
 	\centering
-    \includegraphics[width=\textwidth]{example-image}
+    \includegraphics[width=\textwidth]{charts/ejA.png}
 \end{figure}
 }
 \end{frame}
@@ -258,11 +258,11 @@ public void simulate(double t, double dt, int k){
 \subsection{Animaciones}
 
 \begin{frame}[plain]
-\frametitle{Resultados}
-\framesubtitle{Animación de la simulación para $N = 300$}
+\frametitle{Animación de la simulación}
+\framesubtitle{Para $N = 300$, $r_{min} = 0.15m$, $r_{max} = 0.32m$ y $v_{d}^{max} = 1.55 \frac{m}{s}$}
 \begin{figure}[H]
 	\centering
-	\animategraphics[loop,controls,width=0.90\textheight]{10}{animation/room}{00001}{00133}
+	\animategraphics[loop,controls,width=0.85\textwidth]{10}{animation/300n}{00001}{00242}
 \end{figure}
 \end{frame}
 
@@ -270,24 +270,11 @@ public void simulate(double t, double dt, int k){
 
 \begin{frame}
 \frametitle{Conclusiones}
-\framesubtitle{Para el silo abierto}
+\framesubtitle{Lorem ipsum dolor}
 \begin{itemize}
-	\item Formación de arcos cerca de la puerta de la habitación
+	\item Lorem ipsum dolor
 \end{itemize}	
 \end{frame} 
-
-\begin{frame}
-\Wider{
-\frametitle{Conclusiones}
-\framesubtitle{Formación de arcos cerca de la puerta de la habitación}
-\begin{figure}[H]
-	\centering
-    \includegraphics[width=0.75\textheight]{images/arco.png}
-\end{figure}
-}
-\end{frame}
-
-\part{Bosque de obstáculos}
 
 \begin{frame}[plain]
     \centering

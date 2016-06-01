@@ -48,7 +48,10 @@ public class BehaviourSystemSimulation {
             behaviourSystem.writeFrameWithDirection(writer,framesWrited++);
             Logger.getLogger(this.getClass()).info("Tiempo simulado: " + String.format("%.2f",totalTimeSimulated) + "s");
             writeResult(resultWriter,totalTimeSimulated);
-            behaviourSystem.getParticleDetectorWall().resetCounts();
+            /**
+             * No reseteamos el contador porque la pregunta a) pide el valor acumulado.
+             */
+//            behaviourSystem.getParticleDetectorWall().resetCounts();
         }
         writer.flush();
         writer.close();
