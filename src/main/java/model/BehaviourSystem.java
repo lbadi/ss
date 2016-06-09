@@ -167,17 +167,22 @@ public class BehaviourSystem extends ParticleSystem{
                 }
             }
             particle.setSpeed(direction.getModuleX(),direction.getModuleY());
-            particle.setX(particle.getX() + particle.getSpeedX() * dt);
-            particle.setY(particle.getY() + particle.getSpeedY() * dt);
-
             detectCollisionWithDetector(particle);
         }
+        refreshPosition(dt);
         refreshRadius(dt);
         refreshObjectives();
 
 //        removeParticlesThatReachTheObjective();
 //        removeParticlesThatReachTheObjective();
 
+    }
+
+    public void refreshPosition(double dt){
+        for(Particle particle : getParticles()){
+            particle.setX(particle.getX() + particle.getSpeedX() * dt);
+            particle.setY(particle.getY() + particle.getSpeedY() * dt);
+        }
     }
 
     public void detectCollisionWithDetector(Particle particle){

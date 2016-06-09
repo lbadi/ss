@@ -47,7 +47,9 @@ public class BehaviourSystemSimulation {
             }
             behaviourSystem.writeFrameWithDirection(writer,framesWrited++);
             Logger.getLogger(this.getClass()).info("Tiempo simulado: " + String.format("%.2f",totalTimeSimulated) + "s");
-            writeResult(resultWriter,totalTimeSimulated);
+            if(writeResult(resultWriter,totalTimeSimulated)){
+                break;
+            }
             /**
              * No reseteamos el contador porque la pregunta a) pide el valor acumulado.
              */
@@ -65,13 +67,17 @@ public class BehaviourSystemSimulation {
         writer.write(sb.toString());
     }
 
-    private void writeResult(PrintWriter writer, double timeStep) {
+    private boolean writeResult(PrintWriter writer, double timeStep) {
         DecimalFormat df = new PrintFormatter().getDf();
         StringBuilder sb = new StringBuilder();
         int counts = behaviourSystem.getParticleDetectorWall().getCounts();
         sb.append(df.format(timeStep)).append(",")
                 .append(df.format(counts)).append("\n");
         writer.write(sb.toString());
+        if(counts == behaviourSystem.getParticles().size()){
+            return true;
+        }
+        return false;
     }
 
 }

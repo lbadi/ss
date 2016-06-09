@@ -54,8 +54,8 @@ public class BehaviourTest {
         double rMax = 0.32;
         double vMax = 1.55;
         int k = 5;
-        double dt = 0.05;
-        double t = 200;
+        double dt = 0.01;
+        double t = 1000;
         return Arrays.asList(new Object[][]{
 //        int id, double width, double height, double apperture, int maxAgents (<= N),
 //        int squareCount, double innerRadius, double outterRadius, double vMax, int k, double dt, double t
@@ -68,11 +68,33 @@ public class BehaviourTest {
 //                {22, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
 //                {23, width, height, apperture, 200, squareCount, rMin, rMax, vMax, k, dt, t},
                 //N = 300
-                {31, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
-                {32, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
-                {33, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
-                {34, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
-                {35, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {31, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {32, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {33, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {34, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+//                {35, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
+
+//                V=0.5
+                {11, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
+                {12, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
+                {13, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
+                //V=2
+
+                {21, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
+                {22, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
+                {23, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
+                //V=3
+
+                {31, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
+                {32, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
+                {33, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
+                //V=4
+
+                {41, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
+                {42, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
+                {43, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
+
+//                {51, width, height, apperture, 300, squareCount, rMin, rMax, 20, k, dt, t},
 
 //                {41, width, height, apperture * 3, 300, squareCount, rMin, rMax, vMax, k, dt, t},
         });
