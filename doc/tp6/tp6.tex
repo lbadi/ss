@@ -189,6 +189,7 @@ public void simulate(double t, double dt, int k){
 \begin{itemize}
 	\item Para los valores de $N$ que vamos a analizar se obtuvieron tiempos de procesamiento muy bajos
 	\item Por lo tanto no se necesitó contar con el \textit{Cell Index Method}
+	\item Se implementó un modelo que contempla una lista de \textit{targets} para cada una de las partículas
 \end{itemize}
 \end{frame}
 
@@ -303,9 +304,10 @@ public void simulate(double t, double dt, int k){
 
 \begin{frame}
 \frametitle{Conclusiones}
-\framesubtitle{Lorem ipsum dolor}
 \begin{itemize}
-	\item Lorem ipsum dolor
+	\item Se logró representar el movimiento de personas en estado no competitivo usando el \textit{Contractile Particle Model}
+	\item A medida que se aumenta la velocidad, se puede ver como disminuye el tiempo de salida. En este caso no se obtuvo \textit{faster is slower}. Una de las posibles causas de esto es que el movimiento de los agentes es no competitivo.
+	\item Implementación simple donde cada partícula o agente es independiente. 
 \end{itemize}	
 \end{frame} 
 
