@@ -225,24 +225,24 @@ public void simulate(double t, double dt, int k){
 \end{itemize}
 \end{frame}
 
-\begin{frame}
-\frametitle{Resultados}
-\framesubtitle{? para distintos valores de ?}
-\begin{center}
-\begin{table}[h]
-\centering
-\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
-           max width=\textwidth}{
-\begin{tabular}{cc}
-\hline
-\textbf{?} & \textbf{?}\\ \hline
-?&?\\ 
-\end{tabular}
-}
-\caption{? para distintos valores de ?}
-\end{table}
-\end{center}
-\end{frame}
+%\begin{frame}
+%\frametitle{Resultados}
+%\framesubtitle{? para distintos valores de ?}
+%\begin{center}
+%\begin{table}[h]
+%\centering
+%\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
+%           max width=\textwidth}{
+%\begin{tabular}{cc}
+%\hline
+%\textbf{?} & \textbf{?}\\ \hline
+%?&?\\ 
+%\end{tabular}
+%}
+%\caption{? para distintos valores de ?}
+%\end{table}
+%\end{center}
+%\end{frame}
 
 \begin{frame}
 \Wider{
@@ -251,6 +251,39 @@ public void simulate(double t, double dt, int k){
 \begin{figure}[H]
 	\centering
     \includegraphics[width=\textwidth]{charts/ejA.png}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}
+\Wider{
+\frametitle{Gráfico del comportamiento promedio del sistema}
+\framesubtitle{Para $N = 300$, $r_{min} = 0.15m$, $r_{max} = 0.32m$ y $v_{d}^{max} = 1.55 \frac{m}{s}$}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{charts/ejB.png}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}
+\Wider{
+\frametitle{Gráfico de la evolución del caudal en función del tiempo}
+\framesubtitle{Para $N = 300$, $r_{min} = 0.15m$, $r_{max} = 0.32m$, $v_{d}^{max} = 1.55 \frac{m}{s}$ y Ventana = $10s$}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{charts/ejC-10.png}
+\end{figure}
+}
+\end{frame}
+
+\begin{frame}
+\Wider{
+\frametitle{Gráfico de $v_{d}^{max}$ en función del tiempo de evacuación}
+\framesubtitle{Para $N = 300$, $r_{min} = 0.15m$, $r_{max} = 0.32m$ y 3 simulaciones en cada caso}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{charts/ejD.png}
 \end{figure}
 }
 \end{frame}
