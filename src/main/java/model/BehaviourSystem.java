@@ -9,6 +9,9 @@ import java.util.List;
 public class BehaviourSystem extends ParticleSystem{
 
     private static final int FALL_HEIGHT = 10;
+    private static final double NODE_SIZE = 1;
+    private static final double FELEER_STEP = 0.1;
+    private static final double FELEER_LENGHT = 0.8;
 
     private static final int MAX_TRIES = 10000;
     private static final double beta = 0.9;
@@ -18,6 +21,7 @@ public class BehaviourSystem extends ParticleSystem{
 
     public List<Particle> targets = new ArrayList<>();
     public ParticleDetectorWall particleDetectorWall;
+    public Node[][] board;
 
     public BehaviourSystem(double width, double height,double apperture,int squareCount, double innerRadius,double outterRadius, int maxAgents, double vMax){
         super(false,squareCount);
@@ -26,6 +30,7 @@ public class BehaviourSystem extends ParticleSystem{
         setInteractionRadius(outterRadius);
         createWalls(width,height);
         createAgents(outterRadius,maxAgents, width, height, innerRadius, vMax);
+//        createBoard();
     }
 
     private void createWalls(double width, double height){
@@ -65,8 +70,16 @@ public class BehaviourSystem extends ParticleSystem{
             newParticle.setrMax(rMax);
             newParticle.setrMin(rMin);
             newParticle.setMaxSpeed(vMax);
+            Feeler feeler1 = new Feeler(new Vector(0,FELEER_LENGHT));
+            Feeler feeler2 = new Feeler(new Vector(Math.PI/8,FELEER_LENGHT));
+            Feeler feeler3 = new Feeler(new Vector(-Math.PI/8,FELEER_LENGHT));
+            Feeler feeler4 = new Feeler(new Vector(Math.PI/4,FELEER_LENGHT));
+            Feeler feeler5 = new Feeler(new Vector(-Math.PI/4,FELEER_LENGHT));
 
-            newParticle.addTargets(targets);
+            newParticle.addFeeler(feeler1).addFeeler(feeler2).addFeeler(feeler3).addFeeler(feeler4).addFeeler(feeler5);
+            if(i == 0) {
+                newParticle.addTargets(targets);
+            }
             boolean overlap = true;
             while (overlap && (tries++ < MAX_TRIES)) {
                 overlap=false;
@@ -95,6 +108,33 @@ public class BehaviourSystem extends ParticleSystem{
             if(tries >= MAX_TRIES) {
                 break;
             }
+        }
+    }
+
+    private void createBoard(){
+        if(this.getL() == 0){
+            throw new IllegalArgumentException();
+        }
+        int nodeCount  = (int) (this.getL() / NODE_SIZE);
+        board = new Node[nodeCount][nodeCount];
+        for(int i = 0; i < board.length ; i ++){
+            for(int j = 0 ; j < board[0].length ; j ++){
+                board[i][j] = new Node();
+            }
+        }
+        for(int i = 0; i < board.length ; i++){
+            for(int j = 0; j < board[0].length ; j++){
+//                board[i][j]
+            }
+        }
+    }
+
+    private void asignAgentsToBoard(){
+        for(Particle particle : getParticles()){
+            int x = (int)Math.floor(particle.getX() / NODE_SIZE);
+            int y = (int)Math.floor(particle.getY() / NODE_SIZE);
+            //Por ahi hay que agregar el casillero a la particula
+            board[x][y].addParticle(particle);
         }
     }
 
@@ -163,7 +203,7 @@ public class BehaviourSystem extends ParticleSystem{
                 if(particle.getTarget() == null){
                     direction = new Vector(0,0);
                 }else {
-                    direction = getDesireVelocity(particle, particle.getTarget().getX(), particle.getTarget().getY());
+                    direction = getVelocity(particle, particle.getTarget().getX(), particle.getTarget().getY());
                 }
             }
             particle.setSpeed(direction.getModuleX(),direction.getModuleY());
@@ -215,12 +255,39 @@ public class BehaviourSystem extends ParticleSystem{
         setParticles(newParticles);
     }
 
+    public Vector getVelocity(Particle particle,double x ,double y){
+        Vector desireVelocity = getDesireVelocity(particle,x,y);
+        Vector avoidVelocity = getAvoidDirection(particle);
+        return desireVelocity.sum(avoidVelocity);
+    }
+
     public Vector getDesireVelocity(Particle particle, double x, double y){
         Vector targetDirection = getTargetDirection(particle,x,y);
         //| vd | = vd = vd max [(r-rmin)/(r-rmax)]β
         double module = particle.getMaxSpeed() * Math.pow((particle.getRadius() - particle.getrMin()) / (particle.getrMax() - particle.getrMin()),beta);
         targetDirection.setModule(module);
         return targetDirection;
+    }
+
+    public Vector getAvoidDirection(Particle particle){
+        Vector avoidVector = new Vector(0,0);
+        for(Feeler feeler : particle.getFeelers()){
+            for(Particle particle1 : getParticles()){
+                if(!particle.equals(particle1)){
+                    for(double i = 0; i<=1 ;i += FELEER_STEP  ) {
+                        double x = particle.getX() + i * feeler.direction.getModule() * Math.cos((feeler.direction.getAngle() + particle.getAngle()));
+                        double y = particle.getY() + i * feeler.direction.getModule() * Math.sin((feeler.direction.getAngle() + particle.getAngle()));
+                        if(particle1.isInnerPoint(x,y)){
+                            double innerLenght = (1-i) * feeler.direction.getModule(); //Cuanto estoy metido del feeler
+                            double angle = - particle.getNormalAngleWith(particle1);
+                            avoidVector.sum(new Vector(innerLenght,angle));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return avoidVector.normalize();
     }
 
     public Vector getContactVelocity(Particle particle, Particle particle2){

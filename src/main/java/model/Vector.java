@@ -76,4 +76,12 @@ public class Vector {
         return this;
     }
 
+    public Vector normalize(){
+        if(module == 0){
+            return this;
+        }
+        module = 1;
+        return this;
+    }
+
 }

@@ -38,6 +38,7 @@ public class Particle implements PlainWritable {
 
 
     private Set<Particle> neighbours = new HashSet<>();
+    private List<Feeler> feelers = new ArrayList<>();
 
     private static AtomicLong counter = new AtomicLong();
     private long id;
@@ -472,11 +473,27 @@ public class Particle implements PlainWritable {
         return overlap != 0;
     }
 
+    public Particle addFeeler(Feeler feeler){
+        feelers.add(feeler);
+        return this;
+    }
+
+    public List<Feeler> getFeelers() {
+        return feelers;
+    }
+
     public void addTarget(Particle target) {
         targets.add(target);
     }
 
     public void addTargets(List<Particle> targets){
         this.targets.addAll(targets);
+    }
+
+    public boolean isInnerPoint(double x, double y){
+        if(Math.sqrt(Math.pow(Math.abs(x - getX()),2) + Math.pow(Math.abs(y - getY()),2)) < getRadius()){
+            return true;
+        }
+        return false;
     }
 }

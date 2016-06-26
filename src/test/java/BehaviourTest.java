@@ -75,24 +75,24 @@ public class BehaviourTest {
 //                {35, width, height, apperture, 300, squareCount, rMin, rMax, vMax, k, dt, t},
 
 //                V=0.5
-                {11, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
-                {12, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
-                {13, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
+                {11, width, height, apperture, 100, squareCount, rMin, rMax, 0.5, k, dt, t},
+//                {12, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
+//                {13, width, height, apperture, 300, squareCount, rMin, rMax, 0.5, k, dt, t},
                 //V=2
 
-                {21, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
-                {22, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
-                {23, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
-                //V=3
-
-                {31, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
-                {32, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
-                {33, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
-                //V=4
-
-                {41, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
-                {42, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
-                {43, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
+//                {21, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
+//                {22, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
+//                {23, width, height, apperture, 300, squareCount, rMin, rMax, 2, k, dt, t},
+//                //V=3
+//
+//                {31, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
+//                {32, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
+//                {33, width, height, apperture, 300, squareCount, rMin, rMax, 3, k, dt, t},
+//                //V=4
+//
+//                {41, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
+//                {42, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
+//                {43, width, height, apperture, 300, squareCount, rMin, rMax, 4, k, dt, t},
 
 //                {51, width, height, apperture, 300, squareCount, rMin, rMax, 20, k, dt, t},
 
