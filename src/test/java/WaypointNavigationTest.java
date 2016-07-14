@@ -13,6 +13,7 @@ public class WaypointNavigationTest {
 
     WaypointNavigationSystemSimulation waypointNavigationSystemSimulation;
     int id;
+    int dim;
     double startX;
     double startY;
     double waypointSeparation;
@@ -24,12 +25,12 @@ public class WaypointNavigationTest {
     double dt;
     double t;
 
-    public static final String CSV_FILENAME = "navigation";
-    public static final String OUTPUT_PATH = "src/test/resources/output/";
+    public static final String OUTPUT_PATH = "src/test/resources/output/navigation%d.csv";
 
-    public WaypointNavigationTest(int id, double startX, double startY, double waypointSeparation,
-                                  double goalX, double goalY, int maxObstacles, String fileName, int k, double dt, double t ) {
+    public WaypointNavigationTest(int id, int dim, double startX, double startY, double waypointSeparation,
+                                  double goalX, double goalY, int maxObstacles, String fileName, int k, double dt, double t) {
         this.id = id;
+        this.dim = dim;
         this.startX = startX;
         this.startY = startY;
         this.waypointSeparation = waypointSeparation;
@@ -44,30 +45,34 @@ public class WaypointNavigationTest {
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data1() {
+        int id = 0;
+        int dim = 10;
         double startX = 0.5;
         double startY = 5;
         double goalX = 9.5;
-        double goalY = 3.25;
+        double goalY = 3.5;
         double waypointSeparation = 0.5;
-        int maxObstacles = 30;
+        int maxObstacles = 35;
         int k = 5;
         double dt = 0.01;
-        double t = 25;
+        double t = 100;
         return Arrays.asList(new Object[][]{
-
-                {1, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, OUTPUT_PATH + CSV_FILENAME, k, dt, t},
-
+                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t}
         });
     }
 
     @Before
     public void init() throws IOException {
-        waypointNavigationSystemSimulation = new WaypointNavigationSystemSimulation(startX,startY,waypointSeparation,
-        goalX, goalY, maxObstacles, fileName);
+        waypointNavigationSystemSimulation = new WaypointNavigationSystemSimulation(dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, fileName);
     }
 
     @Test
     public void simulate(){
         waypointNavigationSystemSimulation.simulate(k,dt,t);
     }
+
 }
