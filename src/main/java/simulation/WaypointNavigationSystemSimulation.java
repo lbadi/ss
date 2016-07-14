@@ -35,6 +35,20 @@ public class WaypointNavigationSystemSimulation {
 
     public void simulate(int k, double dt, double t){
         waypointNavigationSystem.writeFrameWithDirection(writer,0);
+
+        int framesWrited = 1;
+        double totalTimeSimulated = 0;
+        waypointNavigationSystem.move(dt);
+        totalTimeSimulated += dt;
+        while(totalTimeSimulated < t){
+            for(int i = 0; i < k; i++){
+                waypointNavigationSystem.move(dt);
+                totalTimeSimulated += dt;
+            }
+            waypointNavigationSystem.writeFrameWithDirection(writer,framesWrited++);
+            Logger.getLogger(this.getClass()).info("Tiempo simulado: " + String.format("%.2f",totalTimeSimulated) + "s");
+
+        }
         writer.flush();
         writer.close();
 

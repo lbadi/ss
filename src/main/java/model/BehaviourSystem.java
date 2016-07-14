@@ -111,32 +111,9 @@ public class BehaviourSystem extends ParticleSystem{
         }
     }
 
-    private void createBoard(){
-        if(this.getL() == 0){
-            throw new IllegalArgumentException();
-        }
-        int nodeCount  = (int) (this.getL() / NODE_SIZE);
-        board = new Node[nodeCount][nodeCount];
-        for(int i = 0; i < board.length ; i ++){
-            for(int j = 0 ; j < board[0].length ; j ++){
-                board[i][j] = new Node();
-            }
-        }
-        for(int i = 0; i < board.length ; i++){
-            for(int j = 0; j < board[0].length ; j++){
-//                board[i][j]
-            }
-        }
-    }
 
-    private void asignAgentsToBoard(){
-        for(Particle particle : getParticles()){
-            int x = (int)Math.floor(particle.getX() / NODE_SIZE);
-            int y = (int)Math.floor(particle.getY() / NODE_SIZE);
-            //Por ahi hay que agregar el casillero a la particula
-            board[x][y].addParticle(particle);
-        }
-    }
+
+
 
     public void writeFrameWithDirection(PrintWriter writer, int timeStep){
         StringBuilder sb = new StringBuilder();

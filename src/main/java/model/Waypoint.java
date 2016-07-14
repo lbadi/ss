@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class Waypoint {
+public class Waypoint extends Particle{
 
     private List<Waypoint> neighbours = new ArrayList<>();
     private double x;
@@ -30,7 +30,9 @@ public class Waypoint {
         return y;
     }
 
-    public List<Waypoint> getNeighbours() {
+    public List<Waypoint> getWaypointsNeighbours() {
         return neighbours;
     }
+
+
 }

@@ -48,11 +48,11 @@ public class WaypointNavigationTest {
         double startY = 5;
         double goalX = 9.5;
         double goalY = 3.25;
-        double waypointSeparation = 1;
-        int maxObstacles = 15;
+        double waypointSeparation = 0.5;
+        int maxObstacles = 30;
         int k = 5;
         double dt = 0.01;
-        double t = 1000;
+        double t = 25;
         return Arrays.asList(new Object[][]{
 
                 {1, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, OUTPUT_PATH + CSV_FILENAME, k, dt, t},

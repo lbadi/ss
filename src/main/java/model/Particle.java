@@ -467,7 +467,7 @@ public class Particle implements PlainWritable {
             return true;
         }
         double overlap = this.getOverlap(getTarget());
-        if(overlap != 0){
+        if(overlap >= getTarget().getRadius()){
             targets.remove(0);
         }
         return overlap != 0;
