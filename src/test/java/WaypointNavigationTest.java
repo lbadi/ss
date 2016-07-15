@@ -46,13 +46,13 @@ public class WaypointNavigationTest {
     @Parameterized.Parameters
     public static Iterable<Object[]> data1() {
         int id = 0;
-        int dim = 10;
+        int dim = 25;
         double startX = 0.5;
         double startY = 5;
-        double goalX = 9.5;
-        double goalY = 3.5;
-        double waypointSeparation = 0.5;
-        int maxObstacles = 35;
+        double goalX = 23.25;
+        double goalY = 22.25;
+        double waypointSeparation = 1;
+        int maxObstacles = 350;
         int k = 5;
         double dt = 0.01;
         double t = 100;

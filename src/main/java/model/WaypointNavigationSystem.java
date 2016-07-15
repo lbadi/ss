@@ -10,13 +10,13 @@ public class WaypointNavigationSystem extends ParticleSystem{
     private static final double AGENT_RADIUS = 0.25;
     private static final double OBSTACLE_RADIUS = 0.25;
     private static final int INITIAL_OFFSET_RATIO = 1;
-    private static final int WINDOW = 3;
+    private static final int WINDOW = 5;
     private static final double rMin = 0.15;
     private static final double rMax = 0.32;
     private static final double vMax = 1.55;
     private static final double beta = 0.9;
     private static final double tau = 0.5;
-    private static final double FELEER_STEP = rMax/20;
+    private static final double FELEER_STEP = rMax/3;
     public double waypointSeparation;
     private List<Waypoint> waypoints = new ArrayList<>();
     private List<Obstacle> obstacles = new ArrayList<>();
@@ -25,7 +25,10 @@ public class WaypointNavigationSystem extends ParticleSystem{
     private double goalY;
     private double startX;
     private double startY;
-    private static final double DISTANCE_GOAL = 0.5;
+    private static final int DEPTH_LIMIT = 15;
+
+    private List<Particle> allFeelers = new ArrayList<>();
+    private Waypoint waypoint = null;
 
     public WaypointNavigationSystem(int dim, double startX, double startY, double waypointSeparation,
                                     double goalX, double goalY, int maxObstacles) {
@@ -62,7 +65,9 @@ public class WaypointNavigationSystem extends ParticleSystem{
             obstacle.setX(x);
             obstacle.setY(y);
             obstacle.setRadius(OBSTACLE_RADIUS);
-            obstacles.add(obstacle);
+            if(obstacle.distanceTo(goal) > waypointSeparation && obstacle.distanceTo(getParticles().get(0)) > waypointSeparation) {
+                obstacles.add(obstacle);
+            }
         }
     }
 
@@ -96,12 +101,13 @@ public class WaypointNavigationSystem extends ParticleSystem{
     public void writeFrameWithDirection(PrintWriter writer, int timeStep){
         StringBuilder sb = new StringBuilder();
 
-        sb.append(getN() + obstacles.size() + waypoints.size() + 4 + 2).append("\n");
+        sb.append(getN() + obstacles.size() + waypoints.size() + 4 + 2 + allFeelers.size()).append("\n");
         sb.append(timeStep).append("\n");
 
         writeCorners(sb);
         writeObstacles(sb);
         writeWaypoints(sb);
+        writeFeelers(sb);
 
         sb.append(df.format(startX) + "\t" + df.format(startY) + "\t" + df.format(0.1) + "\t");
         sb.append(df.format(0.0) + "\t" + df.format(0.0) + "\t" + df.format(1.0) + "\t");
@@ -118,6 +124,14 @@ public class WaypointNavigationSystem extends ParticleSystem{
         });
 
         writer.write(sb.toString());
+    }
+
+    public void writeFeelers(StringBuilder sb){
+        allFeelers.stream().forEach(particle ->{
+            sb.append(df.format(particle.getX()) + "\t" + df.format(particle.getY()) + "\t" + df.format(particle.getRadius()) + "\t");
+            sb.append(df.format(0.5) + "\t" + df.format(0.5) + "\t" + df.format(0.5) + "\t");
+            sb.append("\n");
+        });
     }
 
     public void writeObstacles(StringBuilder sb){
@@ -227,6 +241,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
         List<Waypoint> explored = new ArrayList<>();
         PriorityQueue<Node> pq = new PriorityQueue<>();
         Waypoint start = closestWaypoint(particle);
+        double betterCostFound = 0;
         start.getWaypointsNeighbours().stream().forEach(neighbour -> {
             pq.add(new Node(neighbour,1,goal,new Node(start,0,goal,null)));
         });
@@ -241,11 +256,18 @@ public class WaypointNavigationSystem extends ParticleSystem{
             for(Waypoint neighbour : node.getWaypoint().getWaypointsNeighbours()){
                 if(!explored.contains(neighbour)) {
                     if(canSeeTarget(node.getWaypoint(),neighbour)) {
-                        pq.add(new Node(neighbour, node.getCost() + (node.getWaypoint().distanceToCenterOf(neighbour)), goal, node));
+                        double newCost = node.getCost() + (node.getWaypoint().distanceToCenterOf(neighbour));
+                        Node newNode = new Node(neighbour, newCost, goal, node);
+                        pq.add(new Node(neighbour, newCost, goal, node));
+                        if(newCost > betterCostFound + DEPTH_LIMIT) {
+                            betterCostFound = newCost;
+                            pq.clear();
+                            pq.add(newNode);
+                        }
                     }
                 }
             }
-        } while(node.getWaypoint().distanceToCenterOf(goal) > DISTANCE_GOAL);
+        } while(node.getWaypoint().distanceToCenterOf(goal) > waypointSeparation);
         Deque<Waypoint> path = new LinkedList<>();
         path.addFirst(goal);
         while(node.getParent() != null){
@@ -262,6 +284,12 @@ public class WaypointNavigationSystem extends ParticleSystem{
             double x = origin.getX() + i * Math.cos(directionAngle);
             double y = origin.getY() + i * Math.sin(directionAngle);
             Particle feeler = new Particle(x,y,rMax);
+//            if(waypoint == null) {
+//                waypoint = origin;
+//                allFeelers.add(feeler);
+//            } else if(waypoint.equals(origin)) {
+//                allFeelers.add(feeler);
+//            }
             for(Obstacle obstacle: obstacles){
                 if(feeler.overlap(obstacle)){
                     return false;
@@ -288,7 +316,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
     }
 
     public boolean hasEnded() {
-        return getParticles().get(0).distanceTo(goal) <= DISTANCE_GOAL;
+        return getParticles().get(0).distanceTo(goal) < 0.05;
     }
 
 }
