@@ -109,11 +109,11 @@ public class WaypointNavigationSystem extends ParticleSystem{
         writeWaypoints(sb);
         writeFeelers(sb);
 
-        sb.append(df.format(startX) + "\t" + df.format(startY) + "\t" + df.format(0.1) + "\t");
+        sb.append(df.format(startX) + "\t" + df.format(startY) + "\t" + df.format(0.25) + "\t");
         sb.append(df.format(0.0) + "\t" + df.format(0.0) + "\t" + df.format(1.0) + "\t");
         sb.append("\n");
 
-        sb.append(df.format(goalX) + "\t" + df.format(goalY) + "\t" + df.format(0.1) + "\t");
+        sb.append(df.format(goalX) + "\t" + df.format(goalY) + "\t" + df.format(0.25) + "\t");
         sb.append(df.format(0.0) + "\t" + df.format(0.0) + "\t" + df.format(1.0) + "\t");
         sb.append("\n");
 
