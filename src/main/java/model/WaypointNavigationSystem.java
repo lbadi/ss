@@ -194,7 +194,35 @@ public class WaypointNavigationSystem extends ParticleSystem{
 
     public Vector getVelocity(Particle particle,double x ,double y){
         Vector desireVelocity = getDesireVelocity(particle,x,y);
+        Vector avoidVelocity = getAvoidVelocity(particle);
+        desireVelocity = desireVelocity.sum(avoidVelocity);
+        double module = particle.getMaxSpeed() * Math.pow((particle.getRadius() - particle.getrMin()) / (particle.getrMax() - particle.getrMin()),beta);
+        desireVelocity.setModule(module);
         return desireVelocity;
+    }
+
+    public Vector getAvoidVelocity(Particle particle){
+        Vector avoidDirection = getAvoidDirection(particle);
+        double module;
+        if(avoidDirection == null){
+            return new Vector(0,0);
+        }
+        module = particle.getMaxSpeed() * Math.pow((particle.getRadius() - particle.getrMin()) / (particle.getrMax() - particle.getrMin()), beta);
+        avoidDirection.setModule(module);
+        return avoidDirection;
+    }
+
+    public Vector getAvoidDirection(Particle particle){
+        Particle closeFeeler = new Particle(particle.getX(),particle.getY(),particle.getRadius() * 1.1);
+        Vector avoidDirection = new Vector(0,0);
+        boolean overlapAtLeastOne = false;
+        for(Obstacle obstacle : obstacles){
+            if(closeFeeler.overlap(obstacle)){
+                overlapAtLeastOne = true;
+                avoidDirection.sum(new Vector(obstacle.getX(),obstacle.getY(),particle.getX(),particle.getY()));
+            }
+        }
+        return overlapAtLeastOne ? avoidDirection : null;
     }
 
     public Vector getDesireVelocity(Particle particle, double x, double y){

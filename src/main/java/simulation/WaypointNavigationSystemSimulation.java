@@ -14,12 +14,20 @@ public class WaypointNavigationSystemSimulation {
 
     private WaypointNavigationSystem waypointNavigationSystem;
     private PrintWriter writer;
+    private PrintWriter resultWriter;
+    private double simulationTime;
+    private boolean reachTarget = false;
+
 
     public WaypointNavigationSystemSimulation(int dim, double startX, double startY, double waypointSeparation,
                                               double goalX, double goalY, int maxObstacles, String fileName) throws IOException {
         waypointNavigationSystem = new WaypointNavigationSystem(dim, startX,startY,waypointSeparation,goalX,goalY,maxObstacles);
         Files.deleteIfExists(Paths.get(fileName));
+//        Files.deleteIfExists(Paths.get(resultFileName));
+
         writer = new PrintWriter(new BufferedWriter(new FileWriter(fileName, true)));
+//        resultWriter = new PrintWriter(new BufferedWriter(new FileWriter(resultFileName, true)));
+
     }
 
     public void simulate(int k, double dt, double t){
@@ -35,12 +43,21 @@ public class WaypointNavigationSystemSimulation {
             }
             waypointNavigationSystem.writeFrameWithDirection(writer,framesWrited++);
             if(waypointNavigationSystem.hasEnded()) {
+                reachTarget = true;
                 break;
             }
             Logger.getLogger(this.getClass()).info("Tiempo simulado: " + String.format("%.2f",totalTimeSimulated) + "s");
         }
+        simulationTime = t;
         writer.flush();
         writer.close();
     }
 
+    public double getSimulationTime() {
+        return simulationTime;
+    }
+
+    public boolean isReachTarget() {
+        return reachTarget;
+    }
 }
