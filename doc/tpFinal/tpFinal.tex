@@ -441,9 +441,18 @@ public void simulate(double t, double dt, int k){
 \begin{frame}
 \frametitle{Conclusiones}
 \begin{itemize}
-	\item Lorem
-	\item Lorem
-	\item Lorem
+\item Se logró obtener un modelo capaz de navegar por una escena con una gran densidad de obstáculos obteniendo más de un 80\% de efectividad (cantidad de veces que el agente alcanza el goal)
+\item Este modelo de navegación es altamente personalizable, permitiendo modificar parámetros como la cantidad y posición de los waypoint así como también permitiendo implementar nuevos \textit{steering behaviors}
+\end{itemize}	
+\end{frame} 
+
+\begin{frame}
+\frametitle{Futuras extensiones}
+\begin{itemize}
+\item \textbf{Definición de la heurística}: Los posibles choques con obstáculos fijos no sean causa de descarte del camino sino que solamente se pondere a ese trayecto con un costo mayor en el árbol de búsqueda.
+\item \textbf{Detección de colisiones}: Proyectando varios \textit{raycast} con distintos radios. Así se aprovecharía mejor la variación del radio del modelo.
+\item \textbf{Otros \textit{steering behaviours}}: Para que el agente tenga un movimiento más complejo. Por ejemplo, si se quiere que un grupo de agentes siga a un líder, se puede implementar el comportamiento \textit{Follow the leader}. 
+
 \end{itemize}	
 \end{frame} 
 

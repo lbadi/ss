@@ -186,6 +186,15 @@ Lorem ipsum dolor sit amet.
 
 \section{Conclusiones}
 
-Lorem ipsum dolor sit amet.
+En primer lugar, se logró obtener un modelo capaz de navegar por un tablero con gran densidad de obstáculos obteniendo más de  un 80\% de efectividad, es decir, la cantidad de veces que alcanza el agente alcanza el nodo meta.
+Además este modelo de navegación resultó altamente personalizable, permitiendo modificar parámetros como la posición y cantidad de los \textit{waypoints} así como también la utilización de \textit{steering behaviors} distintos.
+
+\section{Futuras extensiones}
+
+Uno de los principales componentes del algoritmo al que se le pueden introducir mejoras es la definición de la heurística que utiliza la modificación del método de búsqueda informado A*. Actualmente la heurística utiliza la distancia al nodo meta y descarta los posibles caminos obstruidos por obstáculos que, de transitarlos, generarán colisiones. Este punto podría mejorarse haciendo que los posibles choques con obstáculos fijos no sean causa de descarte del camino sino que le solamente se pondere a ese trayecto con un costo mayor en el árbol de búsqueda.
+
+Una extensión relacionada a lo mencionado anteriormente es la forma en que se realiza el cálculo de colisiones con la utilización del \textit{raycast}. Esto se podría implementar proyectando varios \textit{raycast} con distintos radios. Cabe destacar que en el modelo de simulación peatonal utilizado (\textit{Contractile Particle Model}) el radio de una partícula es variable y proporcional a su velocidad. De esta manera, el rayo con mayor apertura puede detectar una colisión, mientras que el rayo más pequeño no lo detecta. Si éste es el caso, se puede, en vez de descartar el camino, hacer que ese camino tenga un costo mayor. Así se aprovecharía mejor la variación del radio del modelo.
+
+Por último, también se le pueden agregar fácilmente otros comportamientos al modelo para que el agente tenga un movimiento más complejo. El comportamiento a implementar va a depender de cómo se desea que se comporte el agente. Por ejemplo, si se quiere que un grupo de agentes siga a un líder, se puede implementar el comportamiento \textit{Follow the leader}. Este comportamiento puede ser útil, por ejemplo, cuando se quiere simular un grupo numeroso de personas circulando en bicicleta por una ciudad siguiendo a otro grupo de personas (masa crítica). 
 
 \end{document}
