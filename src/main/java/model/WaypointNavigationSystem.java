@@ -32,7 +32,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
     private Waypoint waypoint = null;
 
     public WaypointNavigationSystem(int dim, double startX, double startY, double waypointSeparation,
-                                    double goalX, double goalY, int maxObstacles) {
+                                    double goalX, double goalY, int maxObstacles, boolean staticObstacles) {
         super(false, 1);
         this.waypointSeparation = waypointSeparation;
         setL(dim);
@@ -42,7 +42,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
         this.goalY = goalY;
         goal = new Waypoint(goalX,goalY);
         createAgent(startX,startY);
-        createObstacles(maxObstacles);
+        createObstacles(maxObstacles, staticObstacles);
         createWaypoints();
         List<Particle> targets = new ArrayList<>();
         targets.addAll(aStar(getParticles().get(0)));
@@ -58,7 +58,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
         addParticle(particle);
     }
 
-    private void createObstacles(int maxObstacles){
+    private void createObstacles(int maxObstacles, boolean staticObstancles){
         for(int i = 0 ; i<maxObstacles; i++){
             Obstacle obstacle = new Obstacle();
             double x = RandomUtils.between(AGENT_RADIUS, getL() - AGENT_RADIUS);
@@ -66,6 +66,10 @@ public class WaypointNavigationSystem extends ParticleSystem{
             obstacle.setX(x);
             obstacle.setY(y);
             obstacle.setRadius(OBSTACLE_RADIUS);
+            if(!staticObstancles){
+                obstacle.setSpeed(vMax);
+                obstacle.setAngle((((int)(RandomUtils.between(0,2))) * Math.PI) + Math.PI / 2); // 1/2 pi o 3/2 pi (para arriba o para abajo)
+            }
             if(obstacle.distanceTo(goal) > waypointSeparation && obstacle.distanceTo(getParticles().get(0)) > waypointSeparation) {
                 obstacles.add(obstacle);
             }
@@ -156,6 +160,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
      * @param dt
      */
     public void move(double dt){
+        moveObstacles(dt);
         for(Particle particle : getParticles()){
             Vector direction = new Vector(0,0);
 //            for(Particle particle2 : getParticles()){
@@ -187,6 +192,20 @@ public class WaypointNavigationSystem extends ParticleSystem{
         refreshPosition(dt);
         refreshRadius(dt);
         refreshObjectives();
+    }
+
+    public void moveObstacles(double dt) {
+        for(Obstacle obstacle : obstacles){
+            obstacle.move(dt);
+            if(obstacle.getY() >= getL()){
+                obstacle.setY(getL());
+                obstacle.setAngle(3 * Math.PI / 2);
+            }
+            else if(obstacle.getY() <= 0 ){
+                obstacle.setY(0);
+                obstacle.setAngle(Math.PI / 2);
+            }
+        }
     }
 
     public Vector getContactVelocity(Particle particle, Particle particle2){

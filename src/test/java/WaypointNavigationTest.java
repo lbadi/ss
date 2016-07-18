@@ -29,6 +29,7 @@ public class WaypointNavigationTest {
     int k;
     double dt;
     double t;
+    boolean staticObstacles;
 
     private static FileWriter resultsWriter;
     public static final String OUTPUT_PATH = "src/test/resources/output/navigation%d.csv";
@@ -38,7 +39,7 @@ public class WaypointNavigationTest {
 
 
     public WaypointNavigationTest(int id, int dim, double startX, double startY, double waypointSeparation,
-                                  double goalX, double goalY, int maxObstacles, String fileName, int k, double dt, double t) {
+                                  double goalX, double goalY, int maxObstacles, boolean staticObstacles, String fileName, int k, double dt, double t) {
         this.id = id;
         this.dim = dim;
         this.startX = startX;
@@ -51,97 +52,74 @@ public class WaypointNavigationTest {
         this.k = k;
         this.dt = dt;
         this.t = t;
+        this.staticObstacles = staticObstacles;
     }
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data1() {
         int id = 0;
-        int dim = 25;
+        int dim = 10;
         double startX = 0.5;
-        double startY = 5;
-        double goalX = 23.25;
-        double goalY = 22.25;
+        double startY = 1;
+        double goalX = 9.25;
+        double goalY = 8.25;
         double waypointSeparation = 1;
-        int maxObstacles = 250;
+        int maxObstacles = 30;
         int k = 5;
         double dt = 0.01;
         double t = 100;
         return Arrays.asList(new Object[][]{
 
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles,false, String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), k, dt, t},
 
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-//                  --------------
-
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-
-//               -----------------
-
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
-                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 7, dt, t},
+//
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 3, dt, t},
+//
+////               -----------------
+//
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
+//                {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, true,String.format(OUTPUT_PATH, id), 7, dt, t},
 
 
         });
@@ -149,7 +127,7 @@ public class WaypointNavigationTest {
 
     @Before
     public void init() throws IOException {
-        waypointNavigationSystemSimulation = new WaypointNavigationSystemSimulation(dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, fileName);
+        waypointNavigationSystemSimulation = new WaypointNavigationSystemSimulation(dim, startX, startY, waypointSeparation, goalX, goalY, maxObstacles, staticObstacles, fileName);
     }
 
     @Test

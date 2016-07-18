@@ -20,8 +20,8 @@ public class WaypointNavigationSystemSimulation {
 
 
     public WaypointNavigationSystemSimulation(int dim, double startX, double startY, double waypointSeparation,
-                                              double goalX, double goalY, int maxObstacles, String fileName) throws IOException {
-        waypointNavigationSystem = new WaypointNavigationSystem(dim, startX,startY,waypointSeparation,goalX,goalY,maxObstacles);
+                                              double goalX, double goalY, int maxObstacles, boolean staticObstacles, String fileName) throws IOException {
+        waypointNavigationSystem = new WaypointNavigationSystem(dim, startX,startY,waypointSeparation,goalX,goalY,maxObstacles, staticObstacles);
         Files.deleteIfExists(Paths.get(fileName));
 //        Files.deleteIfExists(Paths.get(resultFileName));
 
