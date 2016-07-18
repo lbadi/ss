@@ -26,6 +26,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
     private double startX;
     private double startY;
     private static final int DEPTH_LIMIT = 15;
+    private static final int MAX_TRYS_ASTAR = 10;
 
     private List<Particle> allFeelers = new ArrayList<>();
     private Waypoint waypoint = null;
@@ -270,6 +271,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
         PriorityQueue<Node> pq = new PriorityQueue<>();
         Waypoint start = closestWaypoint(particle);
         double betterCostFound = 0;
+        int count = 0;
         start.getWaypointsNeighbours().stream().forEach(neighbour -> {
             pq.add(new Node(neighbour,1,goal,new Node(start,0,goal,null)));
         });
@@ -288,6 +290,8 @@ public class WaypointNavigationSystem extends ParticleSystem{
                         Node newNode = new Node(neighbour, newCost, goal, node);
                         pq.add(new Node(neighbour, newCost, goal, node));
                         if(newCost > betterCostFound + DEPTH_LIMIT) {
+                            System.out.println(count);
+                            count++;
                             betterCostFound = newCost;
                             pq.clear();
                             pq.add(newNode);
@@ -295,7 +299,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
                     }
                 }
             }
-        } while(node.getWaypoint().distanceToCenterOf(goal) > waypointSeparation);
+        } while(node.getWaypoint().distanceToCenterOf(goal) > waypointSeparation * 1.5 && count < MAX_TRYS_ASTAR);
         Deque<Waypoint> path = new LinkedList<>();
         path.addFirst(goal);
         while(node.getParent() != null){

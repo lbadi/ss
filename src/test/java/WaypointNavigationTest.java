@@ -3,13 +3,18 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import simulation.BehaviourSystemSimulation;
 import simulation.WaypointNavigationSystemSimulation;
+import util.PrintFormatter;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.Arrays;
 
 @RunWith(value = Parameterized.class)
 public class WaypointNavigationTest {
+
+    public static NumberFormat df = new PrintFormatter().getDf();
+
 
     WaypointNavigationSystemSimulation waypointNavigationSystemSimulation;
     int id;
@@ -57,7 +62,7 @@ public class WaypointNavigationTest {
         double goalX = 23.25;
         double goalY = 22.25;
         double waypointSeparation = 1;
-        int maxObstacles = 300;
+        int maxObstacles = 250;
         int k = 5;
         double dt = 0.01;
         double t = 100;
@@ -75,11 +80,11 @@ public class WaypointNavigationTest {
                 {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
                 {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
 
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
 
                 {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
                 {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), k, dt, t},
@@ -100,11 +105,11 @@ public class WaypointNavigationTest {
                 {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
                 {++id, dim, startX, startY, 1.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
 
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
-                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
+//                {++id, dim, startX, startY, 0.5, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
 
                 {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
                 {++id, dim, startX, startY, 2, goalX, goalY, maxObstacles, String.format(OUTPUT_PATH, id), 3, dt, t},
@@ -172,9 +177,9 @@ public class WaypointNavigationTest {
         /**
          * Agregado de resultados de cada sistema al CSV general.
          */
-        resultsWriter.append(String.format("%.2f",waypointNavigationSystemSimulation.getSimulationTime()));
+        resultsWriter.append(df.format(waypointNavigationSystemSimulation.getSimulationTime()));
         resultsWriter.append(',');
-        resultsWriter.append(String.format("%.2f",waypointSeparation));
+        resultsWriter.append(df.format(waypointSeparation));
         resultsWriter.append(',');
         resultsWriter.append(Integer.toString(k));
         resultsWriter.append(',');

@@ -48,7 +48,7 @@ public class WaypointNavigationSystemSimulation {
             }
             Logger.getLogger(this.getClass()).info("Tiempo simulado: " + String.format("%.2f",totalTimeSimulated) + "s");
         }
-        simulationTime = t;
+        simulationTime = totalTimeSimulated;
         writer.flush();
         writer.close();
     }
