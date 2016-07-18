@@ -58,7 +58,7 @@ public class WaypointNavigationSystem extends ParticleSystem{
         addParticle(particle);
     }
 
-    private void createObstacles(int maxObstacles, boolean staticObstancles){
+    private void createObstacles(int maxObstacles, boolean staticObstacles){
         for(int i = 0 ; i<maxObstacles; i++){
             Obstacle obstacle = new Obstacle();
             double x = RandomUtils.between(AGENT_RADIUS, getL() - AGENT_RADIUS);
@@ -66,7 +66,9 @@ public class WaypointNavigationSystem extends ParticleSystem{
             obstacle.setX(x);
             obstacle.setY(y);
             obstacle.setRadius(OBSTACLE_RADIUS);
-            if(!staticObstancles){
+            if(staticObstacles){
+                obstacle.setSpeed(0);
+            } else {
                 obstacle.setSpeed(vMax);
                 obstacle.setAngle((((int)(RandomUtils.between(0,2))) * Math.PI) + Math.PI / 2); // 1/2 pi o 3/2 pi (para arriba o para abajo)
             }
