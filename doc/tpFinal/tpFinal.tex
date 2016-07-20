@@ -20,6 +20,9 @@
 \usepackage{listings}
 \usepackage{animate}
 \usepackage{hyperref}
+\usepackage{biblatex}
+
+\bibliography{References}
 
 %Code
 \lstset{ %
@@ -73,7 +76,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \makeatother
 
 %Document Data
-\title{Bosque de Obstáculos}
+\title{Navegación de Peatones en Bosque de Obstáculos}
 \subtitle{Trabajo Práctico Final}
 \author{Badi Leonel, Buchhalter Nicolás Demián y Meola Franco Román}
 \subject{Simulación de Sistemas}
@@ -106,7 +109,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \begin{itemize}
 	\item Vamos a simular el trayecto de un peatón que viajará desde un punto inicial a un punto final
 	\item Este agente está equipado con un \textbf{mecanismo de navegación} para evitar colisiones con los obstáculos fijos
-	\item Utilizaremos el \textit{Contractile Particle Model}
+	\item Utilizaremos el \textit{Contractile Particle Model}\footfullcite{parisi}
 	\item Implementación propia (No se utilizaron plataformas de simulación peatonal)
 \end{itemize}
 \end{frame}
@@ -116,7 +119,7 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 \begin{frame}
 \frametitle{Objetivos}
 \begin{block}{Definición de una heurística}
-Crear una heurística que permita ajustar \textbf{dinámicamente} el ángulo del versor de la velocidad deseada en función de las posiciones de los ángulos.
+Crear una heurística que permita ajustar \textbf{dinámicamente} el ángulo del versor de la velocidad deseada en función de las posiciones de los obstáculos.
 \end{block}
 \begin{itemize}
 	\item Se implementó una versión modificada del \textbf{método de búsqueda informado A*} que utiliza una heurística definida
@@ -130,8 +133,8 @@ Crear una heurística que permita ajustar \textbf{dinámicamente} el ángulo del
 \begin{frame}
 \frametitle{Estado del Arte}
 \begin{itemize}
-	\item \textit{Programming Game Ai by Example}, Mat Buckland (2005)
-	\item \textit{Continuous-space automaton model for pedestrian dynamics}, Baglietto, Gabriel, and Daniel R. Parisi (2011)
+	\item \textit{Steering Behavior}\footfullcite{ai}
+	\item \textit{Contractile Particle Model}
 	\item Métodos de búsqueda informados de Sistemas de Inteligencia Artificial (ITBA)
 \end{itemize}
 \end{frame}
@@ -397,32 +400,24 @@ public void simulate(double t, double dt, int k){
 
 \begin{frame}
 \Wider{
-\frametitle{Gráfico de ?}
-\framesubtitle{Para $? = ?$}
+\frametitle{Gráfico de la distancia recorrida promedio}
+\framesubtitle{Para distintos valores de obstáculos fijos}
 \begin{figure}[H]
 	\centering
-    \includegraphics[width=\textwidth]{example-image}
+    \includegraphics[width=\textwidth]{charts/graph2.png}
 \end{figure}
 }
 \end{frame}
 
 \begin{frame}
-\frametitle{Tabla de ?}
-\framesubtitle{Para distintos valores de ?}
-\begin{center}
-\begin{table}[h]
-\centering
-\adjustbox{max height=\dimexpr\textheight-3.0cm\relax,
-           max width=\textwidth}{
-\begin{tabular}{cc}
-\hline
-\textbf{?} & \textbf{?}\\ \hline
-?&?\\ 
-\end{tabular}
+\Wider{
+\frametitle{Gráfico del tiempo promedio de simulación}
+\framesubtitle{Para distintos valores de $W_{s}$ y $W_{v}$}
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{charts/graph.png}
+\end{figure}
 }
-\caption{? para distintos valores de ?}
-\end{table}
-\end{center}
 \end{frame}
 
 \subsection{Animaciones}
@@ -449,6 +444,7 @@ public void simulate(double t, double dt, int k){
 \begin{frame}
 \frametitle{Conclusiones}
 \begin{itemize}
+\item A valores mayores de $W_{v}$, se pueden encontrar caminos diagonales que, claramente, tendrán una distancia menor y por lo tanto serán considerados con mayor prioridad en el método de búsqueda informado.
 \item Se logró obtener un modelo capaz de navegar por una escena con una gran densidad de obstáculos obteniendo más de un 80\% de efectividad (cantidad de veces que el agente alcanza el goal)
 \item Este modelo de navegación es altamente personalizable, permitiendo modificar parámetros como la cantidad y posición de los waypoint así como también permitiendo implementar nuevos \textit{steering behaviors}
 \end{itemize}	

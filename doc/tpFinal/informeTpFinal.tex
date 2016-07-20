@@ -8,6 +8,9 @@
 \usepackage{incgraph,tikz}
 \usepackage{hyperref}
 \usepackage{listings}
+\usepackage[nottoc,numbib]{tocbibind}
+
+\bibliographystyle{plain}
 
 %Code
 \lstset{ %
@@ -39,9 +42,9 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 \makeatother
 
-\title{Bosque de Obstáculos}
+\title{Navegación de Peatones en Bosque de Obstáculos}
 \author{Badi Leonel, Buchhalter Nicolás Demián y Meola Franco Román}
-\lhead{Bosque de Obstáculos}
+\lhead{Navegación de Peatones en Bosque de Obstáculos}
 \rhead{Trabajo Práctico Final}
 
 \begin{document}
@@ -58,13 +61,17 @@ escapeinside={\%*}{*)}          % if you want to add a comment within your code
 
 En el presente trabajo se detallan los fundamentos, la implementación y los resultados obtenidos de la simulación del trayecto de un peatón equipado con un mecanismo de navegación que viaja desde un punto inicial a uno final con el objetivo de  evitar colisiones con los obstáculos fijos presentes en la escena. Para la simulación se utiliza una implementación propia del \textit{Contractile Particle Model} y no se utilizaron plataformas de simulación peatonal.
 
-Los fundamentos están inspirados en la temática \textit{Steering Behavior}, propuesto por Mat Buckland en su libro \textit{Programming Game Ai by Example}, así como también en los conocimientos de método de búsqueda informados.
+Los fundamentos están inspirados en la temática \textit{Steering Behavior}, propuesto por Mat Buckland en su libro \textit{Programming Game Ai by Example} \cite{ai}, así como también en los conocimientos de método de búsqueda informados.
 
-El objetivo principal del presente trabajo consiste en crear una heurística que permita ajustar dinámicamente el ángulo del versor de la velocidad deseada en función de las posiciones de los ángulos. Para lograrlo, se recurre una versión modificada del método de búsqueda informado A* que utiliza la heurística distancia real al objetivo. Cabe destacar que la búsqueda de la ruta se realiza antes de la simulación, ya que todos los obstáculos a evitar son fijos. Por último, se modifica el \textit{Contractile Particle Model} para evitar colisiones en el transcurso la simulación.
+El objetivo principal del presente trabajo consiste en crear una heurística que permita ajustar dinámicamente el ángulo del versor de la velocidad deseada en función de las posiciones de los obstáculos. Para lograrlo, se recurre una versión modificada del método de búsqueda informado A* que utiliza la heurística distancia real al objetivo. Cabe destacar que la búsqueda de la ruta se realiza antes de la simulación, ya que todos los obstáculos a evitar son fijos. Por último, se modifica el \textit{Contractile Particle Model} para evitar colisiones en el transcurso la simulación.
 
 \section{Fundamentos}
 
 En esta sección se detallan todos los fundamentos teóricos que sustentan el presente trabajo así como también los parámetros fijos que se definieron para todas las pruebas realizadas.
+
+\subsection{Contractile Particle Model}
+
+Como ya se mencionó, la implementación propuesta utiliza el modelo de dinámica peatonal en situación no competitiva \textit{Contractile Particle Model} \cite{parisi}. Este modelo se basa en simular a un peatón como una partícula de radio variable. De esta forma, este radio representa el estado de relajación del agente. 
 
 \subsection{Escena}
 
@@ -163,31 +170,37 @@ Los \textit{steering behaviors} son comportamientos que se le pueden aplicar al 
 
 El objetivo entonces es evitar los choques del agente con obstáculos que tiene en sus inmediaciones. Así, utilizando una partícula de radio $r_{p} = 1.1 r$ se calculan todos los posibles solapamientos con obstáculos. Para cada solapamiento detectado se genera un versor director en dirección contraria a la del agente, para así evitar este obstáculo. Al final, todos los versores se suman y se obtiene un versor sumarizado que representa la dirección a transitar para no colisionar con los obstáculos.
 
-%\begin{lstlisting}[language=Java, caption = Algoritmo de simulación]
-%public void simulate(double t, double dt, int k){
-%	writeFrame(0);
-%	int framesWrited = 1;
-%	double totalTimeSimulated = 0;
-%	moveSystem(dt);
-%	totalTimeSimulated += dt;
-%	while(totalTimeSimulated < t){
-%		for(int i = 0; i < k; i++){
-%			moveSystem(dt);
-%			totalTimeSimulated += dt;
-%		}
-%		writeFrame(framesWrited++);
-%	}
-%}
-%\end{lstlisting}
-
 \section{Resultados}
 
-Lorem ipsum dolor sit amet.
+En la Figura \ref{fig:graph2} se puede ver cómo, a medida que se aumenta el número de obstáculos fijos en la escena, la distancia recorrida promedio por el agente es mayor. Del mismo modo, el error (desvío estándar) de la distancia también aumenta. 
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{charts/graph2.png}
+    \caption{Gráfico de la distancia recorrida promedio para distintos valores de obstáculos fijos.}
+    \label{fig:graph2}
+\end{figure}
+
+Como se puede ver en el la Figura \ref{fig:graph} con el valor $W_{s} = 1.5$ se obtuvieron los mejores resultados ya que el tiempo promedio de la simulación resultó ser el menor de todas las pruebas, sin importar el valor del lado de la ventana $W_{v}$. Allí también el error (desvío estándar) resultó bajo.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[width=\textwidth]{charts/graph.png}
+    \caption{Gráfico del tiempo promedio de simulación para distintos valores de $W_{s}$ y $W_{v}$.}
+    \label{fig:graph}
+\end{figure}
+
+Para $W_{s} = 1$, el desvío estándar resultó más alto para un tamaño de ventana menor $W_{v} = 3$. Esto se explica por el hecho de que a una menor cantidad de vecinos, los movimientos que puede realizar el agente son acotados en comparación con tamaños de ventana mayores, donde los errores resultaron bajos. Es por eso que al tener menos movimientos se pierde la posibilidad de tomar caminos más cortos.
+
+De las pruebas realizadas, $W_{s} = 2$ produjo los peores resultados debido a que, al ser los caminos más largos, aumentaba la posibilidad de ser descartados del método de búsqueda por el hecho de una colisión con un obstáculos. Y este hecho se repite para todos los valores de $W_{v}$ probados. Además, con este valor de $W_{s}$ muchas de las pruebas realizadas no cumplieron con el objetivo de llegar al goal.
 
 \section{Conclusiones}
 
 En primer lugar, se logró obtener un modelo capaz de navegar por un tablero con gran densidad de obstáculos obteniendo más de  un 80\% de efectividad, es decir, la cantidad de veces que alcanza el agente alcanza el nodo meta.
+
 Además este modelo de navegación resultó altamente personalizable, permitiendo modificar parámetros como la posición y cantidad de los \textit{waypoints} así como también la utilización de \textit{steering behaviors} distintos.
+
+Concluimos además que a valores mayores de $W_{v}$, se pueden encontrar caminos diagonales que, claramente, tendrán una distancia menor y por lo tanto serán considerados con mayor prioridad en el método de búsqueda informado.
 
 \section{Futuras extensiones}
 
@@ -196,5 +209,9 @@ Uno de los principales componentes del algoritmo al que se le pueden introducir 
 Una extensión relacionada a lo mencionado anteriormente es la forma en que se realiza el cálculo de colisiones con la utilización del \textit{raycast}. Esto se podría implementar proyectando varios \textit{raycast} con distintos radios. Cabe destacar que en el modelo de simulación peatonal utilizado (\textit{Contractile Particle Model}) el radio de una partícula es variable y proporcional a su velocidad. De esta manera, el rayo con mayor apertura puede detectar una colisión, mientras que el rayo más pequeño no lo detecta. Si éste es el caso, se puede, en vez de descartar el camino, hacer que ese camino tenga un costo mayor. Así se aprovecharía mejor la variación del radio del modelo.
 
 Por último, también se le pueden agregar fácilmente otros comportamientos al modelo para que el agente tenga un movimiento más complejo. El comportamiento a implementar va a depender de cómo se desea que se comporte el agente. Por ejemplo, si se quiere que un grupo de agentes siga a un líder, se puede implementar el comportamiento \textit{Follow the leader}. Este comportamiento puede ser útil, por ejemplo, cuando se quiere simular un grupo numeroso de personas circulando en bicicleta por una ciudad siguiendo a otro grupo de personas (masa crítica). 
+
+\pagebreak
+
+\bibliography{References}
 
 \end{document}
